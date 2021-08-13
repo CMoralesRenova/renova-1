@@ -39,7 +39,7 @@ class usuarios extends AW {
 
     public function Informacion() {
 
-        $sql = "select * from usuarios where  usr_id='{$this->usr_id}'";
+        $sql = "select * from usuarios where  id='{$this->usr_id}'";
         $res = parent::Query($sql);
 
         if (!empty($res) && !($res === NULL)) {

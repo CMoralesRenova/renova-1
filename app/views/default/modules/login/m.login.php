@@ -87,7 +87,7 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
     }
     </script>
 
-<body class="bg-gradient-info">
+<body class="bg-gradient-danger">
 
     <div class="container">
 
@@ -125,7 +125,7 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
                                             </div>
                                         </div>
                                         <input type="button" id="btnLogin"
-                                            class="btn bg-gradient-info btn-user btn-block" name="btnLogin"
+                                            class="btn bg-gradient-danger btn-user btn-block" name="btnLogin"
                                             value="Login" style="color:#000;">
                                     </form>
                                 </div>

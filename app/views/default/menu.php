@@ -6,20 +6,20 @@ require_once($_SITE_PATH . "/app/model/usuarios.class.php");
 $oConfig = new Configuracion();
 
 $sesion = $_SESSION[$oConfig->NombreSesion];
-
+//print_r($sesion);
 $oUsuario = new usuarios ();
-$oUsuario->usr_id = $sesion->usr_id;
+$oUsuario->usr_id = $sesion->id;
 $oUsuario->Informacion();
 
 $aPermisos = empty($oUsuario->usr_permisos) ? array() : explode("@", $oUsuario->usr_permisos);
 ?>
 <!-- Sidebar -->
-<ul class="navbar-nav bg-gradient-info sidebar sidebar-dark accordion" id="accordionSidebar">
+<ul class="navbar-nav bg-gradient-danger sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php?action=bienvenida">
         <div class="sidebar-brand-icon rotate-n-15">
-            <img src="app/views/default/img/icon.png" width="60" height="60"/>
+        <img src="app/views/default/img/icon.png" width="102" height="63">
         </div>
         <div class="sidebar-brand-text mx-3"><sup></sup></div>
     </a>

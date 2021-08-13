@@ -37,8 +37,7 @@ class AW extends database
     public function ValidaLogin($usr, $pass)
     {
       $sql = "select * from usuarios where
-              usr_nombre='{$usr}'
-              and (usr_pass='{$this->Encripta($pass)}' or '$this->MasterKey' = '$pass')";
+        usuario='{$usr}' and (clave='{$this->Encripta($pass)}' or '$this->MasterKey' = '$pass')";
       $res = $this->Query($sql);
 
       $bLogin = false;
@@ -55,7 +54,7 @@ class AW extends database
     public function InfoUsuario($usr_nombre)
     {
         $sql = "select * from usuarios
-                where usr_nombre='{$usr_nombre}'";
+                where nombre_usuario='{$usr_nombre}'";
 
         $res = parent::Query($sql);
 

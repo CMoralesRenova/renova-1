@@ -56,12 +56,13 @@ $(document).ready(function(e) {
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">
-                                    <?php print"<h1>$horasaludoF, $sesion->usr_nombre</h1>";?></h6>
+                                    <?php print"<h1>$horasaludoF, $sesion->nombre_usuario</h1>";?></h6>
                             </div>
                             <strong style="text-align: right"><?=$texto;?>&nbsp&nbsp</strong>
                             <div class="card-body">
                                 <div class="text-center">
-                                    <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 22rem;" src="app/views/default/img/icon.png" alt="">
+                                    <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 22rem;" src="app/views/default/img/icon.png" alt=""><br>
+                                    <strong>Somos una empresa familiar con poco mas de 14 años en el mercado del reciclaje. Pretendemos cada día con eficiencia, transparencia, productividad y calidad en el servicio generar en nuestros clientes y proveedores, confianza.</strong>
                                 </div>
                             </div>
                         </div>

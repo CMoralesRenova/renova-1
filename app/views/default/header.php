@@ -10,7 +10,7 @@ $sesion = $_SESSION[$oConfig->NombreSesion];
 
 //echo($_SERVER['HTTP_USER_AGENT']);
 $oUsuario = new usuarios ();
-$oUsuario->usr_id = $sesion->usr_id;
+$oUsuario->usr_id = $sesion->id;
 $oUsuario->Informacion();
 
 ?>
@@ -38,7 +38,7 @@ $(document).ready(function(e) {
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small"> <?= $sesion->usr_nombre ?></span>
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small"> <?= $sesion->nombre_usuario ?></span>
                 <img class="img-profile rounded-circle" src="app/views/default/img/profile.jpg">
             </a>
             <!-- Dropdown - User Information -->
