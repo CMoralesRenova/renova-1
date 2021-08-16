@@ -6,18 +6,12 @@
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "/app/model/principal.class.php");
 
-class usuarios extends AW {
+class choferes extends AW {
 
     var $id;
-    var $nombre_usuario;
-    var $usuario;
-    var $correo;
-    var $numero_economico;
-    var $clave_usuario;
+    var $nombre;
+    var $estatus;
     var $user_id;
-    var $estado;
-
-    var $perfiles_id;
 
     public function __construct($sesion = true, $datos = NULL) {
         parent::__construct($sesion);
@@ -36,15 +30,14 @@ class usuarios extends AW {
     }
 
     public function Listado() {
-        $sql = "SELECT * FROM usuarios  ";
+        $sql = "SELECT * FROM choferes  ";
         //echo nl2br($sql);
         return $this->Query($sql);
-        
     }
 
     public function Informacion() {
 
-        $sql = "select * from usuarios where  id='{$this->id}'";
+        $sql = "select * from choferes where  id='{$this->id}'";
         $res = parent::Query($sql);
 
         if (!empty($res) && !($res === NULL)) {
@@ -59,7 +52,7 @@ class usuarios extends AW {
     }
 
     public function Existe() {
-        $sql = "select id from usuarios where id='{$this->id}'";
+        $sql = "select id from choferes where id='{$this->id}'";
         $res = $this->Query($sql);
 
         $bExiste = false;
@@ -71,27 +64,12 @@ class usuarios extends AW {
     }
 
     public function Actualizar() {
-
-        $sPermisos = "";
-        if (! empty($this->perfiles_id)) {
-            foreach ($this->perfiles_id as $idx => $valor) {
-                $sPermisos .= $valor . "@";
-            }
-        }
-
-        $sqlPass = "";
-        if (!empty($this->clave_usuario)) {
-            $sqlPass = ", clave_usuario='{$this->Encripta($this->clave_usuario)}'";
-        }
-
         $sql = "update
-                    usuarios
+                    choferes
                 set
-                    perfiles_id = '{$sPermisos}',
-                    nombre_usuario = '{$this->nombre_usuario}',
-                    correo = '{$this->correo}',
-                    numero_economico = '{$this->numero_economico}'
-                    {$sqlPass}
+                    nombre = '{$this->nombre}',
+                    estatus = '{$this->estatus}',
+                    usuario_creacion = '{$this->user_id}'
                 where
                   id='{$this->id}'";
         return $this->NonQuery($sql);
@@ -100,30 +78,24 @@ class usuarios extends AW {
     public function Desactivar() {
 
         $sql = "update
-                    usuarios
+                    choferes
                 set
-                    estado = '{$this->estado}'
+                    estatus = '{$this->estatus}'
                 where
                   id='{$this->id}'";
-                 // echo nl2br($sql);
+                  echo nl2br($sql);
         return $this->NonQuery($sql);
     }
 
     public function Agregar() {
-        $sPermisos = "";
-        if (! empty($this->perfiles_id)) {
-            foreach ($this->perfiles_id as $idx => $valor) {
-                $sPermisos .= $valor . "@";
-            }
-        }
-
-        $sql = "insert into usuarios
-                (`id`,`perfiles_id`,`nombre_usuario`,`correo`,`usuario`,`clave`,`numero_economico`,`estado`,`usuario_creacion`,`fecha_creacion`)
+       
+        $sql = "insert into choferes
+                (`id`,`nombre`,`estatus`,`usuario_creacion`)
                 values
-                ('0','{$this->sPermisos}','{$this->nombre_usuario}','{$this->correo}','{$this->usuario}','{$this->Encripta($this->clave_usuario)}','{$this->numero_economico}', '1', '{$this->user_id}', now())";
+                ('0','{$this->nombre}','1','{$this->usuario_creacion}'";
         $bResultado = $this->NonQuery($sql);
         
-        $sql1 = "select id from usuarios order by id desc limit 1";
+        $sql1 = "select id from choferes order by id desc limit 1";
         $res = $this->Query($sql1);
         
         $this->id = $res[0]->id;

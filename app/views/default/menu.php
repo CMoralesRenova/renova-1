@@ -19,7 +19,7 @@ $aPermisos = empty($oUsuario->usr_permisos) ? array() : explode("@", $oUsuario->
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php?action=bienvenida">
         <div class="sidebar-brand-icon rotate-n-15">
-        <img src="app/views/default/img/icon.png" width="102" height="63">
+        <img src="app/views/default/img/icon.png" width="137" height="63">
         </div>
         <div class="sidebar-brand-text mx-3"><sup></sup></div>
     </a>
@@ -41,7 +41,7 @@ $aPermisos = empty($oUsuario->usr_permisos) ? array() : explode("@", $oUsuario->
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class='collapse-item' href='index.php?action=usuarios'>Usuarios</a>
-                <a class='collapse-item' href='index.php?action=clientes'>Clientes</a>
+                <a class='collapse-item' href='index.php?action=choferes'>Choferes</a>
                 <a class='collapse-item' href='index.php?action=marcas'>Marcas Vehiculos</a>
             </div>
         </div>

@@ -27,8 +27,8 @@ if ($action === "login") {
     } else if ($action === "usuarios") {
         $mvc_admin = new mvc_controller_administrador();
         $mvc_admin->usuarios();
-    }else if ($action === "clientes") {
-        $mvc_default->clientes();
+    }else if ($action === "choferes") {
+        $mvc_default->choferes();
     }else if ($action === "marcas") {
         $mvc_default->marcas();
     }else if ($action === "registro") {

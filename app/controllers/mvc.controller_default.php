@@ -19,8 +19,8 @@ class mvc_controller_default extends mvc_controller {
     public function bienvenida() {
         include_once("app/views/default/modules/m.bienvenida.php");
     }
-    public function clientes () {
-        include_once("app/views/default/modules/catalogos/clientes/m.clientes.php");
+    public function choferes () {
+        include_once("app/views/default/modules/catalogos/choferes/m.choferes.buscar.php");
     }
     public function marcas () {
         include_once("app/views/default/modules/catalogos/marcas/m.marcas.php");

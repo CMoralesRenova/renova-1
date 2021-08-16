@@ -6,10 +6,10 @@
 session_start();
 
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
-require_once($_SITE_PATH . "/app/model/usuarios.class.php");
+require_once($_SITE_PATH . "/app/model/choferes.class.php");
 
-$oUsuarios = new Usuarios();
-$lstUsuarios = $oUsuarios->Listado();
+$oChoferes = new choferes();
+$lstChoferes = $oChoferes->Listado();
 ?>
 <script type="text/javascript">
 $(document).ready(function(e) {
@@ -24,7 +24,7 @@ $(document).ready(function(e) {
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="card-header py-3" style="text-align:left">
-        <h5 class="m-0 font-weight-bold text-danger">Usuarios</h5>
+        <h5 class="m-0 font-weight-bold text-danger">Choferes</h5>
         <div class="form-group" style="text-align:right">
             <input type="button" id="btnAgregar" class="btn btn-danger" name="btnAgregar" value="Agregar nuevo" />
         </div>
@@ -44,14 +44,14 @@ $(document).ready(function(e) {
                 </tfoot>
                 <tbody>
                     <?php
-                        if (count($lstUsuarios) > 0) {
-                            foreach ($lstUsuarios as $idx => $campo) {
+                        if (count($lstChoferes) > 0) {
+                            foreach ($lstChoferes as $idx => $campo) {
                                 ?>
                                     <tr>
-                                        <td style="text-align: center;"><?= $campo->nombre_usuario ?></td>
+                                        <td style="text-align: center;"><?= $campo->nombre ?></td>
                                         <td style="text-align: center;">
                                             <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','Editar')">Editar</a>
-                                            <?php if ($campo->estado == 1) {?>
+                                            <?php if ($campo->estatus == 1) {?>
                                             <a class="btn btn-sm btn-secondary" href="javascript:Editar('<?= $campo->id ?>','Desactivar')">Desactivar</a>
                                             <?php } else {?>
                                                 <a class="btn btn-sm btn-success" href="javascript:Editar('<?= $campo->id ?>','Activar')">Activar</a>

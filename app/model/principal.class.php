@@ -50,6 +50,46 @@ class AW extends database
       }
       return $bLogin;
     }
+    
+    public function ValidaNivelUsuario($permiso = "")
+    {
+        $sql = "select perfiles_id from usuarios where id='" . $_SESSION[$this->NombreSesion]->id . "' and estado = '1'";
+        $res = $this->Query($sql);
+        $aPermisos = explode("@", $res[0]->perfiles_id);
+
+        if ($aPermisos && count($aPermisos) > 0) {
+            $bTienePermiso = false;
+            foreach ($aPermisos as $idx => $valor) {
+                if ($permiso === $valor) {
+                    $bTienePermiso = true;
+                    break;
+                }
+            }
+
+            if ($bTienePermiso === false) {
+                header("Location: index.php?action=acceso_denegado");
+                exit();
+            }
+        } else {
+            header("Location: index.php?action=error_page");
+            exit();
+        }
+    }
+
+    public function ExistePermiso($permiso, $arreglo)
+    {
+        $bExiste = false;
+
+        if ($arreglo && count($arreglo) > 0) {
+            foreach ($arreglo as $idx => $valor) {
+                if ($valor === $permiso) {
+                    $bExiste = true;
+                    break;
+                }
+            }
+        }
+        return $bExiste;
+    }
 
     public function InfoUsuario($usr_nombre)
     {
