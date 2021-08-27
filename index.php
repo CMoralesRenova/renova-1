@@ -29,10 +29,38 @@ if ($action === "login") {
         $mvc_admin->usuarios();
     }else if ($action === "choferes") {
         $mvc_default->choferes();
-    }else if ($action === "marcas") {
-        $mvc_default->marcas();
-    }else if ($action === "registro") {
-        $mvc_default->registro();
+    }else if ($action === "contenedores") {
+        $mvc_default->contenedores();
+    }else if ($action === "vehiculos") {
+        $mvc_default->vehiculos();
+    }else if ($action === "departamentos") {
+        $mvc_default->departamentos();
+    }else if ($action === "puestos") {
+        $mvc_default->puestos();
+    }else if ($action === "nominas") {
+        $mvc_default->nominas();
+    }else if ($action === "horarios") {
+        $mvc_default->horarios();
+    }else if ($action === "horas") {
+        $mvc_default->horas();
+    }else if ($action === "empleados") {
+        $mvc_default->empleados();
+    }else if ($action === "proveedores") {
+        $mvc_default->proveedores();
+    }else if ($action === "materiales") {
+        $mvc_default->materiales();
+    }else if ($action === "ahorros") {
+        $mvc_default->ahorros();
+    }else if ($action === "prestamos") {
+        $mvc_default->prestamos();
+    }else if ($action === "otros") {
+        $mvc_default->otros();
+    }else if ($action === "recoleccion") {
+        $mvc_default->recoleccion();
+    }else if ($action === "embarque") {
+        $mvc_default->embarque();
+    }else if ($action === "servicio") {
+        $mvc_default->servicio();
     }else if ($action === "cerrar_sesion") {
         $mvc->CerrarSesion();
     }else if ($action === "acceso_denegado") {

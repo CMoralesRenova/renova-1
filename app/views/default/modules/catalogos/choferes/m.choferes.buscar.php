@@ -51,7 +51,7 @@ $lstUsuarios = $oChoferes->Listado();
     function Editar(id, nombre) {
         if (nombre == "Desactivar") {
             $.ajax({
-                data: "accion=Desactivar&id=" + id + "&estado= 0",
+                data: "accion=Desactivar&id=" + id + "&estatus= 0",
                 type: "POST",
                 url: "app/views/default/modules/catalogos/choferes/m.choferes.procesa.php",
                 beforeSend: function() {
@@ -64,7 +64,7 @@ $lstUsuarios = $oChoferes->Listado();
             });
         } else if (nombre == "Activar") {
             $.ajax({
-                data: "accion=Desactivar&id=" + id + "&estado= 1",
+                data: "accion=Desactivar&id=" + id + "&estatus= 1",
                 type: "POST",
                 url: "app/views/default/modules/catalogos/choferes/m.choferes.procesa.php",
                 beforeSend: function() {

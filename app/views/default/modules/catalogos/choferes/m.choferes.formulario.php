@@ -6,9 +6,9 @@
 session_start();
 
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
-require_once($_SITE_PATH . "/app/model/usuarios.class.php");
+require_once($_SITE_PATH . "/app/model/choferes.class.php");
 
-$oChoferes = new Usuarios ();
+$oChoferes = new choferes ();
 $oChoferes->id = addslashes(filter_input(INPUT_POST, "id"));
 $nombre = addslashes(filter_input(INPUT_POST, "nombre"));
 $sesion = $_SESSION[$oChoferes->NombreSesion];
@@ -38,14 +38,14 @@ $(document).ready(function(e) {
 });
 </script>
 <form id="frmFormulario" name="frmFormulario"
-    action="app/views/default/modules/catalogos/usuarios/m.usuarios.procesa.php" enctype="multipart/form-data"
+    action="app/views/default/modules/catalogos/choferes/m.choferes.procesa.php" enctype="multipart/form-data"
     method="post" target="_self" class="form-horizontal">
     <div>
         <div class="form-group">
             <strong class="">Nombre:</strong>
             <div class="form-group">
-                <input type="text" class="form-control form-control-user" aria-describedby="" id="nombre_usuario"
-                    required name="nombre_usuario" value="<?= $oChoferes->nombre_usuario ?>" class="form-control" />
+                <input type="text" class="form-control form-control-user" aria-describedby="" id="nombre"
+                    required name="nombre" value="<?= $oChoferes->nombre ?>" class="form-control" />
             </div>
         </div>
         <input type="hidden" id="id" name="id" value="<?= $oChoferes->id ?>" />

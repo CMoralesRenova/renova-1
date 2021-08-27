@@ -4,13 +4,11 @@
  * felipeangelcerdacontreras@gmail.com
  */
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
-require_once($_SITE_PATH . "/app/model/usuarios.class.php");
+require_once($_SITE_PATH . "app/model/proveedores.class.php");
 
-$oUsuarios = new Usuarios();
-$sesion = $_SESSION[$oUsuarios->NombreSesion];
-$oUsuarios->ValidaNivelUsuario("usuarios");
-$lstUsuarios = $oUsuarios->Listado();
-
+$oproveedores = new proveedores();
+$sesion = $_SESSION[$oproveedores->NombreSesion];
+$oproveedores->ValidaNivelUsuario("proveedores");
 
 ?>
 <?php require_once('app/views/default/script_h.html'); ?>
@@ -18,21 +16,12 @@ $lstUsuarios = $oUsuarios->Listado();
     $(document).ready(function(e) {
         Listado();
         $("#btnGuardar").button().click(function(e) {
-            if ($("#nombre_usuario").val() === "") {
+            if ($("#nombre").val() === "") {
                 Alert("", "Ingrese el nombre", "warning");
-            } else if ($("#usuario").val() === "" ) { 
-                Alert("", "Ingrese el usuario", "warning");
-            } else if ($("#correo").val() === "" ) {
-                Alert("", "Ingrese un correo", "warning");
-            } else if ($("#numero_economico").val() === "" ) {
-                Alert("", "Ingrese un numero economico", "warning");
-            } else if  ($("#clave_usuario").val() === "" && $("#nameModal").text() == "Agregar Usuario") {
-                Alert("", "Ingrese una contraseña", "warning");
             } else {
                 $("#frmFormulario").submit();
             }
         });
-        
         $("#btnBuscar").button().click(function(e) {
             Listado();
         });
@@ -46,7 +35,7 @@ $lstUsuarios = $oUsuarios->Listado();
         $.ajax({
             data: jsonDatos,
             type: "POST",
-            url: "app/views/default/modules/catalogos/usuarios/m.usuarios.listado.php",
+            url: "app/views/default/modules/catalogos/proveedores/m.proveedores.listado.php",
             beforeSend: function() {
                 $("#divListado").html(
                     '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Leyendo información de la Base de Datos, espere un momento por favor...</center></div>'
@@ -61,9 +50,9 @@ $lstUsuarios = $oUsuarios->Listado();
     function Editar(id, nombre) {
         if (nombre == "Desactivar") {
             $.ajax({
-                data: "accion=Desactivar&id=" + id + "&estado= 0",
+                data: "accion=Desactivar&id=" + id + "&estatus= 0",
                 type: "POST",
-                url: "app/views/default/modules/catalogos/usuarios/m.usuarios.procesa.php",
+                url: "app/views/default/modules/catalogos/proveedores/m.proveedores.procesa.php",
                 beforeSend: function() {
 
                 },
@@ -74,9 +63,9 @@ $lstUsuarios = $oUsuarios->Listado();
             });
         } else if (nombre == "Activar") {
             $.ajax({
-                data: "accion=Desactivar&id=" + id + "&estado= 1",
+                data: "accion=Desactivar&id=" + id + "&estatus= 1",
                 type: "POST",
-                url: "app/views/default/modules/catalogos/usuarios/m.usuarios.procesa.php",
+                url: "app/views/default/modules/catalogos/proveedores/m.proveedores.procesa.php",
                 beforeSend: function() {
 
                 },
@@ -89,7 +78,7 @@ $lstUsuarios = $oUsuarios->Listado();
             $.ajax({
                 data: "id=" + id + "&nombre=" + nombre,
                 type: "POST",
-                url: "app/views/default/modules/catalogos/usuarios/m.usuarios.formulario.php",
+                url: "app/views/default/modules/catalogos/proveedores/m.proveedores.formulario.php",
                 beforeSend: function() {
                     $("#divFormulario").html(
                         '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
@@ -110,7 +99,9 @@ $lstUsuarios = $oUsuarios->Listado();
 
 <head>
     <?php require_once('app/views/default/head.html'); ?>
-    <title>Usuarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <title>proveedores</title>
 </head>
 
 <body id="page-top">
@@ -134,7 +125,7 @@ $lstUsuarios = $oUsuarios->Listado();
                 </div>
             </div>
             <!-- Logout Modal-->
-            <div class="modal fade bd-example-modal-lg" id="myModal_1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade bd-example-modal-lg" id="myModal_1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">

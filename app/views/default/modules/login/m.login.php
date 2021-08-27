@@ -6,7 +6,7 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
 <?php require_once('app/views/default/link.html'); ?>
 
 <head>
-    <title>AW software</title>
+    <title>Renova</title>
 
     <?php require_once('app/views/default/head.html'); ?>
     <?php require_once('app/views/default/script_h.html'); ?>

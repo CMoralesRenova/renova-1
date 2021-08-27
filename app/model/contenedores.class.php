@@ -6,18 +6,17 @@
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "/app/model/principal.class.php");
 
-class usuarios extends AW {
+class contenedores extends AW {
 
     var $id;
-    var $nombre_usuario;
-    var $usuario;
-    var $correo;
-    var $numero_economico;
-    var $clave_usuario;
+    var $nombre;
+    var $tara;
+    var $tipo;
+    var $capacidad;
+    var $estatus;
+    var $ubicacion;
     var $user_id;
-    var $estado;
 
-    var $perfiles_id;
 
     public function __construct($sesion = true, $datos = NULL) {
         parent::__construct($sesion);
@@ -36,7 +35,7 @@ class usuarios extends AW {
     }
 
     public function Listado() {
-        $sql = "SELECT * FROM usuarios  ";
+        $sql = "SELECT * FROM contenedores  ";
         //echo nl2br($sql);
         return $this->Query($sql);
         
@@ -44,7 +43,7 @@ class usuarios extends AW {
 
     public function Informacion() {
 
-        $sql = "select * from usuarios where  id='{$this->id}'";
+        $sql = "select * from contenedores where  id='{$this->id}'";
         $res = parent::Query($sql);
 
         if (!empty($res) && !($res === NULL)) {
@@ -59,7 +58,7 @@ class usuarios extends AW {
     }
 
     public function Existe() {
-        $sql = "select id from usuarios where id='{$this->id}'";
+        $sql = "select id from contenedores where id='{$this->id}'";
         $res = $this->Query($sql);
 
         $bExiste = false;
@@ -72,26 +71,13 @@ class usuarios extends AW {
 
     public function Actualizar() {
 
-        $sPermisos = "";
-        if (! empty($this->perfiles_id)) {
-            foreach ($this->perfiles_id as $idx => $valor) {
-                $sPermisos .= $valor . "@";
-            }
-        }
-
-        $sqlPass = "";
-        if (!empty($this->clave_usuario)) {
-            $sqlPass = ", clave='{$this->Encripta($this->clave_usuario)}'";
-        }
-
         $sql = "update
-                    usuarios
+                    contenedores
                 set
-                    perfiles_id = '{$sPermisos}',
-                    nombre_usuario = '{$this->nombre_usuario}',
-                    correo = '{$this->correo}',
-                    numero_economico = '{$this->numero_economico}'
-                    {$sqlPass}
+                nombre = '{$this->nombre}',
+                tara = '{$this->tara}',
+                tipo = '{$this->tipo}',
+                capacidad='{$this->capacidad}'
                 where
                   id='{$this->id}'";
         return $this->NonQuery($sql);
@@ -100,9 +86,9 @@ class usuarios extends AW {
     public function Desactivar() {
 
         $sql = "update
-                    usuarios
+                    contenedores
                 set
-                    estado = '{$this->estado}'
+                estatus = '{$this->estatus}'
                 where
                   id='{$this->id}'";
                  // echo nl2br($sql);
@@ -110,20 +96,15 @@ class usuarios extends AW {
     }
 
     public function Agregar() {
-        $sPermisos = "";
-        if (! empty($this->perfiles_id)) {
-            foreach ($this->perfiles_id as $idx => $valor) {
-                $sPermisos .= $valor . "@";
-            }
-        }
 
-        $sql = "insert into usuarios
-                (`id`,`perfiles_id`,`nombre_usuario`,`correo`,`usuario`,`clave`,`numero_economico`,`estado`,`usuario_creacion`,`fecha_creacion`)
+
+        $sql = "insert into contenedores
+                (`id`,`nombre`,`tara`,`tipo`,`capacidad`,`usuario_creacion`)
                 values
-                ('0','{$this->sPermisos}','{$this->nombre_usuario}','{$this->correo}','{$this->usuario}','{$this->Encripta($this->clave_usuario)}','{$this->numero_economico}', '1', '{$this->user_id}', now())";
+                ('0','{$this->nombre}','{$this->tara}','{$this->tipo}','{$this->capacidad}','{$this->user_id}')";
         $bResultado = $this->NonQuery($sql);
         
-        $sql1 = "select id from usuarios order by id desc limit 1";
+        $sql1 = "select id from contenedores order by id desc limit 1";
         $res = $this->Query($sql1);
         
         $this->id = $res[0]->id;

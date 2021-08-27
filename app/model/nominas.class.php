@@ -6,18 +6,13 @@
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "/app/model/principal.class.php");
 
-class usuarios extends AW {
+class nominas extends AW {
 
     var $id;
-    var $nombre_usuario;
-    var $usuario;
-    var $correo;
-    var $numero_economico;
-    var $clave_usuario;
+    var $fecha;
+    var $estatus;
     var $user_id;
-    var $estado;
 
-    var $perfiles_id;
 
     public function __construct($sesion = true, $datos = NULL) {
         parent::__construct($sesion);
@@ -36,15 +31,36 @@ class usuarios extends AW {
     }
 
     public function Listado() {
-        $sql = "SELECT * FROM usuarios  ";
+        $sql = "SELECT nominas.fecha, nominas.id,CONCAT('$',sum( nomina_detalle.total )) AS total_nomina,CASE WHEN nominas.estatus = 0 THEN 'NO PAGADA' WHEN nominas.estatus = 1 THEN
+        'PAGADA' ELSE 'OTRO'END AS estatus, WEEK ( nominas.fecha ) AS semana FROM nominas LEFT JOIN nomina_detalle ON nominas.id = nomina_detalle.id_nomina GROUP BY nominas.fecha, nominas.id 
+        ORDER BY fecha ASC  ";
         //echo nl2br($sql);
         return $this->Query($sql);
         
     }
+    public function Listado_nomina() {
+        $sql = "SELECT a.*, b.*, c.*, WEEK ( a.fecha ) AS semana,d.horas FROM nominas a 
+            LEFT JOIN nomina_detalle b ON a.id = b.id_nomina
+            LEFT JOIN empleados c ON b.id_empleado = c.id LEFT JOIN ( SELECT horas_extras.id_empleado, horas_extras AS horas FROM horas_extras WHERE estatus = 2 ) d ON c.id = d.id_empleado 
+        WHERE a.id ='{$this->id}'";
+        //echo nl2br($sql);
+        return $this->Query($sql);
+        
+    }
+    public function Pagar() {
+        $sql = "update
+                    nominas
+                set
+                estatus = '1',
+                fecha_pago = ".date("Y-m-d")."
+                where
+                  id='{$this->id}'";
+        return $this->NonQuery($sql);
+    }
 
     public function Informacion() {
 
-        $sql = "select * from usuarios where  id='{$this->id}'";
+        $sql = "select * from nominas where  id='{$this->id}'";
         $res = parent::Query($sql);
 
         if (!empty($res) && !($res === NULL)) {
@@ -59,7 +75,7 @@ class usuarios extends AW {
     }
 
     public function Existe() {
-        $sql = "select id from usuarios where id='{$this->id}'";
+        $sql = "select id from nominas where id='{$this->id}'";
         $res = $this->Query($sql);
 
         $bExiste = false;
@@ -72,26 +88,15 @@ class usuarios extends AW {
 
     public function Actualizar() {
 
-        $sPermisos = "";
-        if (! empty($this->perfiles_id)) {
-            foreach ($this->perfiles_id as $idx => $valor) {
-                $sPermisos .= $valor . "@";
-            }
-        }
-
-        $sqlPass = "";
-        if (!empty($this->clave_usuario)) {
-            $sqlPass = ", clave='{$this->Encripta($this->clave_usuario)}'";
-        }
-
         $sql = "update
-                    usuarios
+                    nominas
                 set
-                    perfiles_id = '{$sPermisos}',
-                    nombre_usuario = '{$this->nombre_usuario}',
-                    correo = '{$this->correo}',
-                    numero_economico = '{$this->numero_economico}'
-                    {$sqlPass}
+                nombre = '{$this->nombre}',
+                placa = '{$this->placa}',
+                ano = '{$this->ano}',
+                marca='{$this->marca}',
+                usuario_edicion = '{$this->user_id}',
+                fecha_modificacion = now()
                 where
                   id='{$this->id}'";
         return $this->NonQuery($sql);
@@ -100,9 +105,9 @@ class usuarios extends AW {
     public function Desactivar() {
 
         $sql = "update
-                    usuarios
+                    nominas
                 set
-                    estado = '{$this->estado}'
+                estatus = '{$this->estatus}'
                 where
                   id='{$this->id}'";
                  // echo nl2br($sql);
@@ -110,20 +115,15 @@ class usuarios extends AW {
     }
 
     public function Agregar() {
-        $sPermisos = "";
-        if (! empty($this->perfiles_id)) {
-            foreach ($this->perfiles_id as $idx => $valor) {
-                $sPermisos .= $valor . "@";
-            }
-        }
 
-        $sql = "insert into usuarios
-                (`id`,`perfiles_id`,`nombre_usuario`,`correo`,`usuario`,`clave`,`numero_economico`,`estado`,`usuario_creacion`,`fecha_creacion`)
+
+        $sql = "insert into nominas
+                (`id`,`fecha`,`estatus`)
                 values
-                ('0','{$this->sPermisos}','{$this->nombre_usuario}','{$this->correo}','{$this->usuario}','{$this->Encripta($this->clave_usuario)}','{$this->numero_economico}', '1', '{$this->user_id}', now())";
+                ('0','{$this->fecha}','0')";
         $bResultado = $this->NonQuery($sql);
         
-        $sql1 = "select id from usuarios order by id desc limit 1";
+        $sql1 = "select id from nominas order by id desc limit 1";
         $res = $this->Query($sql1);
         
         $this->id = $res[0]->id;

@@ -8,7 +8,7 @@ session_start();
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "/app/model/usuarios.class.php");
 
-$oUsuarios = new Usuarios ();
+$oUsuarios = new Usuarios();
 $oUsuarios->id = addslashes(filter_input(INPUT_POST, "id"));
 $nombre = addslashes(filter_input(INPUT_POST, "nombre"));
 $sesion = $_SESSION[$oUsuarios->NombreSesion];
@@ -17,92 +17,102 @@ $oUsuarios->Informacion();
 $aPermisos = empty($oUsuarios->perfiles_id) ? array() : explode("@", $oUsuarios->perfiles_id);
 ?>
 <script type="text/javascript">
-$(document).ready(function(e) {
-    $("#nameModal").text("<?php  echo $nombre?> Usuario");
-    $("#frmFormulario").ajaxForm({
-        beforeSubmit: function(formData, jqForm, options) {},
-        success: function(data) {
-            var str = data;
-            var datos0 = str.split("@")[0];
-            var datos1 = str.split("@")[1];
-            var datos2 = str.split("@")[2];
-            if ((datos3 = str.split("@")[3]) === undefined) {
-                datos3 = "";
-            } else {
-                datos3 = str.split("@")[3];
+    $(document).ready(function(e) {
+        $("#nameModal").text("<?php echo $nombre ?> Usuario");
+        $("#frmFormulario").ajaxForm({
+            beforeSubmit: function(formData, jqForm, options) {},
+            success: function(data) {
+                var str = data;
+                var datos0 = str.split("@")[0];
+                var datos1 = str.split("@")[1];
+                var datos2 = str.split("@")[2];
+                if ((datos3 = str.split("@")[3]) === undefined) {
+                    datos3 = "";
+                } else {
+                    datos3 = str.split("@")[3];
+                }
+                Alert(datos0, datos1 + "" + datos3, datos2);
+                Listado();
+                $("#myModal_1").modal("hide");
             }
-            Alert(datos0, datos1 + "" + datos3, datos2);
-            Listado();
-            $("#myModal_1").modal("hide");
-        }
+        });
     });
-});
 </script>
-<form id="frmFormulario" name="frmFormulario"
-    action="app/views/default/modules/catalogos/usuarios/m.usuarios.procesa.php" enctype="multipart/form-data"
-    method="post" target="_self" class="form-horizontal">
+<form id="frmFormulario" name="frmFormulario" action="app/views/default/modules/catalogos/usuarios/m.usuarios.procesa.php" enctype="multipart/form-data" method="post" target="_self" class="form-horizontal">
     <div>
-        <div class="form-group">
-            <strong class="">Nombre:</strong>
-            <div class="form-group">
-                <input type="text" class="form-control form-control-user" aria-describedby="" id="nombre_usuario"
-                    required name="nombre_usuario" value="<?= $oUsuarios->nombre_usuario ?>" class="form-control" />
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Nombre:</strong>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user" aria-describedby="" id="nombre_usuario" required name="nombre_usuario" value="<?= $oUsuarios->nombre_usuario ?>" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Usuario:</strong>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user" aria-describedby="" id="usuario" required name="usuario" value="<?= $oUsuarios->usuario ?>" class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Correo:</strong>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user" aria-describedby="" id="correo" required name="correo" value="<?= $oUsuarios->correo ?>" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">N° Económico:</strong>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user" aria-describedby="" id="numero_economico" required name="numero_economico" value="<?= $oUsuarios->numero_economico ?>" class="form-control" />
+                    </div>
+                </div>
             </div>
         </div>
         <div class="form-group">
-            <strong class="">Usuario:</strong>
-            <div class="form-group">
-                <input type="text" class="form-control form-control-user" aria-describedby="" id="usuario"
-                    required name="usuario" value="<?= $oUsuarios->usuario ?>" class="form-control" />
+            <strong class="">Permisos </strong>
+            <div class="row">
+                <div class="col">
+                    <strong class="">Administrador: </strong><br>
+                    <strong class="">Modulos: </strong><br>
+                    <input type="checkbox" name="perfiles_id[]" value="recoleccion" <?php if ($oUsuarios->ExistePermiso("recoleccion", $aPermisos) === true) echo "checked" ?>><strong> Recolección</strong><br>
+                    <input type="checkbox" name="perfiles_id[]" value="embarque" <?php if ($oUsuarios->ExistePermiso("embarque", $aPermisos) === true) echo "checked" ?>><strong> Embarque y venta(En construccion)</strong><br>
+                    <input type="checkbox" name="perfiles_id[]" value="servicio" <?php if ($oUsuarios->ExistePermiso("servicio", $aPermisos) === true) echo "checked" ?>><strong> Servicio(En construccion)</strong><br>
+                    <strong class="">Catalogos: </strong><br>
+                    <input type="checkbox" name="perfiles_id[]" value="usuarios" <?php if ($oUsuarios->ExistePermiso("usuarios", $aPermisos) === true) echo "checked" ?>><strong> Usuarios</strong><br>
+                    <input type="checkbox" name="perfiles_id[]" value="materiales" <?php if ($oUsuarios->ExistePermiso("materiales", $aPermisos) === true) echo "checked" ?>><strong> Materiales</strong><br>
+                    <input type="checkbox" name="perfiles_id[]" value="choferes" <?php if ($oUsuarios->ExistePermiso("choferes", $aPermisos) === true) echo "checked" ?>><strong> Choferes</strong><br />
+                    <input type="checkbox" name="perfiles_id[]" value="contenedores" <?php if ($oUsuarios->ExistePermiso("contenedores", $aPermisos) === true) echo "checked" ?>><strong> Contenedores</strong><br />
+                    <input type="checkbox" name="perfiles_id[]" value="vehiculos" <?php if ($oUsuarios->ExistePermiso("vehiculos", $aPermisos) === true) echo "checked" ?>><strong> Vehiculos</strong><br />
+                    <input type="checkbox" name="perfiles_id[]" value="proveedores" <?php if ($oUsuarios->ExistePermiso("proveedores", $aPermisos) === true) echo "checked" ?>><strong> Proveedores</strong><br />
+                </div>
+                <div class="col">
+                    <strong class="">Recursos Humanos: </strong><br>
+                    <strong class="">Modulos: </strong><br>
+                    <input type="checkbox" name="perfiles_id[]" value="ahorros" <?php if ($oUsuarios->ExistePermiso("ahorros", $aPermisos) === true) echo "checked" ?>><strong> Ahorros</strong><br />
+                    <input type="checkbox" name="perfiles_id[]" value="prestamos" <?php if ($oUsuarios->ExistePermiso("prestamos", $aPermisos) === true) echo "checked" ?>><strong> Prestamos</strong><br />
+                    <input type="checkbox" name="perfiles_id[]" value="otros" <?php if ($oUsuarios->ExistePermiso("otros", $aPermisos) === true) echo "checked" ?>><strong> Otros Cargos</strong><br />
+                    <strong class="">Catalogos: </strong><br>
+                    <input type="checkbox" name="perfiles_id[]" value="departamentos" <?php if ($oUsuarios->ExistePermiso("departamentos", $aPermisos) === true) echo "checked" ?>><strong> Departamentos</strong><br />
+                    <input type="checkbox" name="perfiles_id[]" value="puestos" <?php if ($oUsuarios->ExistePermiso("puestos", $aPermisos) === true) echo "checked" ?>><strong> Puestos</strong><br />
+                    <input type="checkbox" name="perfiles_id[]" value="empleados" <?php if ($oUsuarios->ExistePermiso("empleados", $aPermisos) === true) echo "checked" ?>><strong> Empleados</strong><br />
+                    <input type="checkbox" name="perfiles_id[]" value="horas" <?php if ($oUsuarios->ExistePermiso("horas", $aPermisos) === true) echo "checked" ?>><strong> Horas extras</strong><br />
+                    <input type="checkbox" name="perfiles_id[]" value="horarios" <?php if ($oUsuarios->ExistePermiso("horarios", $aPermisos) === true) echo "checked" ?>><strong> Horarios</strong><br />
+                    <input type="checkbox" name="perfiles_id[]" value="nominas" <?php if ($oUsuarios->ExistePermiso("nominas", $aPermisos) === true) echo "checked" ?>><strong> Nominas</strong><br />
+                </div>
             </div>
         </div>
-        <div class="form-group">
-            <strong class="">Correo:</strong>
-            <div class="form-group">
-                <input type="text" class="form-control form-control-user" aria-describedby="" id="correo"
-                    required name="correo" value="<?= $oUsuarios->correo ?>" class="form-control" />
-            </div>
-        </div>
-        <div class="form-group">
-            <strong class="">N° Económico:</strong>
-            <div class="form-group">
-                <input type="text" class="form-control form-control-user" aria-describedby="" id="numero_economico"
-                    required name="numero_economico" value="<?= $oUsuarios->numero_economico ?>" class="form-control" />
-            </div>
-        </div>
-        <div class="form-group">
-            <strong class="">Permisos: </strong>
-            <div class="col-sm-10">
-                <table id="dtBasicExample" class="table table-bordered-curved table-hover" cellspacing="0" width="100%">
-                    <tr>
-                        <td style="vertical-align: top;">
-                            <strong>Usuarios</strong><br />
-                            <input type="checkbox" name="perfiles_id[]" value="usuarios"
-                                <?php if ($oUsuarios->ExistePermiso("usuarios", $aPermisos) === true) echo "checked" ?>><br>
-                            <strong>Choferes</strong><br />
-                            <input type="checkbox" name="perfiles_id[]" value="choferes"
-                                <?php if ($oUsuarios->ExistePermiso("choferes", $aPermisos) === true) echo "checked" ?>><br>
-                        </td>
-                        <td style="vertical-align: top;">
-                            <strong>Cabecera</strong><br />
-                            <input type="checkbox" name="perfiles_id[]" value="cabecera"
-                                <?php if ($oUsuarios->ExistePermiso("cabecera", $aPermisos) === true) echo "checked" ?>><br>
-                            <strong>Servicios</strong><br />
-                            <input type="checkbox" name="perfiles_id[]" value="servicios"
-                                <?php if ($oUsuarios->ExistePermiso("servicios", $aPermisos) === true) echo "checked" ?>><br>
-                            <strong>Multimedia</strong><br />
-                            <input type="checkbox" name="perfiles_id[]" value="tecnologia"
-                                <?php if ($oUsuarios->ExistePermiso("tecnologia", $aPermisos) === true) echo "checked" ?>><br>
-                        </td>
-
-                    </tr>
-                </table>
-            </div>
         <div class="form-group">
             <strong class="">Contraseña:</strong>
             <div class="form-group">
-                <input type="text" class="form-control form-control-user" aria-describedby="" id="clave_usuario"
-                    required name="clave_usuario" value="" class="form-control" />
+                <input type="text" class="form-control form-control-user" aria-describedby="" id="clave_usuario" required name="clave_usuario" value="" class="form-control" />
             </div>
         </div>
         <input type="hidden" id="id" name="id" value="<?= $oUsuarios->id ?>" />
