@@ -6,10 +6,10 @@
 session_start();
 
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
-require_once($_SITE_PATH . "/app/model/proveedores.class.php");
+require_once($_SITE_PATH . "/app/model/materiales.class.php");
 
-$oProveedores = new proveedores();
-$lstproveedores = $oProveedores->Listado();
+$oMateriales = new materiales();
+$lstmateriales = $oMateriales->Listado();
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
@@ -24,7 +24,7 @@ $lstproveedores = $oProveedores->Listado();
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="card-header py-3" style="text-align:left">
-        <h5 class="m-0 font-weight-bold text-danger">Proveedores</h5>
+        <h5 class="m-0 font-weight-bold text-danger">materiales</h5>
         <div class="form-group" style="text-align:right">
             <input type="button" id="btnAgregar" class="btn btn-danger" name="btnAgregar" value="Agregar nuevo" />
         </div>
@@ -35,28 +35,30 @@ $lstproveedores = $oProveedores->Listado();
                 <thead>
                     <tr>
                         <th>Nombre</th>
-                        <th>Alias</th>
+                        <th>Estatus</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tfoot>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Alias</th>
-                        <th>Acciones</th>
-                    </tr>
+                    <th>Nombre</th>
+                    <th>Estatus</th>
+                    <th>Acciones</th>
                 </tfoot>
                 <tbody>
                     <?php
-                    if (count($lstproveedores) > 0) {
-                        foreach ($lstproveedores as $idx => $campo) {
+                    if (count($lstmateriales) > 0) {
+                        foreach ($lstmateriales as $idx => $campo) {
                     ?>
                             <tr>
                                 <td style="text-align: center;"><?= $campo->nombre ?></td>
-                                <td style="text-align: center;"><?= $campo->alias ?></td>
+                                <td style="text-align: center;"><?php if ($campo->estatus == 0) {
+                                                                    echo "INHABILITADO";
+                                                                } else if ($campo->estatus == 1) {
+                                                                    echo "DISPONIBLE";
+                                                                } ?></td>
                                 <td style="text-align: center;">
                                     <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','Editar')">Editar</a>
-                                    <?php if ($campo->estatus_cliente == 1) { ?>
+                                    <?php if ($campo->estatus == 1) { ?>
                                         <a class="btn btn-sm btn-secondary" href="javascript:Editar('<?= $campo->id ?>','Desactivar')">Desactivar</a>
                                     <?php } else { ?>
                                         <a class="btn btn-sm btn-success" href="javascript:Editar('<?= $campo->id ?>','Activar')">Activar</a>

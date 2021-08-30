@@ -4,11 +4,11 @@
  * felipeangelcerdacontreras@gmail.com
  */
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
-require_once($_SITE_PATH . "app/model/proveedores.class.php");
+require_once($_SITE_PATH . "app/model/materiales.class.php");
 
-$oproveedores = new proveedores();
-$sesion = $_SESSION[$oproveedores->NombreSesion];
-$oproveedores->ValidaNivelUsuario("proveedores");
+$oMateriales = new materiales();
+$sesion = $_SESSION[$oMateriales->NombreSesion];
+$oMateriales->ValidaNivelUsuario("materiales");
 
 ?>
 <?php require_once('app/views/default/script_h.html'); ?>
@@ -16,26 +16,8 @@ $oproveedores->ValidaNivelUsuario("proveedores");
     $(document).ready(function(e) {
         Listado();
         $("#btnGuardar").button().click(function(e) {
-            if ($("#alias").val() === "") {
-                Alert("", "Ingrese el Alias", "warning");
-            } else if ($("#nombre").val() === "") {
+            if ($("#nombre").val() === "") {
                 Alert("", "Ingrese el nombre", "warning");
-            } else if ($("#Calle").val() === "") {
-                Alert("", "Ingrese la calle", "warning");
-            } else if ($("#Numero").val() === "") {
-                Alert("", "Ingrese el numero", "warning");
-            } else if ($("#Colonia").val() === "") {
-                Alert("", "Ingrese la colonia", "warning");
-            } else if ($("#Municipio").val() === "") {
-                Alert("", "Ingrese el municipio", "warning");
-            } else if ($("#Estado").val() === "") {
-                Alert("", "Ingrese el estado", "warning");
-            } else if ($("#CP").val() === "") {
-                Alert("", "Ingrese el Codigo Postal", "warning");
-            } else if ($("#RFC").val() === "") {
-                Alert("", "Ingrese el RFC", "warning");
-            } else if ($("#Telefono").val() === "") {
-                Alert("", "Ingrese el Telefono", "warning");
             } else {
                 $("#frmFormulario").submit();
             }
@@ -53,7 +35,7 @@ $oproveedores->ValidaNivelUsuario("proveedores");
         $.ajax({
             data: jsonDatos,
             type: "POST",
-            url: "app/views/default/modules/catalogos/proveedores/m.proveedores.listado.php",
+            url: "app/views/default/modules/catalogos/materiales/m.materiales.listado.php",
             beforeSend: function() {
                 $("#divListado").html(
                     '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Leyendo información de la Base de Datos, espere un momento por favor...</center></div>'
@@ -70,7 +52,7 @@ $oproveedores->ValidaNivelUsuario("proveedores");
             $.ajax({
                 data: "accion=Desactivar&id=" + id + "&estatus= 0",
                 type: "POST",
-                url: "app/views/default/modules/catalogos/proveedores/m.proveedores.procesa.php",
+                url: "app/views/default/modules/catalogos/materiales/m.materiales.procesa.php",
                 beforeSend: function() {
 
                 },
@@ -83,7 +65,7 @@ $oproveedores->ValidaNivelUsuario("proveedores");
             $.ajax({
                 data: "accion=Desactivar&id=" + id + "&estatus= 1",
                 type: "POST",
-                url: "app/views/default/modules/catalogos/proveedores/m.proveedores.procesa.php",
+                url: "app/views/default/modules/catalogos/materiales/m.materiales.procesa.php",
                 beforeSend: function() {
 
                 },
@@ -96,7 +78,7 @@ $oproveedores->ValidaNivelUsuario("proveedores");
             $.ajax({
                 data: "id=" + id + "&nombre=" + nombre,
                 type: "POST",
-                url: "app/views/default/modules/catalogos/proveedores/m.proveedores.formulario.php",
+                url: "app/views/default/modules/catalogos/materiales/m.materiales.formulario.php",
                 beforeSend: function() {
                     $("#divFormulario").html(
                         '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
@@ -117,9 +99,7 @@ $oproveedores->ValidaNivelUsuario("proveedores");
 
 <head>
     <?php require_once('app/views/default/head.html'); ?>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <title>Proveedores</title>
+    <title>materiales</title>
 </head>
 
 <body id="page-top">
@@ -143,8 +123,8 @@ $oproveedores->ValidaNivelUsuario("proveedores");
                 </div>
             </div>
             <!-- Logout Modal-->
-            <div class="modal fade bd-example-modal-lg" id="myModal_1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg" role="document">
+            <div class="modal fade" id="myModal_1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel"><strong id="nameModal"></strong>
