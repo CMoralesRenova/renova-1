@@ -17,7 +17,7 @@ $oMateriales->Informacion();
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        $("#nameModal").text("<?php echo $nombre ?> Departamento");
+        $("#nameModal").text("<?php echo $nombre ?> Material");
         $("#frmFormulario").ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {},
             success: function(data) {
