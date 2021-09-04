@@ -16,14 +16,20 @@ $oVehiculos->ValidaNivelUsuario("vehiculos");
     $(document).ready(function(e) {
         Listado();
         $("#btnGuardar").button().click(function(e) {
+            $(".form-control").css('border', '1px solid #d1d3e2');
+
             if ($("#nombre").val() === "") {
-                Alert("", "Ingrese el nombre", "warning");
+                Alert("", "Ingrese el nombre", "warning",900,false);
+                Empty("nombre");
             } else if ($("#placa").val() === "") {
-                Alert("", "Ingrese la placa", "warning");
+                Alert("", "Ingrese la placa", "warning",900,false);
+                Empty("placa");
             } else if ($("#ano").val() === "") {
-                Alert("", "Ingrese el año", "warning");
+                Alert("", "Ingrese el año", "warning",900,false);
+                Empty("ano");
             }else if ($("#marca").val() === "") {
-                Alert("", "Ingrese la marca", "warning");
+                Alert("", "Ingrese la marca", "warning",900,false);
+                Empty("marca");
             }  else {
                 $("#frmFormulario").submit();
             }

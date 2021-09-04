@@ -12,14 +12,14 @@ $oChoferes = new choferes();
 $lstChoferes = $oChoferes->Listado();
 ?>
 <script type="text/javascript">
-$(document).ready(function(e) {
-    $("#dataTable").DataTable();
+    $(document).ready(function(e) {
+        $("#dataTable").DataTable();
 
-    $("#btnAgregar").button().click(function(e) {
-        Editar("","Agregar");
+        $("#btnAgregar").button().click(function(e) {
+            Editar("", "Agregar");
+        });
+
     });
-
-});
 </script>
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
@@ -39,28 +39,28 @@ $(document).ready(function(e) {
                     </tr>
                 </thead>
                 <tfoot>
-                    <th>Editar</th>
                     <th>Nombre</th>
+                    <th>Acciones</th>
                 </tfoot>
                 <tbody>
                     <?php
-                        if (count($lstChoferes) > 0) {
-                            foreach ($lstChoferes as $idx => $campo) {
-                                ?>
-                                    <tr>
-                                        <td style="text-align: center;"><?= $campo->nombre ?></td>
-                                        <td style="text-align: center;">
-                                            <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','Editar')">Editar</a>
-                                            <?php if ($campo->estatus == 1) {?>
-                                            <a class="btn btn-sm btn-secondary" href="javascript:Editar('<?= $campo->id ?>','Desactivar')">Desactivar</a>
-                                            <?php } else {?>
-                                                <a class="btn btn-sm btn-success" href="javascript:Editar('<?= $campo->id ?>','Activar')">Activar</a>
-                                            <?php } ?>
-                                        </td> 
-                                    </tr>
-                                    <?php
-                            }
+                    if (count($lstChoferes) > 0) {
+                        foreach ($lstChoferes as $idx => $campo) {
+                    ?>
+                            <tr>
+                                <td style="text-align: center;"><?= $campo->nombre ?></td>
+                                <td style="text-align: center;">
+                                    <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','Editar')">Editar</a>
+                                    <?php if ($campo->estatus == 1) { ?>
+                                        <a class="btn btn-sm btn-secondary" href="javascript:Editar('<?= $campo->id ?>','Desactivar')">Desactivar</a>
+                                    <?php } else { ?>
+                                        <a class="btn btn-sm btn-success" href="javascript:Editar('<?= $campo->id ?>','Activar')">Activar</a>
+                                    <?php } ?>
+                                </td>
+                            </tr>
+                    <?php
                         }
+                    }
                     ?>
                 </tbody>
             </table>

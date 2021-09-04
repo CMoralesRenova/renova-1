@@ -16,10 +16,16 @@ $oAhorros->ValidaNivelUsuario("ahorros");
     $(document).ready(function(e) {
         Listado();
         $("#btnGuardar").button().click(function(e) {
-            if ($("#fecha").val() === "") {
-                Alert("", "Ingrese una fecha", "warning");
+            $(".form-control").css('border', '1px solid #d1d3e2');
+
+            if ($("#id_empleado").val() == 0) {
+                Empty("id_empleado");
+                Alert("", "Seleccione un empleado", "warning",900,false);
+            } else if ($("#monto").val() === "") {
+                Empty("monto");
+                Alert("", "Ingrese un monto", "warning",900,false);
             } else {
-                $("#frmFormulario_").submit();
+                $("#frmFormulario").submit();
             }
         });
         $("#btnBuscar").button().click(function(e) {
@@ -49,9 +55,9 @@ $oAhorros->ValidaNivelUsuario("ahorros");
 
     function Editar(id, nombre) {
         switch (nombre) {
-            case 'Pagar':
+            case 'Detener':
                 swal({
-                    title: "¿DESEA PAGAR LA NOMINA SELECCIONADA?",
+                    title: "¿Desea detener el ahorro?",
                     text: "",
                     icon: "warning",
                     buttons: [
@@ -62,12 +68,12 @@ $oAhorros->ValidaNivelUsuario("ahorros");
                 }).then(function(isConfirm) {
                     if (isConfirm) {
                         swal({
-                            title: 'Pagada!',
-                            text: 'La nomina seleccionada a sido pagada',
+                            title: 'Detenido!',
+                            text: 'Ahorro detenido con exito',
                             icon: 'success'
                         }).then(function() {
                             $.ajax({
-                                data: "accion=Pagar&id=" + id,
+                                data: "accion=Detener&id=" + id,
                                 type: "POST",
                                 url: "app/views/default/modules/modulos/ahorros/m.ahorros.procesa.php",
                                 beforeSend: function() {
@@ -80,7 +86,7 @@ $oAhorros->ValidaNivelUsuario("ahorros");
                             });
                         });
                     } else {
-                        swal("Cancelado", "Nomina no pagada", "error");
+                        swal("Cancelado", "Ahorro no detenido", "error");
                     }
                 });
                 break;
@@ -170,14 +176,13 @@ $oAhorros->ValidaNivelUsuario("ahorros");
                             </div>
                         </div>
                         <div class="modal-footer">
-                        <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Crear Nomina">
+                        <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Guardar">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- Modal -->
-
             <!-- archivo Footer -->
             <?php require_once('app/views/default/footer.php'); ?>
             <!-- End of Footer -->

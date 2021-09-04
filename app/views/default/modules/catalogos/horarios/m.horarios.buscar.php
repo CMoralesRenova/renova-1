@@ -16,8 +16,11 @@ $oHorarios->ValidaNivelUsuario("horarios");
     $(document).ready(function(e) {
         Listado();
         $("#btnGuardar").button().click(function(e) {
+            $(".form-control").css('border', '1px solid #d1d3e2');
+
             if ($("#nombre").val() === "") {
-                Alert("", "Ingrese el nombre", "warning");
+                Empty("nombre")
+                Alert("", "Ingrese el nombre", "warning",900,false);
             } else {
                 $("#frmFormulario").submit();
             }

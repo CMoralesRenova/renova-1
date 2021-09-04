@@ -16,8 +16,14 @@ $oPuestos->ValidaNivelUsuario("puestos");
     $(document).ready(function(e) {
         Listado();
         $("#btnGuardar").button().click(function(e) {
+            $(".form-control").css('border', '1px solid #d1d3e2');
+
             if ($("#nombre").val() === "") {
-                Alert("", "Ingrese el nombre", "warning");
+                Alert("", "Ingrese el nombre", "warning",900,false);
+                Empty("nombre");
+            } else if ($("#id_departamento").val() == 0) {
+                Alert("", "Seleccione el departamento", "warning",900,false);
+                Empty("id_departamento")
             } else {
                 $("#frmFormulario").submit();
             }
@@ -100,7 +106,7 @@ $oPuestos->ValidaNivelUsuario("puestos");
 <head>
     <?php require_once('app/views/default/head.html'); ?>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <title>puestos</title>
 </head>
 

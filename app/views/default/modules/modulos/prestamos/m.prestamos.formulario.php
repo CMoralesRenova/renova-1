@@ -6,21 +6,21 @@
 session_start();
 
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
-require_once($_SITE_PATH . "/app/model/ahorros.class.php");
+require_once($_SITE_PATH . "/app/model/prestamos.class.php");
 require_once($_SITE_PATH . "/app/model/empleados.class.php");
 
-$oAhorros = new ahorros();
-$oAhorros->id = addslashes(filter_input(INPUT_POST, "id"));
+$oPrestamos = new prestamos();
+$oPrestamos->id = addslashes(filter_input(INPUT_POST, "id"));
 $nombre = addslashes(filter_input(INPUT_POST, "nombre"));
-$sesion = $_SESSION[$oAhorros->NombreSesion];
-$oAhorros->Informacion();
+$sesion = $_SESSION[$oPrestamos->NombreSesion];
+$oPrestamos->Informacion();
 
 $oEmpleados = new empleados();
 $lstEmpleados = $oEmpleados->Listado();
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        $("#nameModal").text("<?php echo $nombre ?> Ahorro");
+        $("#nameModal").text("<?php echo $nombre ?> Prestamo");
         $("#frmFormulario").ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {},
             success: function(data) {
@@ -44,7 +44,7 @@ $lstEmpleados = $oEmpleados->Listado();
     });
 </script>
 <!-- DataTales Example -->
-<form id="frmFormulario" name="frmFormulario" action="app/views/default/modules/modulos/ahorros/m.ahorros.procesa.php" enctype="multipart/form-data" method="post" target="_self" class="form-horizontal">
+<form id="frmFormulario" name="frmFormulario" action="app/views/default/modules/modulos/prestamos/m.prestamos.procesa.php" enctype="multipart/form-data" method="post" target="_self" class="form-horizontal">
     <div>
         <div class="form-group">
             <strong class="">Empleado:</strong>
@@ -62,13 +62,19 @@ $lstEmpleados = $oEmpleados->Listado();
             </div>
         </div>
         <div class="form-group">
-            <strong class="">Monto a ahorrar:</strong>
+            <strong class="">Monto a Prestar:</strong>
             <div class="form-group">
                 <input type="number" class="form-control form-control-user" aria-describedby="" id="monto" required name="monto" class="form-control" />
             </div>
         </div>
+        <div class="form-group">
+            <strong class="">Numero de Semanas:</strong>
+            <div class="form-group">
+                <input type="number" class="form-control form-control-user" aria-describedby="" id="numero_semanas" required name="numero_semanas" class="form-control" />
+            </div>
+        </div>
     </div>
-    <input type="hidden" id="id" name="id" value="<?= $oAhorros->id ?>" />
+    <input type="hidden" id="id" name="id" value="<?= $oPrestamos->id ?>" />
     <input type="hidden" id="user_id" name="user_id" value="<?= $sesion->id ?>">
     <input type="hidden" id="accion" name="accion" value="GUARDAR" />
     </div>

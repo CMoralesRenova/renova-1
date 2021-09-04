@@ -16,11 +16,64 @@ $oEmpleados->ValidaNivelUsuario("empleados");
     $(document).ready(function(e) {
         Listado();
         $("#btnGuardar").button().click(function(e) {
-            if ($("#nombre").val() === "") {
-                Alert("", "Ingrese el nombre", "warning");
-            } else {
+            $(".form-control").css('border', '1px solid #d1d3e2');
+            var frmTrue = true;
+            $("#frmFormulario").find('select, input').each(function() {
+                var elemento = this;
+                if ($(elemento).hasClass("obligado")) {
+                    if (elemento.value == "" || elemento.value == 0) {
+                        Alert("", $(elemento).attr("description"), "warning",900,false);
+                        Empty(elemento.id);
+                        frmTrue = false;
+                    }
+                }
+            });
+            if(frmTrue == true) {
                 $("#frmFormulario").submit();
             }
+
+            /* if ($("#nombres").val() === "") {
+                 Empty("nombre");
+                 Alert("", "Ingrese el nombre", "warning",900,false);
+             } else if ($("#ape_paterno").val() === "") {
+                 Empty("ape_paterno");
+                 Alert("", "Ingrese el apellido paterno", "warning",900,false);
+             } else if ($("#ape_materno").val() === "") {
+                 Empty("ape_materno");
+                 Alert("", "Ingrese el apellido materno", "warning",900,false);
+             } else if ($("#fecha_nacimiento").val() === "") {
+                Empty("fecha_nacimiento");
+                 Alert("", "Seleccione la fecha de nacimiento", "warning",900,false);
+             } else if ($("#direccion").val() == "" ) {
+                 Empty("direccion");
+                 Alert("", "Ecribir la direccion completa", "warning",900,false);
+             } else if ($("#estado_civil").val() == 0 ) {
+                 Empty("estado_civil");
+                 Alert("", "Seleccione el estado civil", "warning",900,false);
+             } else if ($("#rfc").val() == "") {
+                 Empty("rfc");
+                 Alert("", "Ingrese el RFC", "warning",900,false);
+             } else if ($("#curp").val() == "") {
+                 Empty("curp");
+                 Alert("", "Ingrese la CURP", "warning",900,false);
+             } else if ($("#nss").val() == "") {
+                 Empty("nss");
+                 Alert("", "Ingrese el NSS", "warning",900,false);
+             } else if ($("#nivel_estudios").val() == 0) {
+                 Empty("nivel_estudios");
+                 Alert("", "Seleccione el nivel estudios", "warning",900,false);
+             } else if ($("#id_puesto").val() == 0) {
+                 Empty("id_puesto");
+                 Alert("", "Seleccione el puesto", "warning",900,false);
+             } else if ($("#id_jefe").val() == 0) {
+                 Empty("id_jefe");
+                 Alert("", "Seleccione el jefe", "warning",900,false);
+             } else if ($("#salario_diario").val() == "") {
+                 Empty("salario_diario");
+                 Alert("", "Ingrese el salario diario", "warning",900,false);
+             } else {
+                 $("#frmFormulario").submit();
+             }*/
         });
         $("#btnBuscar").button().click(function(e) {
             Listado();
@@ -100,7 +153,7 @@ $oEmpleados->ValidaNivelUsuario("empleados");
 <head>
     <?php require_once('app/views/default/head.html'); ?>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <title>Empleados</title>
 </head>
 

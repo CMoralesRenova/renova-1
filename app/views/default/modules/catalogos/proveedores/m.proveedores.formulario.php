@@ -21,7 +21,7 @@ $lstpuestos = $oPuestos->Listado();
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        $("#nameModal").text("<?php echo $nombre ?> Empleado");
+        $("#nameModal").text("<?php echo $nombre ?> Proveedor");
         $("#frmFormulario").ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {},
             success: function(data) {

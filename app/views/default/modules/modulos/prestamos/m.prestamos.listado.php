@@ -6,10 +6,10 @@
 session_start();
 
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
-require_once($_SITE_PATH . "/app/model/ahorros.class.php");
+require_once($_SITE_PATH . "/app/model/prestamos.class.php");
 
-$oAhorros = new ahorros();
-$lstahorros = $oAhorros->Listado();
+$oPrestamos = new prestamos();
+$lstprestamos = $oPrestamos->Listado();
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
@@ -24,9 +24,9 @@ $lstahorros = $oAhorros->Listado();
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="card-header py-3" style="text-align:left">
-        <h5 class="m-0 font-weight-bold text-danger">Ahorros</h5>
+        <h5 class="m-0 font-weight-bold text-danger">Prestamos</h5>
         <div class="form-group" style="text-align:right">
-            <input type="button" id="btnAgregar" class="btn btn-danger" name="btnAgregar" value="Agregar Ahorro" />
+            <input type="button" id="btnAgregar" class="btn btn-danger" name="btnAgregar" value="Agregar Prestamo" />
         </div>
     </div>
     <div class="card-body">
@@ -36,7 +36,10 @@ $lstahorros = $oAhorros->Listado();
                     <tr>
                         <th>Empleado</th>
                         <th>Fecha de registro</th>
-                        <th>Monto A Ahorrar</th>
+                        <th>Monto Solicitado</th>
+                        <th>Monto A Pagar</th>
+                        <th>Cantidad A Pagar Por Semana</th>
+                        <th>Semanas</th>
                         <th>Estatus</th>
                         <th>Acciones</th>
                     </tr>
@@ -44,23 +47,29 @@ $lstahorros = $oAhorros->Listado();
                 <tfoot>
                     <th>Empleado</th>
                     <th>Fecha de registro</th>
-                    <th>Monto A Ahorrar</th>
+                    <th>Monto Solicitado</th>
+                    <th>Monto A Pagar</th>
+                    <th>Cantidad A Pagar Por Semana</th>
+                    <th>Semanas</th>
                     <th>Estatus</th>
                     <th>Acciones</th>
                 </tfoot>
                 <tbody>
                     <?php
-                    if (count($lstahorros) > 0) {
-                        foreach ($lstahorros as $idx => $campo) {
+                    if (count($lstprestamos) > 0) {
+                        foreach ($lstprestamos as $idx => $campo) {
                     ?>
                             <tr>
-                                <td style="text-align: center;"><?= $campo->nombres." ".$campo->ape_paterno." ".$campo->ape_materno?></td>
-                                <td style="text-align: center;"><?= $campo->fecha_registro?></td>
+                                <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
+                                <td style="text-align: center;"><?= $campo->fecha_registro ?></td>
                                 <td style="text-align: center;"><?= $campo->monto ?></td>
+                                <td style="text-align: center;"><?= $campo->monto_pagar ?></td>
+                                <td style="text-align: center;"><?= $campo->monto_por_semana ?></td>
+                                <td style="text-align: center;"><?= $campo->numero_semanas ?></td>
                                 <td style="text-align: center;"><?= $campo->est ?></td>
                                 <td style="text-align: center;">
                                     <?php if ($campo->estatus == "1") { ?>
-                                        <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','Detener')">Parar Ahorro</a>
+                                        <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','Liquidar')"><span class="glyphicon glyphicon-ok">Liquidar</a>
                                     <?php } ?>
                                 </td>
                             </tr>

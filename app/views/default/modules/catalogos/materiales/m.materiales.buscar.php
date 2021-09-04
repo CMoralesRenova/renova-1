@@ -16,8 +16,11 @@ $oMateriales->ValidaNivelUsuario("materiales");
     $(document).ready(function(e) {
         Listado();
         $("#btnGuardar").button().click(function(e) {
+            $(".form-control").css('border', '1px solid #d1d3e2');
+            
             if ($("#nombre").val() === "") {
-                Alert("", "Ingrese el nombre", "warning");
+                Alert("", "Ingrese el nombre", "warning",900,false);
+                Empty("nombre");
             } else {
                 $("#frmFormulario").submit();
             }

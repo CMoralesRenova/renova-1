@@ -18,21 +18,28 @@ $lstUsuarios = $oUsuarios->Listado();
     $(document).ready(function(e) {
         Listado();
         $("#btnGuardar").button().click(function(e) {
-            if ($("#nombre_usuario").val() === "") {
-                Alert("", "Ingrese el nombre", "warning");
-            } else if ($("#usuario").val() === "" ) { 
-                Alert("", "Ingrese el usuario", "warning");
-            } else if ($("#correo").val() === "" ) {
-                Alert("", "Ingrese un correo", "warning");
-            } else if ($("#numero_economico").val() === "" ) {
-                Alert("", "Ingrese un numero economico", "warning");
-            } else if  ($("#clave_usuario").val() === "" && $("#nameModal").text() == "Agregar Usuario") {
-                Alert("", "Ingrese una contraseña", "warning");
+            $(".form-control").css('border', '1px solid #d1d3e2');
+
+            if ($("#nombre_usuario").val() == "") {
+                Alert("", "Ingrese el nombre", "warning",900,false);
+                Empty("nombre_usuario");
+            } else if ($("#usuario").val() === "") {
+                Alert("", "Ingrese el usuario", "warning",900,false);
+                Empty("usuario");
+            } else if ($("#correo").val() === "") {
+                Alert("", "Ingrese un correo", "warning",900,false);
+                Empty("correo");
+            } else if ($("#numero_economico").val() === "") {
+                Alert("", "Ingrese un numero economico", "warning",900,false);
+                Empty("numero_economico");
+            } else if ($("#clave_usuario").val() === "" && $("#nameModal").text() == "Agregar Usuario") {
+                Alert("", "Ingrese una contraseña", "warning",900,false);
+                Empty("clave_usuario");
             } else {
                 $("#frmFormulario").submit();
             }
         });
-        
+
         $("#btnBuscar").button().click(function(e) {
             Listado();
         });

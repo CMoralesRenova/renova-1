@@ -49,6 +49,9 @@ $lstpuestos = $oPuestos->Listado();
         $('#id_puesto').select2({
             width: '100%'
         });
+        $('#id_jefe').select2({
+            width: '100%'
+        });
         $('[data-toggle="tooltip"]').tooltip();
     });
 </script>
@@ -59,7 +62,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Nombres:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="nombres" required name="nombres" value="<?= $oEmpleados->nombres ?>" class="form-control" />
+                        <input type="text" description="Ingrese el nombre" class="form-control obligado" aria-describedby="" id="nombres" required name="nombres" value="<?= $oEmpleados->nombres ?>"  />
                     </div>
                 </div>
             </div>
@@ -67,7 +70,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Apellido Paterno:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="ape_paterno" required name="ape_paterno" value="<?= $oEmpleados->ape_paterno ?>" class="form-control" />
+                        <input type="text" description="Ingrese el apellido paterno " aria-describedby="" id="ape_paterno" required name="ape_paterno" value="<?= $oEmpleados->ape_paterno ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -77,7 +80,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Apellido Materno:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="ape_materno" required name="ape_materno" value="<?= $oEmpleados->ape_materno ?>" class="form-control" />
+                        <input type="text" description="Ingrese el apellido materno" aria-describedby="" id="ape_materno" required name="ape_materno" value="<?= $oEmpleados->ape_materno ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -85,7 +88,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Fecha Nacimiento:</strong>
                     <div class="form-group">
-                        <input type="date" class="form-control form-control-user" aria-describedby="" id="fecha_nacimiento" required name="fecha_nacimiento" value="<?= $oEmpleados->fecha_nacimiento ?>" class="form-control" />
+                        <input type="date" description="Seleccione la fecha de nacimiento" aria-describedby="" id="fecha_nacimiento" required name="fecha_nacimiento" value="<?= $oEmpleados->fecha_nacimiento ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -93,7 +96,7 @@ $lstpuestos = $oPuestos->Listado();
         <div class="form-group">
             <strong class="">Dirección:</strong>
             <div class="form-group">
-                <input type="text" class="form-control form-control-user" aria-describedby="" id="direccion" name="direccion" value="<?= $oEmpleados->direccion ?>" class="form-control"  data-toggle="tooltip" title="" data-original-title="Escribir la direccion completa"/>
+                <input type="text" description="Ingrese la dirección" aria-describedby="" id="direccion" name="direccion" value="<?= $oEmpleados->direccion ?>" class="form-control obligado"  data-toggle="tooltip" title="" data-original-title="Escribir la direccion completa"/>
             </div>
         </div>
         <div class="row">
@@ -101,7 +104,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Estado Civil:</strong>
                     <div class="form-group">
-                        <select id="estado_civil" class="form-control" name="estado_civil">
+                        <select id="estado_civil" description="Seleccione el estado civil" class="form-control obligado" name="estado_civil">
                             <option value='0'>--SELECCIONE--</option>
                             <option value='1' <?php if ($oEmpleados->estado_civil == 1) echo "selected" ?>>Soltero/a</option>
                             <option value='2' <?php if ($oEmpleados->estado_civil == 2) echo 'Selected'; ?>>Casado/a</option>
@@ -117,7 +120,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">RFC:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="rfc" required name="rfc" value="<?= $oEmpleados->rfc ?>" class="form-control" />
+                        <input type="text" description="Ingrese el RFC" aria-describedby="" id="rfc" required name="rfc" value="<?= $oEmpleados->rfc ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -127,7 +130,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">CURP:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="curp" required name="curp" value="<?= $oEmpleados->curp ?>" class="form-control" />
+                        <input type="text" description="Ingrese la CURP" aria-describedby="" id="curp" required name="curp" value="<?= $oEmpleados->curp ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -135,7 +138,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">NSS:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="nss" required name="nss" value="<?= $oEmpleados->nss ?>" class="form-control" />
+                        <input type="text" description="Ingrese el NSS" aria-describedby="" id="nss" required name="nss" value="<?= $oEmpleados->nss ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -145,7 +148,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Nivel de Estudios:</strong>
                     <div class="form-group">
-                        <select id="nivel_estudios" class="form-control" name="nivel_estudios">
+                        <select id="nivel_estudios" description="Seleccione el nivel de estudios" class="form-control obligado" name="nivel_estudios">
                             <option value='0'>--SELECCIONE--</option>
                             <option value='1' <?php if ($oEmpleados->nivel_estudios == 1) echo "selected" ?>>Primaria</option>
                             <option value='2' <?php if ($oEmpleados->nivel_estudios == 2) echo "selected" ?>>Secundaria</option>
@@ -162,7 +165,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Puestos:</strong>
                     <div class="form-group">
-                        <select id="id_puesto" class="form-control" name="id_puesto">
+                        <select id="id_puesto" description="Seleccione el puesto" class="form-control obligado" name="id_puesto">
                             <?php
                             if (count($lstpuestos) > 0) {
                                 echo "<option value='0' >-- SELECCIONE --</option>\n";
@@ -185,7 +188,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Jefe Directo:</strong>
                     <div class="form-group">
-                        <select id="id_jefe" class="form-control" name="id_jefe">
+                        <select id="id_jefe" description="Seleccione el jefe directo" class="form-control obligado" name="id_jefe">
                             <?php
                             if (count($lstJefes) > 0) {
                                 echo "<option value='0' >-- SELECCIONE --</option>\n";
@@ -206,7 +209,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Sueldo Base Diario:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="salario_diario" required name="salario_diario" value="<?= $oEmpleados->salario_diario ?>" class="form-control" />
+                        <input type="text" description="Ingrese sueldo base" aria-describedby="" id="salario_diario" required name="salario_diario" value="<?= $oEmpleados->salario_diario ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>

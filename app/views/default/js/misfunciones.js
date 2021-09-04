@@ -59,12 +59,18 @@ function getUrlVars() {
     }
     return vars;
 }
-function Alert(tit,msg,iconn){
+function Alert(tit,msg,iconn,time,buttons) {
   swal({
   title:tit,
   text: msg,
-  icon: iconn
+  icon: iconn,
+  timer: time,
+  buttons: buttons
   });
+}
+function Empty(name) {
+    $("#"+name).css('border', '1px solid red');
+    $("#"+name).focus();
 }
 function soloLetras(e){
     key = e.keyCode || e.which;

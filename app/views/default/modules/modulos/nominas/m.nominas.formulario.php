@@ -64,7 +64,7 @@ $lstnominas = $oNominas->Listado_nomina();
                         foreach ($lstnominas as $idx => $campo) {
                     ?>
                             <tr>
-                                <td style="text-align: center;"><?= $campo->nombre ?></td>
+                                <td style="text-align: center;"><?= $campo->nombres. " " . $campo->ape_paterno . " " . $campo->ape_materno?></td>
                                 <td style="text-align: center;"><?= $campo->salario_diario ?></td>
                                 <td style="text-align: center;"><?= $campo->salario_semanal ?></td>
                                 <td style="text-align: center;"><?= $campo->estatus ?></td>

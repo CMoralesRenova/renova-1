@@ -15,9 +15,18 @@ $oHoras->ValidaNivelUsuario("horas");
     $(document).ready(function(e) {
         Listado();
         $("#btnGuardar").button().click(function(e) {
-            if ($("#nombre").val() === "") {
-                Alert("", "Ingrese el nombre", "warning");
-            } else {
+            $(".form-control").css('border', '1px solid #d1d3e2');
+
+            if ($("#id_empleado").val() == 0) {
+                Empty("id_empleado");
+                Alert("", "Seleccione el empleado", "warning",900,false);
+            } else if ($("#horas_extras").val() == "" || $("#horas_extras").val() < 0) {
+                Empty("horas_extras");
+                Alert("", "Ingrese las horas extras", "warning",900,false);
+            } else if ($("#motivo").val() == "") {
+                Empty("motivo");
+                Alert("", "Ingrese el nombre", "warning",900,false);
+            }  else {
                 $("#frmFormulario").submit();
             }
         });

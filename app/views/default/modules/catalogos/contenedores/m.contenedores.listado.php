@@ -12,14 +12,14 @@ $oContenedores = new contenedores();
 $lstcontenedores = $oContenedores->Listado();
 ?>
 <script type="text/javascript">
-$(document).ready(function(e) {
-    $("#dataTable").DataTable();
+    $(document).ready(function(e) {
+        $("#dataTable").DataTable();
 
-    $("#btnAgregar").button().click(function(e) {
-        Editar("","Agregar");
+        $("#btnAgregar").button().click(function(e) {
+            Editar("", "Agregar");
+        });
+
     });
-
-});
 </script>
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
@@ -44,33 +44,50 @@ $(document).ready(function(e) {
                     </tr>
                 </thead>
                 <tfoot>
-                    <th>Editar</th>
                     <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Tara</th>
+                    <th>Capacidad M3</th>
+                    <th>Ubicacion</th>
+                    <th>Estatus</th>
+                    <th>Acciones</th>
                 </tfoot>
                 <tbody>
                     <?php
-                        if (count($lstcontenedores) > 0) {
-                            foreach ($lstcontenedores as $idx => $campo) {
-                                ?>
-                                    <tr>
-                                        <td style="text-align: center;"><?= $campo->nombre ?></td>
-                                        <td style="text-align: center;"><?php if($campo->tipo == 1) {echo"Abierto";}else if($campo->tipo == 2){echo"Cerrado";}else{echo"Otro";}  ?></td>
-                                        <td style="text-align: center;"><?= $campo->tara ?></td>
-                                        <td style="text-align: center;"><?= $campo->capacidad ?></td>
-                                        <td style="text-align: center;"><?= $campo->ubicacion ?></td>
-                                        <td style="text-align: center;"><?php if ($campo->estatus == 0) { echo "INHABILITADO";} else if ($campo->estatus == 1) {echo "DISPONIBLE";} else if ($campo->estatus == 2) {echo "SEMBRADO";} ?></td>
-                                        <td style="text-align: center;">
-                                            <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','Editar')">Editar</a>
-                                            <?php if ($campo->estatus == 1) {?>
-                                            <a class="btn btn-sm btn-secondary" href="javascript:Editar('<?= $campo->id ?>','Desactivar')">Desactivar</a>
-                                            <?php } else {?>
-                                                <a class="btn btn-sm btn-success" href="javascript:Editar('<?= $campo->id ?>','Activar')">Activar</a>
-                                            <?php } ?>
-                                        </td> 
-                                    </tr>
-                                    <?php
-                            }
+                    if (count($lstcontenedores) > 0) {
+                        foreach ($lstcontenedores as $idx => $campo) {
+                    ?>
+                            <tr>
+                                <td style="text-align: center;"><?= $campo->nombre ?></td>
+                                <td style="text-align: center;"><?php if ($campo->tipo == 1) {
+                                                                    echo "Abierto";
+                                                                } else if ($campo->tipo == 2) {
+                                                                    echo "Cerrado";
+                                                                } else {
+                                                                    echo "Otro";
+                                                                }  ?></td>
+                                <td style="text-align: center;"><?= $campo->tara ?></td>
+                                <td style="text-align: center;"><?= $campo->capacidad ?></td>
+                                <td style="text-align: center;"><?= $campo->ubicacion ?></td>
+                                <td style="text-align: center;"><?php if ($campo->estatus == 0) {
+                                                                    echo "INHABILITADO";
+                                                                } else if ($campo->estatus == 1) {
+                                                                    echo "DISPONIBLE";
+                                                                } else if ($campo->estatus == 2) {
+                                                                    echo "SEMBRADO";
+                                                                } ?></td>
+                                <td style="text-align: center;">
+                                    <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','Editar')">Editar</a>
+                                    <?php if ($campo->estatus == 1) { ?>
+                                        <a class="btn btn-sm btn-secondary" href="javascript:Editar('<?= $campo->id ?>','Desactivar')">Desactivar</a>
+                                    <?php } else { ?>
+                                        <a class="btn btn-sm btn-success" href="javascript:Editar('<?= $campo->id ?>','Activar')">Activar</a>
+                                    <?php } ?>
+                                </td>
+                            </tr>
+                    <?php
                         }
+                    }
                     ?>
                 </tbody>
             </table>

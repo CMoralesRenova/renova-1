@@ -4,11 +4,11 @@
  * felipeangelcerdacontreras@gmail.com
  */
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
-require_once($_SITE_PATH . "app/model/contenedores.class.php");
+require_once($_SITE_PATH . "app/model/prestamos.class.php");
 
-$oContenedores = new contenedores();
-$sesion = $_SESSION[$oContenedores->NombreSesion];
-$oContenedores->ValidaNivelUsuario("contenedores");
+$oPrestamos = new prestamos();
+$sesion = $_SESSION[$oPrestamos->NombreSesion];
+$oPrestamos->ValidaNivelUsuario("prestamos");
 
 ?>
 <?php require_once('app/views/default/script_h.html'); ?>
@@ -16,17 +16,10 @@ $oContenedores->ValidaNivelUsuario("contenedores");
     $(document).ready(function(e) {
         Listado();
         $("#btnGuardar").button().click(function(e) {
-            $(".form-control").css('border', '1px solid #d1d3e2');
-
-            if ($("#nombre").val() === "") {
-                Alert("", "Ingrese el nombre", "warning",900,false);
-                Empty("nombre");
-            } else if ($("#tara").val() === "") {
-                Alert("", "Ingrese la tara", "warning",900,false);
-                Empty("tara");
-            } else if ($("#capacidad").val() === "") {
-                Alert("", "Ingrese la capacidad", "warning",900,false);
-                Empty("capacidad");
+            if ($("#id_empleado").val() == 0) {
+                Alert("", "Seleccione un empleado", "warning");
+            } else if ($("#monto").val() === "") {
+                Alert("", "Ingrese un monto", "warning");
             } else {
                 $("#frmFormulario").submit();
             }
@@ -44,7 +37,7 @@ $oContenedores->ValidaNivelUsuario("contenedores");
         $.ajax({
             data: jsonDatos,
             type: "POST",
-            url: "app/views/default/modules/catalogos/contenedores/m.contenedores.listado.php",
+            url: "app/views/default/modules/modulos/prestamos/m.prestamos.listado.php",
             beforeSend: function() {
                 $("#divListado").html(
                     '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Leyendo información de la Base de Datos, espere un momento por favor...</center></div>'
@@ -57,49 +50,60 @@ $oContenedores->ValidaNivelUsuario("contenedores");
     }
 
     function Editar(id, nombre) {
-        if (nombre == "Desactivar") {
-            $.ajax({
-                data: "accion=Desactivar&id=" + id + "&estatus= 0",
-                type: "POST",
-                url: "app/views/default/modules/catalogos/contenedores/m.contenedores.procesa.php",
-                beforeSend: function() {
+        switch (nombre) {
+            case 'Liquidar':
+                swal({
+                    title: "¿Desea liquidar el prestamo?",
+                    text: "",
+                    icon: "warning",
+                    buttons: [
+                        'No',
+                        'Si'
+                    ],
+                    dangerMode: true,
+                }).then(function(isConfirm) {
+                    if (isConfirm) {
+                        swal({
+                            title: 'Liquidado!',
+                            text: 'Prestamo Liquidado',
+                            icon: 'success'
+                        }).then(function() {
+                            $.ajax({
+                                data: "accion=Liquidado&id=" + id+"&estatus=0",
+                                type: "POST",
+                                url: "app/views/default/modules/modulos/prestamos/m.prestamos.procesa.php",
+                                beforeSend: function() {
 
-                },
-                success: function(datos) {
-                    console.log(datos);
-                    Listado();
-                }
-            });
-        } else if (nombre == "Activar") {
-            $.ajax({
-                data: "accion=Desactivar&id=" + id + "&estatus= 1",
-                type: "POST",
-                url: "app/views/default/modules/catalogos/contenedores/m.contenedores.procesa.php",
-                beforeSend: function() {
-
-                },
-                success: function(datos) {
-                    console.log(datos);
-                    Listado();
-                }
-            });
-        } else {
-            $.ajax({
-                data: "id=" + id + "&nombre=" + nombre,
-                type: "POST",
-                url: "app/views/default/modules/catalogos/contenedores/m.contenedores.formulario.php",
-                beforeSend: function() {
-                    $("#divFormulario").html(
-                        '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
-                    );
-                },
-                success: function(datos) {
-                    $("#divFormulario").html(datos);
-                }
-            });
-            $("#myModal_1").modal({
-                backdrop: "true"
-            });
+                                },
+                                success: function(datos) {
+                                    console.log(datos);
+                                    Listado();
+                                }
+                            });
+                        });
+                    } else {
+                        swal("Cancelado", "Prestamo no liquidado", "error");
+                    }
+                });
+                break;
+            case 'Agregar':
+                $.ajax({
+                    data: "nombre=" + nombre,
+                    type: "POST",
+                    url: "app/views/default/modules/modulos/prestamos/m.prestamos.formulario.php",
+                    beforeSend: function() {
+                        $("#divFormulario").html(
+                            '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
+                        );
+                    },
+                    success: function(datos) {
+                        $("#divFormulario").html(datos);
+                    }
+                });
+                $("#myModal").modal({
+                    backdrop: "true"
+                });
+                break;
         }
     }
 </script>
@@ -108,7 +112,9 @@ $oContenedores->ValidaNivelUsuario("contenedores");
 
 <head>
     <?php require_once('app/views/default/head.html'); ?>
-    <title>contenedores</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <title>Prestamos</title>
 </head>
 
 <body id="page-top">
@@ -131,8 +137,9 @@ $oContenedores->ValidaNivelUsuario("contenedores");
                     <div id="divListado"></div>
                 </div>
             </div>
+
             <!-- Logout Modal-->
-            <div class="modal fade" id="myModal_1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade " id="myModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -148,15 +155,13 @@ $oContenedores->ValidaNivelUsuario("contenedores");
                             </div>
                         </div>
                         <div class="modal-footer">
-
-                            <input type="submit" class="btn btn-danger" id="btnGuardar" value="Guardar">
+                        <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Guardar">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- Modal -->
-
             <!-- archivo Footer -->
             <?php require_once('app/views/default/footer.php'); ?>
             <!-- End of Footer -->

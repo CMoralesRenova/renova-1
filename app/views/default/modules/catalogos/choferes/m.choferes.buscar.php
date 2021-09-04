@@ -17,8 +17,11 @@ $lstUsuarios = $oChoferes->Listado();
     $(document).ready(function(e) {
         Listado();
         $("#btnGuardar").button().click(function(e) {
+            $(".form-control").css('border', '1px solid #d1d3e2');
+
             if ($("#nombre").val() === "") {
                 Alert("", "Ingrese el nombre", "warning");
+                Empty("nombre");
             } else {
                 $("#frmFormulario").submit();
             }
@@ -26,7 +29,6 @@ $lstUsuarios = $oChoferes->Listado();
         $("#btnBuscar").button().click(function(e) {
             Listado();
         });
-
     });
 
     function Listado() {

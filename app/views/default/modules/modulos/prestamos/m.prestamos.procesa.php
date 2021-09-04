@@ -6,28 +6,29 @@
 session_start();
 
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
-require_once($_SITE_PATH . "/app/model/ahorros.class.php");
+require_once($_SITE_PATH . "/app/model/prestamos.class.php");
 
 $accion = addslashes(filter_input(INPUT_POST, "accion"));
 
 
 if ($accion == "GUARDAR") {
-    $oAhorros = new ahorros(true, $_POST);
-    $resultado = $oAhorros->Existe();
+    $oPrestamos = new prestamos(true, $_POST);
+
+    $resultado = $oPrestamos->Existe();
     if ($resultado) {
-        echo "Sistema@El empleado ya tiene un ahorrro. @warning";
+        echo "Sistema@El empleado ya tiene un prestamo activo. @warning";
     } else {
-        if ($oAhorros->Guardar() === true) {
+        if ($oPrestamos->Guardar() === true) {
             echo "Sistema@Se ha registrado exitosamente la información. @success";
         } else {
             echo "Sistema@Ha ocurrido un error al guardar la información , vuelva a intentarlo o consulte con el administrador del sistema.@warning";
         }
     }
-} else if ($accion == "Detener") {
-    $oAhorros = new ahorros(true, $_POST);
+} else if ($accion == "Liquidado") {
+    $oPrestamos = new prestamos(true, $_POST);
 
-    if ($oAhorros->Detener() === true) {
-        echo "Sistema@Se ha registrado exitosamente la información. @success";
+    if ($oPrestamos->Liquidar() === true) {
+        echo "Sistema@Prestamo liquidado exitosamente. @success";
     } else {
         echo "Sistema@Ha ocurrido un error al guardar la información , vuelva a intentarlo o consulte con el administrador del sistema.@warning";
     }

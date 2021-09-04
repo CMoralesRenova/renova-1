@@ -16,11 +16,23 @@ $oNominas->ValidaNivelUsuario("nominas");
     $(document).ready(function(e) {
         Listado();
         $("#btnGuardar").button().click(function(e) {
-            if ($("#fecha").val() === "") {
-                Alert("", "Ingrese una fecha", "warning");
-            } else {
-                $("#frmFormulario_").submit();
-            }
+            $("#frmFormulario_").find(':input').each(function() {
+                var elemento = this;
+                if(elemento.type != "hidden"){
+                    
+                    console.log(elemento);
+                console.log("elemento.id=" + elemento.id + ", elemento.value=" + elemento.value+", elemento.class=" + elemento.class);
+                }
+            });
+
+            /* $(".form-control").css('border', '1px solid #d1d3e2');
+
+             if ($("#fecha").val() === "") {
+                 Empty("fecha");
+                 Alert("", "Ingrese una fecha", "warning",900,false);
+             } else {
+                 $("#frmFormulario_").submit();
+             }*/
         });
         $("#btnBuscar").button().click(function(e) {
             Listado();
@@ -191,7 +203,7 @@ $oNominas->ValidaNivelUsuario("nominas");
                             </div>
                         </div>
                         <div class="modal-footer">
-                        <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Crear Nomina">
+                            <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Crear Nomina">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>
