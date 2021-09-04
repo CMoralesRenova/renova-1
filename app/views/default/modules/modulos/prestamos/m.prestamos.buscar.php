@@ -16,11 +16,20 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
     $(document).ready(function(e) {
         Listado();
         $("#btnGuardar").button().click(function(e) {
-            if ($("#id_empleado").val() == 0) {
-                Alert("", "Seleccione un empleado", "warning");
-            } else if ($("#monto").val() === "") {
-                Alert("", "Ingrese un monto", "warning");
-            } else {
+            $(".form-control").css('border', '1px solid #d1d3e2');
+            var frmTrue = true;
+
+            $("#frmFormulario").find('select, input, textarea').each(function() {
+                var elemento = this;
+                if ($(elemento).hasClass("obligado")) {
+                    if (elemento.value == "" || elemento.value == 0) {
+                        Alert("", $(elemento).attr("description"), "warning", 900, false);
+                        Empty(elemento.id);
+                        frmTrue = false;
+                    }
+                }
+            });
+            if (frmTrue == true) {
                 $("#frmFormulario").submit();
             }
         });

@@ -17,14 +17,19 @@ $oAhorros->ValidaNivelUsuario("ahorros");
         Listado();
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
+            var frmTrue = true;
 
-            if ($("#id_empleado").val() == 0) {
-                Empty("id_empleado");
-                Alert("", "Seleccione un empleado", "warning",900,false);
-            } else if ($("#monto").val() === "") {
-                Empty("monto");
-                Alert("", "Ingrese un monto", "warning",900,false);
-            } else {
+            $("#frmFormulario").find('select, input, textarea').each(function() {
+                var elemento = this;
+                if ($(elemento).hasClass("obligado")) {
+                    if (elemento.value == "" || elemento.value == 0) {
+                        Alert("", $(elemento).attr("description"), "warning", 900, false);
+                        Empty(elemento.id);
+                        frmTrue = false;
+                    }
+                }
+            });
+            if (frmTrue == true) {
                 $("#frmFormulario").submit();
             }
         });
@@ -134,7 +139,7 @@ $oAhorros->ValidaNivelUsuario("ahorros");
 <head>
     <?php require_once('app/views/default/head.html'); ?>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <title>ahorros</title>
 </head>
 
@@ -160,7 +165,7 @@ $oAhorros->ValidaNivelUsuario("ahorros");
             </div>
 
             <!-- Logout Modal-->
-            <div class="modal fade " id="myModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade " id="myModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -176,7 +181,7 @@ $oAhorros->ValidaNivelUsuario("ahorros");
                             </div>
                         </div>
                         <div class="modal-footer">
-                        <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Guardar">
+                            <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Guardar">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>

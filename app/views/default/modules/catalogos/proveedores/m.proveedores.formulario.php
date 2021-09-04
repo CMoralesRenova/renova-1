@@ -49,7 +49,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Alias:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="alias" required name="alias" value="<?= $oProveedores->alias ?>" class="form-control" />
+                        <input type="text" description="Ingrese el alias" aria-describedby="" id="alias" required name="alias" value="<?= $oProveedores->alias ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -57,7 +57,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Nombre:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="nombre" required name="nombre" value="<?= $oProveedores->nombre ?>" class="form-control" />
+                        <input type="text" description="Ingrese el nombre" aria-describedby="" id="nombre" required name="nombre" value="<?= $oProveedores->nombre ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -67,7 +67,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Calle:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="Calle" required name="Calle" value="<?= $oProveedores->Calle ?>" class="form-control" />
+                        <input type="text" description="Ingrese la calle" aria-describedby="" id="Calle" required name="Calle" value="<?= $oProveedores->Calle ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -75,7 +75,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Numero:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="Numero" required name="Numero" value="<?= $oProveedores->Numero ?>" class="form-control" />
+                        <input type="text" description="Ingrese el numero" aria-describedby="" id="Numero" required name="Numero" value="<?= $oProveedores->Numero ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -85,7 +85,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Colonia:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="Colonia" required name="Colonia" value="<?= $oProveedores->Colonia ?>" class="form-control" />
+                        <input type="text" description="Ingrese la colonia" aria-describedby="" id="Colonia" required name="Colonia" value="<?= $oProveedores->Colonia ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -93,7 +93,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Municipio:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="Municipio" required name="Municipio" value="<?= $oProveedores->Municipio ?>" class="form-control" />
+                        <input type="text" description="Ingrese el municipio" aria-describedby="" id="Municipio" required name="Municipio" value="<?= $oProveedores->Municipio ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -103,7 +103,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Estado:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="Estado" required name="Estado" value="<?= $oProveedores->Estado ?>" class="form-control" />
+                        <input type="text" description="Ingrese el estado" aria-describedby="" id="Estado" required name="Estado" value="<?= $oProveedores->Estado ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -111,7 +111,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">CP:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="CP" required name="CP" value="<?= $oProveedores->CP ?>" class="form-control" />
+                        <input type="text" description="Ingrese el CP" aria-describedby="" id="CP" required name="CP" value="<?= $oProveedores->CP ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -121,7 +121,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">RFC:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="RFC" required name="RFC" value="<?= $oProveedores->RFC ?>" class="form-control" />
+                        <input type="text" description="Ingrese el RFC" aria-describedby="" id="RFC" required name="RFC" value="<?= $oProveedores->RFC ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -129,7 +129,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Telefono:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="Telefono" required name="Telefono" value="<?= $oProveedores->Telefono ?>" class="form-control" />
+                        <input type="text" description="Ingrese el telefono" aria-describedby="" id="Telefono" required name="Telefono" value="<?= $oProveedores->Telefono ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -139,7 +139,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Fecha Nacimiento:</strong>
                     <div class="form-group">
-                        <input type="date" class="form-control form-control-user" aria-describedby="" id="Fecha_Nac" required name="Fecha_Nac" value="<?= $oProveedores->Fecha_Nac ?>" class="form-control" />
+                        <input type="date" description="Seleccione la fecha de nacimiento" aria-describedby="" id="Fecha_Nac" required name="Fecha_Nac" value="<?= $oProveedores->Fecha_Nac ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>

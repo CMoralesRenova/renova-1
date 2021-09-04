@@ -42,7 +42,7 @@ $oDepartamentos->Informacion();
         <div class="form-group">
             <strong class="">Nombre:</strong>
             <div class="form-group">
-                <input type="text" class="form-control form-control-user" aria-describedby="" id="nombre" required name="nombre" value="<?= $oDepartamentos->nombre ?>" class="form-control" />
+                <input type="text" description="Ingrese el nombre" aria-describedby="" id="nombre" required name="nombre" value="<?= $oDepartamentos->nombre ?>" class="form-control obligado" />
             </div>
         </div>
         <input type="hidden" id="id" name="id" value="<?= $oDepartamentos->id ?>" />

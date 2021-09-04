@@ -19,9 +19,9 @@ $oNominas->ValidaNivelUsuario("nominas");
             $("#frmFormulario_").find(':input').each(function() {
                 var elemento = this;
                 if(elemento.type != "hidden"){
-                    
                     console.log(elemento);
                 console.log("elemento.id=" + elemento.id + ", elemento.value=" + elemento.value+", elemento.class=" + elemento.class);
+                elemento.id
                 }
             });
 

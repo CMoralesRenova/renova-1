@@ -16,17 +16,19 @@ $oHoras->ValidaNivelUsuario("horas");
         Listado();
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
+            var frmTrue = true;
 
-            if ($("#id_empleado").val() == 0) {
-                Empty("id_empleado");
-                Alert("", "Seleccione el empleado", "warning",900,false);
-            } else if ($("#horas_extras").val() == "" || $("#horas_extras").val() < 0) {
-                Empty("horas_extras");
-                Alert("", "Ingrese las horas extras", "warning",900,false);
-            } else if ($("#motivo").val() == "") {
-                Empty("motivo");
-                Alert("", "Ingrese el nombre", "warning",900,false);
-            }  else {
+            $("#frmFormulario").find('select, input, textarea').each(function() {
+                var elemento = this;
+                if ($(elemento).hasClass("obligado")) {
+                    if (elemento.value == "" || elemento.value == 0) {
+                        Alert("", $(elemento).attr("description"), "warning", 900, false);
+                        Empty(elemento.id);
+                        frmTrue = false;
+                    }
+                }
+            });
+            if (frmTrue == true) {
                 $("#frmFormulario").submit();
             }
         });

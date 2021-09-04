@@ -19,23 +19,26 @@ $lstUsuarios = $oUsuarios->Listado();
         Listado();
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
+            var frmTrue = true;
 
-            if ($("#nombre_usuario").val() == "") {
-                Alert("", "Ingrese el nombre", "warning",900,false);
-                Empty("nombre_usuario");
-            } else if ($("#usuario").val() === "") {
-                Alert("", "Ingrese el usuario", "warning",900,false);
-                Empty("usuario");
-            } else if ($("#correo").val() === "") {
-                Alert("", "Ingrese un correo", "warning",900,false);
-                Empty("correo");
-            } else if ($("#numero_economico").val() === "") {
-                Alert("", "Ingrese un numero economico", "warning",900,false);
-                Empty("numero_economico");
-            } else if ($("#clave_usuario").val() === "" && $("#nameModal").text() == "Agregar Usuario") {
-                Alert("", "Ingrese una contraseña", "warning",900,false);
-                Empty("clave_usuario");
-            } else {
+            $("#frmFormulario").find('select, input').each(function() {
+                var elemento = this;
+                if ($(elemento).hasClass("obligado")) {
+                    if (elemento.value == "" || elemento.value == 0) {
+                        Alert("", $(elemento).attr("description"), "warning", 900, false);
+                        Empty(elemento.id);
+                        frmTrue = false;
+                    }
+                }
+                if ($(elemento).hasClass("form-control")) {
+                    if ($("#nameModal").text() == "Agregar Usuario" && $("#clave_usuario").val() == "") {
+                        Alert("", $("#clave_usuario").attr("description"), "warning", 900, false);
+                        Empty("clave_usuario");
+                        frmTrue = false;
+                    }
+                }
+            });
+            if (frmTrue == true) {
                 $("#frmFormulario").submit();
             }
         });

@@ -42,7 +42,7 @@ $oHorarios->Informacion();
         <div class="form-group">
             <strong class="">Nombre:</strong>
             <div class="form-group">
-                <input type="text" class="form-control form-control-user" aria-describedby="" id="nombre" required name="nombre" value="<?= $oHorarios->nombre ?>" class="form-control" />
+                <input type="text" description="Ingrese el nombre" aria-describedby="" id="nombre" required name="nombre" value="<?= $oHorarios->nombre ?>" class="form-control obligado" />
             </div>
         </div>
         <strong class="">Asignacion de horario: </strong>
@@ -83,7 +83,7 @@ $oHorarios->Informacion();
                 <div class="form-group">
                     <strong class="">Entrada Lunes:</strong>
                     <div class="form-group">
-                        <input type="time" class="form-control form-control-user" aria-describedby="" id="entrada_1" required name="entrada_1" value="<?= $oHorarios->entrada_1 ?>" class="form-control" />
+                        <input type="time" description="" aria-describedby="" id="entrada_1" required name="entrada_1" value="<?= $oHorarios->entrada_1 ?>" class="form-control" />
                     </div>
                 </div>
             </div>
@@ -91,7 +91,7 @@ $oHorarios->Informacion();
                 <div class="form-group">
                     <strong class="">Salida Lunes:</strong>
                     <div class="form-group">
-                        <input type="time" class="form-control form-control-user" aria-describedby="" id="salida_1" required name="salida_1" value="<?= $oHorarios->salida_1 ?>" class="form-control" />
+                        <input type="time" description="" aria-describedby="" id="salida_1" required name="salida_1" value="<?= $oHorarios->salida_1 ?>" class="form-control" />
                     </div>
                 </div>
             </div>
@@ -101,7 +101,7 @@ $oHorarios->Informacion();
                 <div class="form-group">
                     <strong class="">Entrada Martes:</strong>
                     <div class="form-group">
-                        <input type="time" class="form-control form-control-user" aria-describedby="" id="entrada_2" required name="entrada_2" value="<?= $oHorarios->entrada_2 ?>" class="form-control" />
+                        <input type="time" description="" aria-describedby="" id="entrada_2" required name="entrada_2" value="<?= $oHorarios->entrada_2 ?>" class="form-control" />
                     </div>
                 </div>
             </div>
@@ -109,7 +109,7 @@ $oHorarios->Informacion();
                 <div class="form-group">
                     <strong class="">Salida Martes:</strong>
                     <div class="form-group">
-                        <input type="time" class="form-control form-control-user" aria-describedby="" id="salida_2" required name="salida_2" value="<?= $oHorarios->salida_2 ?>" class="form-control" />
+                        <input type="time" description="" aria-describedby="" id="salida_2" required name="salida_2" value="<?= $oHorarios->salida_2 ?>" class="form-control" />
                     </div>
                 </div>
             </div>
@@ -119,7 +119,7 @@ $oHorarios->Informacion();
                 <div class="form-group">
                     <strong class="">Entrada Miercoles:</strong>
                     <div class="form-group">
-                        <input type="time" class="form-control form-control-user" aria-describedby="" id="entrada_3" required name="entrada_3" value="<?= $oHorarios->entrada_3 ?>" class="form-control" />
+                        <input type="time" description="" aria-describedby="" id="entrada_3" required name="entrada_3" value="<?= $oHorarios->entrada_3 ?>" class="form-control" />
                     </div>
                 </div>
             </div>
@@ -127,7 +127,7 @@ $oHorarios->Informacion();
                 <div class="form-group">
                     <strong class="">Salida Miercoles:</strong>
                     <div class="form-group">
-                        <input type="time" class="form-control form-control-user" aria-describedby="" id="salida_3" required name="salida_3" value="<?= $oHorarios->salida_3 ?>" class="form-control" />
+                        <input type="time" description="" aria-describedby="" id="salida_3" required name="salida_3" value="<?= $oHorarios->salida_3 ?>" class="form-control" />
                     </div>
                 </div>
             </div>
@@ -137,7 +137,7 @@ $oHorarios->Informacion();
                 <div class="form-group">
                     <strong class="">Entrada Jueves:</strong>
                     <div class="form-group">
-                        <input type="time" class="form-control form-control-user" aria-describedby="" id="entrada_4" required name="entrada_4" value="<?= $oHorarios->entrada_4 ?>" class="form-control" />
+                        <input type="time" description="" aria-describedby="" id="entrada_4" required name="entrada_4" value="<?= $oHorarios->entrada_4 ?>" class="form-control" />
                     </div>
                 </div>
             </div>
@@ -145,7 +145,7 @@ $oHorarios->Informacion();
                 <div class="form-group">
                     <strong class="">Salida Jueves:</strong>
                     <div class="form-group">
-                        <input type="time" class="form-control form-control-user" aria-describedby="" id="salida_4" required name="salida_4" value="<?= $oHorarios->salida_4 ?>" class="form-control" />
+                        <input type="time" description="" aria-describedby="" id="salida_4" required name="salida_4" value="<?= $oHorarios->salida_4 ?>" class="form-control" />
                     </div>
                 </div>
             </div>
@@ -155,7 +155,7 @@ $oHorarios->Informacion();
                 <div class="form-group">
                     <strong class="">Entrada Viernes:</strong>
                     <div class="form-group">
-                        <input type="time" class="form-control form-control-user" aria-describedby="" id="entrada_5" required name="entrada_5" value="<?= $oHorarios->entrada_5 ?>" class="form-control" />
+                        <input type="time" description="" aria-describedby="" id="entrada_5" required name="entrada_5" value="<?= $oHorarios->entrada_5 ?>" class="form-control" />
                     </div>
                 </div>
             </div>
@@ -163,7 +163,7 @@ $oHorarios->Informacion();
                 <div class="form-group">
                     <strong class="">Salida Viernes:</strong>
                     <div class="form-group">
-                        <input type="time" class="form-control form-control-user" aria-describedby="" id="salida_5" required name="salida_5" value="<?= $oHorarios->salida_5 ?>" class="form-control" />
+                        <input type="time" description="" aria-describedby="" id="salida_5" required name="salida_5" value="<?= $oHorarios->salida_5 ?>" class="form-control" />
                     </div>
                 </div>
             </div>
@@ -173,7 +173,7 @@ $oHorarios->Informacion();
                 <div class="form-group">
                     <strong class="">Entrada Sabado:</strong>
                     <div class="form-group">
-                        <input type="time" class="form-control form-control-user" aria-describedby="" id="entrada_6" required name="entrada_6" value="<?= $oHorarios->entrada_6 ?>" class="form-control" />
+                        <input type="time" description="" aria-describedby="" id="entrada_6" required name="entrada_6" value="<?= $oHorarios->entrada_6 ?>" class="form-control" />
                     </div>
                 </div>
             </div>
@@ -181,7 +181,7 @@ $oHorarios->Informacion();
                 <div class="form-group">
                     <strong class="">Salida Sabado:</strong>
                     <div class="form-group">
-                        <input type="time" class="form-control form-control-user" aria-describedby="" id="salida_6" required name="salida_6" value="<?= $oHorarios->salida_6 ?>" class="form-control" />
+                        <input type="time" description="" aria-describedby="" id="salida_6" required name="salida_6" value="<?= $oHorarios->salida_6 ?>" class="form-control" />
                     </div>
                 </div>
             </div>
@@ -191,7 +191,7 @@ $oHorarios->Informacion();
                 <div class="form-group">
                     <strong class="">Entrada Domingo:</strong>
                     <div class="form-group">
-                        <input type="time" class="form-control form-control-user" aria-describedby="" id="entrada_7" required name="entrada_7" value="<?= $oHorarios->entrada_7 ?>" class="form-control" />
+                        <input type="time" description="" aria-describedby="" id="entrada_7" required name="entrada_7" value="<?= $oHorarios->entrada_7 ?>" class="form-control" />
                     </div>
                 </div>
             </div>
@@ -199,7 +199,7 @@ $oHorarios->Informacion();
                 <div class="form-group">
                     <strong class="">Salida Domingo:</strong>
                     <div class="form-group">
-                        <input type="time" class="form-control form-control-user" aria-describedby="" id="salida_7" required name="salida_7" value="<?= $oHorarios->salida_7 ?>" class="form-control" />
+                        <input type="time" description="" aria-describedby="" id="salida_7" required name="salida_7" value="<?= $oHorarios->salida_7 ?>" class="form-control" />
                     </div>
                 </div>
             </div>

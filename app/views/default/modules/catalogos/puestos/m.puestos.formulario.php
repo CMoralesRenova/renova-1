@@ -47,13 +47,13 @@ $lstdepartamentos = $oDepartamentos->Listado();
         <div class="form-group">
             <strong class="">Nombre:</strong>
             <div class="form-group">
-                <input type="text" class="form-control form-control-user" aria-describedby="" id="nombre" required name="nombre" value="<?= $oPuestos->nombre ?>" class="form-control" />
+                <input type="text" description="Ingrese el nombre" aria-describedby="" id="nombre" required name="nombre" value="<?= $oPuestos->nombre ?>" class="form-control obligado" />
             </div>
         </div>
         <div class="form-group">
             <strong class="">Departamento:</strong>
             <div class="form-group">
-                <select id="id_departamento" class="form-control" name="id_departamento">
+                <select id="id_departamento" description="Seleccione el departamneto" class="form-control obligado" name="id_departamento">
                     <?php
                     if (count($lstdepartamentos) > 0) {
                         echo "<option value='0' >-- SELECCIONE --</option>\n";

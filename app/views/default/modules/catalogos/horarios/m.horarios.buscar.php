@@ -17,11 +17,19 @@ $oHorarios->ValidaNivelUsuario("horarios");
         Listado();
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
+            var frmTrue = true;
 
-            if ($("#nombre").val() === "") {
-                Empty("nombre")
-                Alert("", "Ingrese el nombre", "warning",900,false);
-            } else {
+            $("#frmFormulario").find('select, input').each(function() {
+                var elemento = this;
+                if ($(elemento).hasClass("obligado")) {
+                    if (elemento.value == "" || elemento.value == 0) {
+                        Alert("", $(elemento).attr("description"), "warning", 900, false);
+                        Empty(elemento.id);
+                        frmTrue = false;
+                    }
+                }
+            });
+            if (frmTrue == true) {
                 $("#frmFormulario").submit();
             }
         });

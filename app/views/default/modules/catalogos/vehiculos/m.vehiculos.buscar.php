@@ -17,20 +17,19 @@ $oVehiculos->ValidaNivelUsuario("vehiculos");
         Listado();
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
+            var frmTrue = true;
 
-            if ($("#nombre").val() === "") {
-                Alert("", "Ingrese el nombre", "warning",900,false);
-                Empty("nombre");
-            } else if ($("#placa").val() === "") {
-                Alert("", "Ingrese la placa", "warning",900,false);
-                Empty("placa");
-            } else if ($("#ano").val() === "") {
-                Alert("", "Ingrese el año", "warning",900,false);
-                Empty("ano");
-            }else if ($("#marca").val() === "") {
-                Alert("", "Ingrese la marca", "warning",900,false);
-                Empty("marca");
-            }  else {
+            $("#frmFormulario").find('select, input').each(function() {
+                var elemento = this;
+                if ($(elemento).hasClass("obligado")) {
+                    if (elemento.value == "" || elemento.value == 0) {
+                        Alert("", $(elemento).attr("description"), "warning", 900, false);
+                        Empty(elemento.id);
+                        frmTrue = false;
+                    }
+                }
+            });
+            if (frmTrue == true) {
                 $("#frmFormulario").submit();
             }
         });

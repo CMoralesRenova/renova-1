@@ -45,7 +45,7 @@ $oVehiculos->Informacion();
                     <div class="form-group">
                         <strong class="">Nombre:</strong>
                         <div class="form-group">
-                            <input type="text" class="form-control form-control-user" aria-describedby="" id="nombre" required name="nombre" value="<?= $oVehiculos->nombre ?>" class="form-control" />
+                            <input type="text" description="Ingrese el nombre" aria-describedby="" id="nombre" required name="nombre" value="<?= $oVehiculos->nombre ?>" class="form-control obligado" />
                         </div>
                     </div>
                 </div>
@@ -53,7 +53,7 @@ $oVehiculos->Informacion();
                     <div class="form-group">
                         <strong class="">Placa:</strong>
                         <div class="form-group">
-                            <input type="text" class="form-control form-control-user" aria-describedby="" id="placa" required name="placa" value="<?= $oVehiculos->placa ?>" class="form-control" />
+                            <input type="text" description="Ingrese la placa" aria-describedby="" id="placa" required name="placa" value="<?= $oVehiculos->placa ?>" class="form-control obligado" />
                         </div>
                     </div>
                 </div>
@@ -65,7 +65,7 @@ $oVehiculos->Informacion();
                     <div class="form-group">
                         <strong class="">Año:</strong>
                         <div class="form-group">
-                            <input type="text" class="form-control form-control-user" aria-describedby="" id="ano" required name="ano" value="<?= $oVehiculos->ano ?>" class="form-control" />
+                            <input type="text" description="Ingrese el año" aria-describedby="" id="ano" required name="ano" value="<?= $oVehiculos->ano ?>" class="form-control obligado" />
                         </div>
                     </div>
                 </div>
@@ -73,7 +73,7 @@ $oVehiculos->Informacion();
                     <div class="form-group">
                         <strong class="">Marca:</strong>
                         <div class="form-group">
-                            <input type="text" class="form-control form-control-user" aria-describedby="" id="marca" required name="marca" value="<?= $oVehiculos->marca ?>" class="form-control" />
+                            <input type="text" description="Ingrese la marca" aria-describedby="" id="marca" required name="marca" value="<?= $oVehiculos->marca ?>" class="form-control obligado" />
                         </div>
                     </div>
                 </div>

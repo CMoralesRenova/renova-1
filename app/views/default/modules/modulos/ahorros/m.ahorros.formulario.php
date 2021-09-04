@@ -49,7 +49,7 @@ $lstEmpleados = $oEmpleados->Listado();
         <div class="form-group">
             <strong class="">Empleado:</strong>
             <div class="form-group">
-                <select id="id_empleado" class="form-control" name="id_empleado">
+                <select id="id_empleado" description="Seleccione a el empleado" class="form-control obligado" name="id_empleado">
                     <?php
                     if (count($lstEmpleados) > 0) {
                         echo "<option value='0' >-- SELECCIONE --</option>\n";
@@ -64,7 +64,7 @@ $lstEmpleados = $oEmpleados->Listado();
         <div class="form-group">
             <strong class="">Monto a ahorrar:</strong>
             <div class="form-group">
-                <input type="number" class="form-control form-control-user" aria-describedby="" id="monto" required name="monto" class="form-control" />
+                <input type="number" description="Ingrese el monto a ahorrar" aria-describedby="" id="monto" required name="monto" class="form-control obligado" />
             </div>
         </div>
     </div>

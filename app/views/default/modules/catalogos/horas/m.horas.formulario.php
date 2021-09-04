@@ -48,7 +48,7 @@ $lstEmpleados = $oEmpleados->Listado();
         <div class="form-group">
             <strong class="">Empleado:</strong>
             <div class="form-group">
-                <select id="id_empleado" class="form-control" name="id_empleado">
+                <select id="id_empleado" description="Seleccione el empleado" class="form-control obligado" name="id_empleado">
                     <?php
                     if (count($lstEmpleados) > 0) {
                         echo "<option value='0' >-- SELECCIONE --</option>\n";
@@ -65,13 +65,13 @@ $lstEmpleados = $oEmpleados->Listado();
         <div class="form-group">
             <strong class="">Horas Extras a Registrar:</strong>
             <div class="form-group">
-                <input type="number" class="form-control" aria-describedby="" id="horas_extras" required name="horas_extras" value="<?= $oHoras->horas_extras ?>" />
+                <input type="number" description="Ingrese las horas a registrar" class="form-control obligado" aria-describedby="" id="horas_extras" required name="horas_extras" value="<?= $oHoras->horas_extras ?>" />
             </div>
         </div>
         <div class="form-group">
             <strong class="">Motivo:</strong>
             <div class="form-group">
-                <textarea name="motivo" id="motivo" class="form-control"><?= $oHoras->motivo ?></textarea>
+                <textarea name="motivo" id="motivo" description="Ingrese el motivo" class="form-control obligado"><?= $oHoras->motivo ?></textarea>
             </div>
         </div>
         <input type="hidden" id="id" name="id" value="<?= $oHoras->id ?>" />

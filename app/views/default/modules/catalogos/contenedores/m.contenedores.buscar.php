@@ -17,17 +17,19 @@ $oContenedores->ValidaNivelUsuario("contenedores");
         Listado();
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
+            var frmTrue = true;
 
-            if ($("#nombre").val() === "") {
-                Alert("", "Ingrese el nombre", "warning",900,false);
-                Empty("nombre");
-            } else if ($("#tara").val() === "") {
-                Alert("", "Ingrese la tara", "warning",900,false);
-                Empty("tara");
-            } else if ($("#capacidad").val() === "") {
-                Alert("", "Ingrese la capacidad", "warning",900,false);
-                Empty("capacidad");
-            } else {
+            $("#frmFormulario").find('select, input').each(function() {
+                var elemento = this;
+                if ($(elemento).hasClass("obligado")) {
+                    if (elemento.value == "" || elemento.value == 0) {
+                        Alert("", $(elemento).attr("description"), "warning", 900, false);
+                        Empty(elemento.id);
+                        frmTrue = false;
+                    }
+                }
+            });
+            if (frmTrue == true) {
                 $("#frmFormulario").submit();
             }
         });

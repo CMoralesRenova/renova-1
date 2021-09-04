@@ -45,7 +45,7 @@ $aPermisos = empty($oUsuarios->perfiles_id) ? array() : explode("@", $oUsuarios-
                 <div class="form-group">
                     <strong class="">Nombre:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="nombre_usuario" required name="nombre_usuario" value="<?= $oUsuarios->nombre_usuario ?>" class="form-control" />
+                        <input type="text" description="Ingrese el nombre" aria-describedby="" id="nombre_usuario" required name="nombre_usuario" value="<?= $oUsuarios->nombre_usuario ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -53,7 +53,7 @@ $aPermisos = empty($oUsuarios->perfiles_id) ? array() : explode("@", $oUsuarios-
                 <div class="form-group">
                     <strong class="">Usuario:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="usuario" required name="usuario" value="<?= $oUsuarios->usuario ?>" class="form-control" />
+                        <input type="text" description="Ingrese el usuario" aria-describedby="" id="usuario" required name="usuario" value="<?= $oUsuarios->usuario ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -63,7 +63,7 @@ $aPermisos = empty($oUsuarios->perfiles_id) ? array() : explode("@", $oUsuarios-
                 <div class="form-group">
                     <strong class="">Correo:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="correo" required name="correo" value="<?= $oUsuarios->correo ?>" class="form-control" />
+                        <input type="text" description="Ingrese el correo" aria-describedby="" id="correo" required name="correo" value="<?= $oUsuarios->correo ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -71,7 +71,7 @@ $aPermisos = empty($oUsuarios->perfiles_id) ? array() : explode("@", $oUsuarios-
                 <div class="form-group">
                     <strong class="">N° Económico:</strong>
                     <div class="form-group">
-                        <input type="text" class="form-control form-control-user" aria-describedby="" id="numero_economico" required name="numero_economico" value="<?= $oUsuarios->numero_economico ?>" class="form-control" />
+                        <input type="text" description="" aria-describedby="" id="numero_economico" required name="numero_economico" value="<?= $oUsuarios->numero_economico ?>" class="form-control" />
                     </div>
                 </div>
             </div>
@@ -112,7 +112,7 @@ $aPermisos = empty($oUsuarios->perfiles_id) ? array() : explode("@", $oUsuarios-
         <div class="form-group">
             <strong class="">Contraseña:</strong>
             <div class="form-group">
-                <input type="text" class="form-control form-control-user" aria-describedby="" id="clave_usuario" required name="clave_usuario" value="" class="form-control" />
+                <input type="text" description="Ingrese la contraseña" aria-describedby="" id="clave_usuario" required name="clave_usuario" value="" class="form-control" />
             </div>
         </div>
         <input type="hidden" id="id" name="id" value="<?= $oUsuarios->id ?>" />

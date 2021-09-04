@@ -17,38 +17,19 @@ $oproveedores->ValidaNivelUsuario("proveedores");
         Listado();
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
+            var frmTrue = true;
 
-            if ($("#alias").val() === "") {
-                Alert("", "Ingrese el Alias", "warning",900,false);
-                Empty("alias");
-            } else if ($("#nombre").val() === "") {
-                Alert("", "Ingrese el nombre", "warning",900,false);
-                Empty("nombre");
-            } else if ($("#Calle").val() === "") {
-                Alert("", "Ingrese la calle", "warning",900,false);
-                Empty("Calle");
-            } else if ($("#Numero").val() === "") {
-                Alert("", "Ingrese el numero", "warning",900,false);
-                Empty("Numero");
-            } else if ($("#Colonia").val() === "") {
-                Alert("", "Ingrese la colonia", "warning",900,false);
-                Empty("Colonia");
-            } else if ($("#Municipio").val() === "") {
-                Alert("", "Ingrese el municipio", "warning",900,false);
-                Empty("Municipio");
-            } else if ($("#Estado").val() === "") {
-                Alert("", "Ingrese el estado", "warning",900,false);
-                Empty("Estado");
-            } else if ($("#CP").val() === "") {
-                Alert("", "Ingrese el Codigo Postal", "warning",900,false);
-                Empty("CP");
-            } else if ($("#RFC").val() === "") {
-                Alert("", "Ingrese el RFC", "warning",900,false);
-                Empty("RFC");
-            } else if ($("#Telefono").val() === "") {
-                Alert("", "Ingrese el Telefono", "warning",900,false);
-                Empty("Telefono");
-            } else {
+            $("#frmFormulario").find('select, input').each(function() {
+                var elemento = this;
+                if ($(elemento).hasClass("obligado")) {
+                    if (elemento.value == "" || elemento.value == 0) {
+                        Alert("", $(elemento).attr("description"), "warning", 900, false);
+                        Empty(elemento.id);
+                        frmTrue = false;
+                    }
+                }
+            });
+            if (frmTrue == true) {
                 $("#frmFormulario").submit();
             }
         });

@@ -42,7 +42,7 @@ $oContenedores->Informacion();
         <div class="form-group">
             <strong class="">Nombre/Numero:</strong>
             <div class="form-group">
-                <input type="text" class="form-control form-control-user" aria-describedby="" id="nombre" required name="nombre" value="<?= $oContenedores->nombre ?>" class="form-control" />
+                <input type="text" description="Ingrese el nombre/numero" aria-describedby="" id="nombre" required name="nombre" value="<?= $oContenedores->nombre ?>" class="form-control obligado" />
             </div>
         </div>
         <div class="form-group">
@@ -60,7 +60,7 @@ $oContenedores->Informacion();
                     <div class="form-group">
                         <strong class="">Tara:</strong>
                         <div class="form-group">
-                            <input type="text" class="form-control form-control-user" aria-describedby="" id="tara" required name="tara" value="<?= $oContenedores->tara ?>" class="form-control" />
+                            <input type="text" description="Ingrese la tara" aria-describedby="" id="tara" required name="tara" value="<?= $oContenedores->tara ?>" class="form-control obligado" />
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@ $oContenedores->Informacion();
         <div class="form-group">
             <strong class="">Capacidad:</strong>
             <div class="form-group">
-                <input type="text" class="form-control form-control-user" aria-describedby="" id="capacidad" required name="capacidad" value="<?= $oContenedores->capacidad ?>" class="form-control" />
+                <input type="text" description="Ingrese la capacidad" aria-describedby="" id="capacidad" required name="capacidad" value="<?= $oContenedores->capacidad ?>" class="form-control obligado" />
             </div>
         </div>
             <input type="hidden" id="id" name="id" value="<?= $oContenedores->id ?>" />
