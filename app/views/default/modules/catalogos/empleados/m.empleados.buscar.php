@@ -31,49 +31,6 @@ $oEmpleados->ValidaNivelUsuario("empleados");
             if(frmTrue == true) {
                 $("#frmFormulario").submit();
             }
-
-            /* if ($("#nombres").val() === "") {
-                 Empty("nombre");
-                 Alert("", "Ingrese el nombre", "warning",900,false);
-             } else if ($("#ape_paterno").val() === "") {
-                 Empty("ape_paterno");
-                 Alert("", "Ingrese el apellido paterno", "warning",900,false);
-             } else if ($("#ape_materno").val() === "") {
-                 Empty("ape_materno");
-                 Alert("", "Ingrese el apellido materno", "warning",900,false);
-             } else if ($("#fecha_nacimiento").val() === "") {
-                Empty("fecha_nacimiento");
-                 Alert("", "Seleccione la fecha de nacimiento", "warning",900,false);
-             } else if ($("#direccion").val() == "" ) {
-                 Empty("direccion");
-                 Alert("", "Ecribir la direccion completa", "warning",900,false);
-             } else if ($("#estado_civil").val() == 0 ) {
-                 Empty("estado_civil");
-                 Alert("", "Seleccione el estado civil", "warning",900,false);
-             } else if ($("#rfc").val() == "") {
-                 Empty("rfc");
-                 Alert("", "Ingrese el RFC", "warning",900,false);
-             } else if ($("#curp").val() == "") {
-                 Empty("curp");
-                 Alert("", "Ingrese la CURP", "warning",900,false);
-             } else if ($("#nss").val() == "") {
-                 Empty("nss");
-                 Alert("", "Ingrese el NSS", "warning",900,false);
-             } else if ($("#nivel_estudios").val() == 0) {
-                 Empty("nivel_estudios");
-                 Alert("", "Seleccione el nivel estudios", "warning",900,false);
-             } else if ($("#id_puesto").val() == 0) {
-                 Empty("id_puesto");
-                 Alert("", "Seleccione el puesto", "warning",900,false);
-             } else if ($("#id_jefe").val() == 0) {
-                 Empty("id_jefe");
-                 Alert("", "Seleccione el jefe", "warning",900,false);
-             } else if ($("#salario_diario").val() == "") {
-                 Empty("salario_diario");
-                 Alert("", "Ingrese el salario diario", "warning",900,false);
-             } else {
-                 $("#frmFormulario").submit();
-             }*/
         });
         $("#btnBuscar").button().click(function(e) {
             Listado();
