@@ -4,11 +4,11 @@
  * felipeangelcerdacontreras@gmail.com
  */
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
-require_once($_SITE_PATH . "app/model/nominas.class.php");
+require_once($_SITE_PATH . "app/model/otros.class.php");
 
-$oNominas = new nominas();
-$sesion = $_SESSION[$oNominas->NombreSesion];
-$oNominas->ValidaNivelUsuario("nominas");
+$oOtros = new otros();
+$sesion = $_SESSION[$oOtros->NombreSesion];
+$oOtros->ValidaNivelUsuario("otros");
 
 ?>
 <?php require_once('app/views/default/script_h.html'); ?>
@@ -16,24 +16,22 @@ $oNominas->ValidaNivelUsuario("nominas");
     $(document).ready(function(e) {
         Listado();
         $("#btnGuardar").button().click(function(e) {
-            $("#frmFormulario_").find(':input').each(function() {
-                $(".form-control").css('border', '1px solid #d1d3e2');
-                var frmTrue = true;
+            $(".form-control").css('border', '1px solid #d1d3e2');
+            var frmTrue = true;
 
-                $("#frmFormulario_").find('select, input, textarea').each(function() {
-                    var elemento = this;
-                    if ($(elemento).hasClass("obligado")) {
-                        if (elemento.value == "" || elemento.value == 0) {
-                            Alert("", $(elemento).attr("description"), "warning", 900, false);
-                            Empty(elemento.id);
-                            frmTrue = false;
-                        }
+            $("#frmFormulario").find('select, input, textarea').each(function() {
+                var elemento = this;
+                if ($(elemento).hasClass("obligado")) {
+                    if (elemento.value == "" || elemento.value == 0) {
+                        Alert("", $(elemento).attr("description"), "warning", 900, false);
+                        Empty(elemento.id);
+                        frmTrue = false;
                     }
-                });
-                if (frmTrue == true) {
-                    $("#frmFormulario_").submit();
                 }
             });
+            if (frmTrue == true) {
+                $("#frmFormulario").submit();
+            }
         });
         $("#btnBuscar").button().click(function(e) {
             Listado();
@@ -48,7 +46,7 @@ $oNominas->ValidaNivelUsuario("nominas");
         $.ajax({
             data: jsonDatos,
             type: "POST",
-            url: "app/views/default/modules/modulos/nominas/m.nominas.listado.php",
+            url: "app/views/default/modules/modulos/otros/m.otros.listado.php",
             beforeSend: function() {
                 $("#divListado").html(
                     '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Leyendo información de la Base de Datos, espere un momento por favor...</center></div>'
@@ -62,9 +60,9 @@ $oNominas->ValidaNivelUsuario("nominas");
 
     function Editar(id, nombre) {
         switch (nombre) {
-            case 'Pagar':
+            case 'Liquidar':
                 swal({
-                    title: "¿DESEA PAGAR LA NOMINA SELECCIONADA?",
+                    title: "¿Desea liquidar el prestamo?",
                     text: "",
                     icon: "warning",
                     buttons: [
@@ -75,14 +73,14 @@ $oNominas->ValidaNivelUsuario("nominas");
                 }).then(function(isConfirm) {
                     if (isConfirm) {
                         swal({
-                            title: 'Pagada!',
-                            text: 'La nomina seleccionada a sido pagada',
+                            title: 'Liquidado!',
+                            text: 'Prestamo Liquidado',
                             icon: 'success'
                         }).then(function() {
                             $.ajax({
-                                data: "accion=Pagar&id=" + id,
+                                data: "accion=Liquidado&id=" + id+"&estatus=0",
                                 type: "POST",
-                                url: "app/views/default/modules/modulos/nominas/m.nominas.procesa.php",
+                                url: "app/views/default/modules/modulos/otros/m.otros.procesa.php",
                                 beforeSend: function() {
 
                                 },
@@ -93,7 +91,7 @@ $oNominas->ValidaNivelUsuario("nominas");
                             });
                         });
                     } else {
-                        swal("Cancelado", "Nomina no pagada", "error");
+                        swal("Cancelado", "Prestamo no liquidado", "error");
                     }
                 });
                 break;
@@ -101,25 +99,7 @@ $oNominas->ValidaNivelUsuario("nominas");
                 $.ajax({
                     data: "nombre=" + nombre,
                     type: "POST",
-                    url: "app/views/default/modules/modulos/nominas/m.nominas.formulario.nominas.php",
-                    beforeSend: function() {
-                        $("#divFormulario_").html(
-                            '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
-                        );
-                    },
-                    success: function(datos) {
-                        $("#divFormulario_").html(datos);
-                    }
-                });
-                $("#myModal_nominas").modal({
-                    backdrop: "true"
-                });
-                break;
-            default:
-                $.ajax({
-                    data: "id=" + id + "&nombre=" + nombre,
-                    type: "POST",
-                    url: "app/views/default/modules/modulos/nominas/m.nominas.formulario.php",
+                    url: "app/views/default/modules/modulos/otros/m.otros.formulario.php",
                     beforeSend: function() {
                         $("#divFormulario").html(
                             '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
@@ -129,9 +109,10 @@ $oNominas->ValidaNivelUsuario("nominas");
                         $("#divFormulario").html(datos);
                     }
                 });
-                $("#myModal_1").modal({
+                $("#myModal").modal({
                     backdrop: "true"
                 });
+                break;
         }
     }
 </script>
@@ -140,7 +121,9 @@ $oNominas->ValidaNivelUsuario("nominas");
 
 <head>
     <?php require_once('app/views/default/head.html'); ?>
-    <title>nominas</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <title>otros</title>
 </head>
 
 <body id="page-top">
@@ -163,9 +146,10 @@ $oNominas->ValidaNivelUsuario("nominas");
                     <div id="divListado"></div>
                 </div>
             </div>
+
             <!-- Logout Modal-->
-            <div class="modal fade bd-example-modal-lg" id="myModal_1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xl" role="document">
+            <div class="modal fade " id="myModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel"><strong id="nameModal"></strong>
@@ -180,38 +164,13 @@ $oNominas->ValidaNivelUsuario("nominas");
                             </div>
                         </div>
                         <div class="modal-footer">
+                        <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Guardar">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- Modal -->
-
-            <!-- Logout Modal-->
-            <div class="modal fade " id="myModal_nominas" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel"><strong id="nameModal_"></strong>
-                            </h5>
-                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <!-- contenido del modal-->
-                            <div style="width:100%;" class="modal-body" id="divFormulario_">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Crear Nomina">
-                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Modal -->
-
             <!-- archivo Footer -->
             <?php require_once('app/views/default/footer.php'); ?>
             <!-- End of Footer -->

@@ -57,9 +57,6 @@ $aPermisos = empty($oUsuario->perfiles_id) ? array() : explode("@", $oUsuario->p
                 <?php if ($oUsuario->ExistePermiso("puestos", $aPermisos) === true) { ?>
                     <a class='collapse-item' href='index.php?action=puestos'>Puestos</a>
                 <?php } ?>
-                <?php if ($oUsuario->ExistePermiso("nominas", $aPermisos) === true) { ?>
-                    <a class='collapse-item' href='index.php?action=nominas'>Nominas</a>
-                <?php } ?>
                 <?php if ($oUsuario->ExistePermiso("horarios", $aPermisos) === true) { ?>
                     <a class='collapse-item' href='index.php?action=horarios'>Horarios</a>
                 <?php } ?>
@@ -89,6 +86,9 @@ $aPermisos = empty($oUsuario->perfiles_id) ? array() : explode("@", $oUsuario->p
         </a>
         <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
+                <?php if ($oUsuario->ExistePermiso("nominas", $aPermisos) === true) { ?>
+                    <a class='collapse-item' href='index.php?action=nominas'>Nominas</a>
+                <?php } ?>
                 <?php if ($oUsuario->ExistePermiso("ahorros", $aPermisos) === true) { ?>
                     <a class='collapse-item' href='index.php?action=ahorros'>Ahorros</a>
                 <?php } ?>

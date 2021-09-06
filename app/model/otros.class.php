@@ -6,15 +6,17 @@
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "/app/model/principal.class.php");
 
-class ahorros extends AW
+class otros extends AW
 {
 
     var $id;
     var $id_empleado;
-    var $frecuencia;
+    var $numero_semanas;
     var $monto;
     var $fecha_registro;
     var $estatus;
+    var $monto_por_semana;
+    var $monto_pagar;
 
 
 
@@ -37,18 +39,28 @@ class ahorros extends AW
 
     public function Listado()
     {
-        $sql = "SELECT a.*, CASE WHEN a.estatus = 0 THEN 'AHORRO DETENIDO' WHEN a.estatus = 1 THEN 'AHORRANDO'
-        ELSE 'OTRO' END AS est,
-        b.nombres, b.ape_paterno, b.ape_materno
-        FROM ahorros AS a LEFT JOIN empleados AS b ON a.id_empleado = b.id
-        ORDER BY a.id ASC";
+        $sql = "SELECT
+        a.*, CASE
+    WHEN a.estatus = 0 THEN
+        'LIQUIDADO'
+    WHEN a.estatus = 1 THEN
+        'PAGANDO'
+    ELSE
+        'OTRO'
+    END AS est,
+     b.nombres, b.ape_paterno, b.ape_materno
+    FROM
+        otros AS a
+    LEFT JOIN empleados AS b ON a.id_empleado = b.id
+    ORDER BY
+        a.id ASC";
         return $this->Query($sql);
     }
 
     public function Informacion()
     {
 
-        $sql = "select * from ahorros where  id='{$this->id}'";
+        $sql = "select * from otros where  id='{$this->id}'";
         $res = parent::Query($sql);
 
         if (!empty($res) && !($res === NULL)) {
@@ -62,11 +74,11 @@ class ahorros extends AW
         return $res;
     }
 
-    public function Detener()
+    public function Liquidar()
     {
 
         $sql = "update
-                    ahorros
+                    otros
                 set
                     estatus = '{$this->estatus}'
                 where
@@ -76,7 +88,8 @@ class ahorros extends AW
 
     public function Existe()
     {
-        $sql = "select id from ahorros where estatus='1' and id_empleado='{$this->id_empleado}'";
+        $sql = "select id from otros where estatus='1' and id_empleado='{$this->id_empleado}'";
+        //print_r($sql);
         $res = $this->Query($sql);
 
         $bExiste = false;
@@ -89,32 +102,24 @@ class ahorros extends AW
 
     public function Actualizar()
     {
-        return "Cuenta con un ahorro activo";
-    }
-
-    public function Desactivar()
-    {
-
-        $sql = "update
-                    ahorros
-                set
-                estatus = '{$this->estatus}'
-                where
-                  id='{$this->id}'";
-        // echo nl2br($sql);
-        return $this->NonQuery($sql);
+        return true;
     }
 
     public function Agregar()
     {
+        $interes = $this->numero_semanas * 1.5;
+        $cantidad = ($this->monto * $interes) / 100;
+        $monto_pagar = $this->monto + $cantidad;
+        $interes_pagar = $monto_pagar - $this->monto;
+        $monto_por_semana = $monto_pagar / $this->numero_semanas;
 
-        $sql = "insert into ahorros
-                (`id`,`id_empleado`,`monto`,`fecha_registro`,`estatus`)
+        $sql = "insert into otros
+                (`id`,`id_empleado`,`monto`,`interes`,`monto_por_semana`,`numero_semanas`,`fecha_registro`,`monto_pagar`,`estatus`)
                 values
-                ('0','{$this->id_empleado}','{$this->monto}',now(),'1')";
+                ('0','{$this->id_empleado}','{$this->monto}','$interes_pagar','$monto_por_semana','{$this->numero_semanas}',now(),'$monto_pagar','1')";
         $bResultado = $this->NonQuery($sql);
 
-        $sql1 = "select id from ahorros order by id desc limit 1";
+        $sql1 = "select id from otros order by id desc limit 1";
         $res = $this->Query($sql1);
 
         $this->id = $res[0]->id;
