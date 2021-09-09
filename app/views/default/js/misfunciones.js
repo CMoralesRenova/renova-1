@@ -97,6 +97,7 @@ function soloLetras(e){
         return true;
     return /\d/.test(String.fromCharCode(keynum));
 }
+
 function DatosVacios(obj, input) {
     var datosVacios = false;
     $(obj).find(input).each(function () {

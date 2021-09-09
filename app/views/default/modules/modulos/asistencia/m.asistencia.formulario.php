@@ -6,21 +6,21 @@
 session_start();
 
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
-require_once($_SITE_PATH . "/app/model/otros.class.php");
+require_once($_SITE_PATH . "/app/model/asistencia.class.php");
 require_once($_SITE_PATH . "/app/model/empleados.class.php");
 
-$oOtros = new otros();
-$oOtros->id = addslashes(filter_input(INPUT_POST, "id"));
+$oAsistencia = new asistencia();
+$oAsistencia->id = addslashes(filter_input(INPUT_POST, "id"));
 $nombre = addslashes(filter_input(INPUT_POST, "nombre"));
-$sesion = $_SESSION[$oOtros->NombreSesion];
-$oOtros->Informacion();
+$sesion = $_SESSION[$oAsistencia->NombreSesion];
+$oAsistencia->Informacion();
 
 $oEmpleados = new empleados();
 $lstEmpleados = $oEmpleados->Listado();
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        $("#nameModal").text("<?php echo $nombre ?> Otro cargo");
+        $("#nameModal").text("<?php echo $nombre ?> Prestamo");
         $("#frmFormulario").ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {},
             success: function(data) {
@@ -44,7 +44,7 @@ $lstEmpleados = $oEmpleados->Listado();
     });
 </script>
 <!-- DataTales Example -->
-<form id="frmFormulario" name="frmFormulario" action="app/views/default/modules/modulos/otros/m.otros.procesa.php" enctype="multipart/form-data" method="post" target="_self" class="form-horizontal">
+<form id="frmFormulario" name="frmFormulario" action="app/views/default/modules/modulos/asistencia/m.asistencia.procesa.php" enctype="multipart/form-data" method="post" target="_self" class="form-horizontal">
     <div>
         <div class="form-group">
             <strong class="">Empleado:</strong>
@@ -62,7 +62,7 @@ $lstEmpleados = $oEmpleados->Listado();
             </div>
         </div>
         <div class="form-group">
-            <strong class="">Monto a Pagar:</strong>
+            <strong class="">Monto a Prestar:</strong>
             <div class="form-group">
                 <input type="number" description="Ingrese el monto a prestar" aria-describedby="" id="monto" required name="monto" class="form-control obligado" />
             </div>
@@ -73,14 +73,8 @@ $lstEmpleados = $oEmpleados->Listado();
                 <input type="number" description="Ingrese el numero de semanas" aria-describedby="" id="numero_semanas" required name="numero_semanas" class="form-control obligado" />
             </div>
         </div>
-        <div class="form-group">
-            <strong class="">Motivo:</strong>
-            <div class="form-group">
-                <input type="text" description="Ingrese el motivo" aria-describedby="" id="motivo" required name="motivo" class="form-control obligado" />
-            </div>
-        </div>
     </div>
-    <input type="hidden" id="id" name="id" value="<?= $oOtros->id ?>" />
+    <input type="hidden" id="id" name="id" value="<?= $oAsistencia->id ?>" />
     <input type="hidden" id="user_id" name="user_id" value="<?= $sesion->id ?>">
     <input type="hidden" id="accion" name="accion" value="GUARDAR" />
     </div>

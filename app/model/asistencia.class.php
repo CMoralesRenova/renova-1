@@ -6,19 +6,19 @@
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "/app/model/principal.class.php");
 
-class otros extends AW
+class asistencia extends AW
 {
 
     var $id;
     var $id_empleado;
-    var $numero_semanas;
-    var $monto;
-    var $fecha_registro;
+    var $fecha;
+    var $hora;
     var $estatus;
-    var $monto_por_semana;
-    var $monto_pagar;
+    var $dia;
 
-
+    //busqueda 
+    var $fecha_inicial;
+    var $fecha_final;
 
     public function __construct($sesion = true, $datos = NULL)
     {
@@ -39,28 +39,24 @@ class otros extends AW
 
     public function Listado()
     {
-        $sql = "SELECT
-        a.*, CASE
-    WHEN a.estatus = 0 THEN
-        'LIQUIDADO'
-    WHEN a.estatus = 1 THEN
-        'PAGANDO'
-    ELSE
-        'OTRO'
-    END AS est,
-     b.nombres, b.ape_paterno, b.ape_materno
-    FROM
-        otros AS a
-    LEFT JOIN empleados AS b ON a.id_empleado = b.id
-    ORDER BY
-        a.id ASC";
+        $sql = "SELECT a.nombres, a.ape_paterno, a.ape_materno, count(dia) as dia, id_empleado  FROM empleados as a 
+        left join asistencia as b on a.id = b.id_empleado where 1=1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' group by nombres";
         return $this->Query($sql);
+    }
+
+    public function Listado_asistencia(){
+        $sql = "SELECT b.nombres, b.ape_paterno, b.ape_materno, a.fecha, a.hora, 
+        if(a.dia = 0, 'Lunes', if(a.dia = 1, 'Martes',if(a.dia = 2, 'Miercoles',if(a.dia = 3, 'Jueves',if(a.dia = 4, 'Viernes',if(a.dia = 5, 'Sabado',if(a.dia = 6, 'Domingo',''))))))) as dia
+        FROM renova.asistencia as a 
+        left join empleados as b on b.id = a.id_empleado where 1=1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' and id_empleado = '{$this->id_empleado}' order by a.dia asc";
+        return $this->Query($sql);
+
     }
 
     public function Informacion()
     {
 
-        $sql = "select * from otros where  id='{$this->id}'";
+        $sql = "select * from asistencia where  id='{$this->id}'";
         $res = parent::Query($sql);
 
         if (!empty($res) && !($res === NULL)) {
@@ -78,7 +74,7 @@ class otros extends AW
     {
 
         $sql = "update
-                    otros
+                    asistencia
                 set
                     estatus = '{$this->estatus}'
                 where
@@ -88,7 +84,7 @@ class otros extends AW
 
     public function Existe()
     {
-        $sql = "select id from otros where estatus='1' and id_empleado='{$this->id_empleado}'";
+        $sql = "select id from asistencia where estatus='1' and id_empleado='{$this->id_empleado}'";
         //print_r($sql);
         $res = $this->Query($sql);
 
@@ -107,19 +103,19 @@ class otros extends AW
 
     public function Agregar()
     {
-        //$interes = $this->numero_semanas * 1.5;
-        //$cantidad = ($this->monto ) / 100;
-        $monto_pagar = $this->monto;
-        //$interes_pagar = $monto_pagar - $this->monto;
-        $monto_por_semana = $monto_pagar / $this->numero_semanas;
+        $dia = $this->fecha * 1.5;
+        $cantidad = ($this->monto * $dia) / 100;
+        $monto_pagar = $this->monto + $cantidad;
+        $dia_pagar = $monto_pagar - $this->monto;
+        $monto_por_semana = $monto_pagar / $this->fecha;
 
-        $sql = "insert into otros
-                (`id`,`id_empleado`,`monto`,`monto_por_semana`,`numero_semanas`,`fecha_registro`,`monto_pagar`,`estatus`)
+        $sql = "insert into asistencia
+                (`id`,`id_empleado`,`monto`,`dia`,`monto_por_semana`,`fecha`,`hora`,`monto_pagar`,`estatus`)
                 values
-                ('0','{$this->id_empleado}','{$this->monto}','$monto_por_semana','{$this->numero_semanas}',now(),'$monto_pagar','1')";
+                ('0','{$this->id_empleado}','{$this->monto}','$dia_pagar','$monto_por_semana','{$this->fecha}',now(),'$monto_pagar','1')";
         $bResultado = $this->NonQuery($sql);
 
-        $sql1 = "select id from otros order by id desc limit 1";
+        $sql1 = "select id from asistencia order by id desc limit 1";
         $res = $this->Query($sql1);
 
         $this->id = $res[0]->id;

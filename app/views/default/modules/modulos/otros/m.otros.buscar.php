@@ -62,7 +62,7 @@ $oOtros->ValidaNivelUsuario("otros");
         switch (nombre) {
             case 'Liquidar':
                 swal({
-                    title: "¿Desea liquidar el prestamo?",
+                    title: "¿Desea liquidar el cargo?",
                     text: "",
                     icon: "warning",
                     buttons: [
@@ -74,7 +74,7 @@ $oOtros->ValidaNivelUsuario("otros");
                     if (isConfirm) {
                         swal({
                             title: 'Liquidado!',
-                            text: 'Prestamo Liquidado',
+                            text: 'Cargo Liquidado',
                             icon: 'success'
                         }).then(function() {
                             $.ajax({
@@ -91,7 +91,7 @@ $oOtros->ValidaNivelUsuario("otros");
                             });
                         });
                     } else {
-                        swal("Cancelado", "Prestamo no liquidado", "error");
+                        swal("Cancelado", "Cargo no liquidado", "error");
                     }
                 });
                 break;
@@ -148,7 +148,7 @@ $oOtros->ValidaNivelUsuario("otros");
             </div>
 
             <!-- Logout Modal-->
-            <div class="modal fade " id="myModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="myModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">

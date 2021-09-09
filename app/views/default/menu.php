@@ -89,6 +89,9 @@ $aPermisos = empty($oUsuario->perfiles_id) ? array() : explode("@", $oUsuario->p
                 <?php if ($oUsuario->ExistePermiso("nominas", $aPermisos) === true) { ?>
                     <a class='collapse-item' href='index.php?action=nominas'>Nominas</a>
                 <?php } ?>
+                <?php if ($oUsuario->ExistePermiso("asistencia", $aPermisos) === true) { ?>
+                    <a class='collapse-item' href='index.php?action=asistencia'>Asistencia</a>
+                <?php } ?>
                 <?php if ($oUsuario->ExistePermiso("ahorros", $aPermisos) === true) { ?>
                     <a class='collapse-item' href='index.php?action=ahorros'>Ahorros</a>
                 <?php } ?>

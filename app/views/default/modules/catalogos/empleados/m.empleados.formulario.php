@@ -62,7 +62,7 @@ $lstpuestos = $oPuestos->Listado();
                 <div class="form-group">
                     <strong class="">Nombres:</strong>
                     <div class="form-group">
-                        <input type="text" description="Ingrese el nombre" class="form-control obligado" aria-describedby="" id="nombres" required name="nombres" value="<?= $oEmpleados->nombres ?>"  />
+                        <input type="text" description="Ingrese el nombre" class="form-control obligado" aria-describedby="" id="nombres" required name="nombres" value="<?= $oEmpleados->nombres ?>" />
                     </div>
                 </div>
             </div>
@@ -96,7 +96,7 @@ $lstpuestos = $oPuestos->Listado();
         <div class="form-group">
             <strong class="">Dirección:</strong>
             <div class="form-group">
-                <input type="text" description="Ingrese la dirección" aria-describedby="" id="direccion" name="direccion" value="<?= $oEmpleados->direccion ?>" class="form-control obligado"  data-toggle="tooltip" title="" data-original-title="Escribir la direccion completa"/>
+                <input type="text" description="Ingrese la dirección" aria-describedby="" id="direccion" name="direccion" value="<?= $oEmpleados->direccion ?>" class="form-control obligado" data-toggle="tooltip" title="" data-original-title="Escribir la direccion completa" />
             </div>
         </div>
         <div class="row">
@@ -212,6 +212,12 @@ $lstpuestos = $oPuestos->Listado();
                         <input type="text" description="Ingrese sueldo base" aria-describedby="" id="salario_diario" required name="salario_diario" value="<?= $oEmpleados->salario_diario ?>" class="form-control obligado" />
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <strong class="">Reloj checador:</strong>
+            <div class="form-group">
+                <input type="text" description="Conecte el lector para leer el numero" aria-describedby="" id="checador" required name="checador" value="<?= $oEmpleados->checador ?>" class="form-control obligado" />
             </div>
         </div>
         <input type="hidden" id="id" name="id" value="<?= $oEmpleados->id ?>" />

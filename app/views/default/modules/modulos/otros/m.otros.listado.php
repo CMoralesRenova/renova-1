@@ -26,7 +26,7 @@ $lstotros = $oOtros->Listado();
     <div class="card-header py-3" style="text-align:left">
         <h5 class="m-0 font-weight-bold text-danger">otros</h5>
         <div class="form-group" style="text-align:right">
-            <input type="button" id="btnAgregar" class="btn btn-danger" name="btnAgregar" value="Agregar Prestamo" />
+            <input type="button" id="btnAgregar" class="btn btn-danger" name="btnAgregar" value="Agregar Cargo" />
         </div>
     </div>
     <div class="card-body">
@@ -36,7 +36,6 @@ $lstotros = $oOtros->Listado();
                     <tr>
                         <th>Empleado</th>
                         <th>Fecha de registro</th>
-                        <th>Monto Solicitado</th>
                         <th>Monto A Pagar</th>
                         <th>Cantidad A Pagar Por Semana</th>
                         <th>Semanas</th>
@@ -47,7 +46,6 @@ $lstotros = $oOtros->Listado();
                 <tfoot>
                     <th>Empleado</th>
                     <th>Fecha de registro</th>
-                    <th>Monto Solicitado</th>
                     <th>Monto A Pagar</th>
                     <th>Cantidad A Pagar Por Semana</th>
                     <th>Semanas</th>
@@ -62,7 +60,6 @@ $lstotros = $oOtros->Listado();
                             <tr>
                                 <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
                                 <td style="text-align: center;"><?= $campo->fecha_registro ?></td>
-                                <td style="text-align: center;"><?= $campo->monto ?></td>
                                 <td style="text-align: center;"><?= $campo->monto_pagar ?></td>
                                 <td style="text-align: center;"><?= $campo->monto_por_semana ?></td>
                                 <td style="text-align: center;"><?= $campo->numero_semanas ?></td>

@@ -15,27 +15,20 @@ $lstnominas = $oNominas->Listado_nomina();
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        /*$("#dataTable2").DataTable({
-            //dom: 'Bfrtip',
-            "paging": false,
-            buttons: [
-                 'pdf','print'
-            ]
-        });*/
         $(document).ready(function() {
             $('#dataTable2').DataTable({
                 "paging": false,
                 dom: 'Bfrtip',
                 buttons: [{
-                        extend: 'pdfHtml5',
-                        title: 'Reporte Nomina Semana <?= $nombre ?>',
-                        text: 'Exportar a pdf',
-                        exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7]
-                        }
+                    extend: 'pdfHtml5',
+                    title: 'Reporte Nomina Semana <?= $nombre ?>',
+                    text: 'Exportar a pdf',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
                     }
-                ]
+                }]
             });
+            $(".buttons-html5 ").addClass("btn btn-danger");
         });
     });
 </script>
@@ -64,7 +57,7 @@ $lstnominas = $oNominas->Listado_nomina();
                         foreach ($lstnominas as $idx => $campo) {
                     ?>
                             <tr>
-                                <td style="text-align: center;"><?= $campo->nombres. " " . $campo->ape_paterno . " " . $campo->ape_materno?></td>
+                                <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
                                 <td style="text-align: center;"><?= $campo->salario_diario ?></td>
                                 <td style="text-align: center;"><?= $campo->salario_semanal ?></td>
                                 <td style="text-align: center;"><?= $campo->estatus ?></td>

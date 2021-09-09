@@ -72,5 +72,8 @@ class mvc_controller_default extends mvc_controller {
     public function servicio () {
         include_once("app/views/default/modules/modulos/servicio/m.servicio.buscar.php");
     }
+    public function asistencia () {
+        include_once("app/views/default/modules/modulos/asistencia/m.asistencia.buscar.php");
+    }
 }
 ?>
