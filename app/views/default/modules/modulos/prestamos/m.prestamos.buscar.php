@@ -36,7 +36,7 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
         $("#btnBuscar").button().click(function(e) {
             Listado();
         });
-
+        $("#id_empleado").change(PrestamoActivo);
     });
 
     function Listado() {
@@ -78,7 +78,7 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
                             icon: 'success'
                         }).then(function() {
                             $.ajax({
-                                data: "accion=Liquidado&id=" + id+"&estatus=0",
+                                data: "accion=Liquidado&id=" + id + "&estatus=0",
                                 type: "POST",
                                 url: "app/views/default/modules/modulos/prestamos/m.prestamos.procesa.php",
                                 beforeSend: function() {
@@ -115,6 +115,25 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
                 break;
         }
     }
+
+    function PrestamoActivo () {
+        console.log("hii");
+        $.ajax({
+            data: "accion=PrestamoActivo&id_empleado=" + $("#id_empleado").val(),
+            type: "POST",
+            url: "app/views/default/modules/modulos/prestamos/m.prestamos.procesa.php",
+            beforeSend: function() {
+                console.log("before");
+            },
+            success: function(datos) {
+                console.log(datos);
+                if (datos == "El empleado ya tiene un prestamo activo") {
+                    Alert("", datos, "warning", 1000, false);
+                    Empty($("#id_empleado").val());
+                }
+            }
+        });
+    }
 </script>
 
 <?php require_once('app/views/default/link.html'); ?>
@@ -122,7 +141,7 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
 <head>
     <?php require_once('app/views/default/head.html'); ?>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <title>Prestamos</title>
 </head>
 
@@ -148,7 +167,7 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
             </div>
 
             <!-- Logout Modal-->
-            <div class="modal fade " id="myModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade " id="myModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -164,7 +183,7 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
                             </div>
                         </div>
                         <div class="modal-footer">
-                        <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Guardar">
+                            <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Guardar">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>

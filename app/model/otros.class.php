@@ -17,6 +17,7 @@ class otros extends AW
     var $estatus;
     var $monto_por_semana;
     var $monto_pagar;
+    var $detalles;
 
 
 
@@ -114,9 +115,9 @@ class otros extends AW
         $monto_por_semana = $monto_pagar / $this->numero_semanas;
 
         $sql = "insert into otros
-                (`id`,`id_empleado`,`monto`,`monto_por_semana`,`numero_semanas`,`fecha_registro`,`monto_pagar`,`estatus`)
+                (`id`,`id_empleado`,`monto`,`monto_por_semana`,`numero_semanas`,`fecha_registro`,`monto_pagar`,`detalles`,`estatus`)
                 values
-                ('0','{$this->id_empleado}','{$this->monto}','$monto_por_semana','{$this->numero_semanas}',now(),'$monto_pagar','1')";
+                ('0','{$this->id_empleado}','{$this->monto}','$monto_por_semana','{$this->numero_semanas}',now(),'$monto_pagar','{$this->detalles}','1')";
         $bResultado = $this->NonQuery($sql);
 
         $sql1 = "select id from otros order by id desc limit 1";

@@ -30,6 +30,7 @@ class empleados extends AW
     var $curp;
     var $nss;
     var $checador;
+    var $id_horario;
 
     var $user_id;
 
@@ -140,6 +141,7 @@ class empleados extends AW
                 id_jefe = '{$this->id_jefe}',
                 {$sqlSalario}
                 checador = '{$this->checador}',
+                id_horario = '{$this->id_horario}',
                 usuario_edicion = '{$this->user_id}'
                 where
                   id='{$this->id}'";
@@ -151,11 +153,11 @@ class empleados extends AW
 
         $sql = "insert into empleados
                 (id,nombres, ape_paterno,ape_materno, fecha_nacimiento, direccion, estado_civil,
-                 rfc, curp, nss, nivel_estudios, id_puesto, id_jefe, salario_diario, salario_semanal, fecha_ingreso, estatus, checador, usuario_creacion)
+                 rfc, curp, nss, nivel_estudios, id_puesto, id_jefe, salario_diario, salario_semanal, fecha_ingreso, estatus, checador,id_horario, usuario_creacion)
                 values
                 ('0','{$this->nombres}', '{$this->ape_paterno}', '{$this->ape_materno}','".$this->fecha_nacimiento."', '{$this->direccion}', '{$this->estado_civil}',
                  '{$this->rfc}', '{$this->curp}', '{$this->nss}', '{$this->nivel_estudios}', '{$this->id_puesto}', '{$this->id_jefe}','{$this->salario_diario}','".$this->salario_diario * 7 ."', '".date('Y-m-d')."',
-                 '{$this->checador}','1', '{$this->user_id}')";
+                 '{$this->checador}','{$this->id_horario}','1', '{$this->user_id}')";
 
         $bResultado = $this->NonQuery($sql);
 

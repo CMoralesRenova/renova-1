@@ -60,9 +60,9 @@ $lstotros = $oOtros->Listado();
                             <tr>
                                 <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
                                 <td style="text-align: center;"><?= $campo->fecha_registro ?></td>
-                                <td style="text-align: center;"><?= $campo->monto_pagar ?></td>
-                                <td style="text-align: center;"><?= $campo->monto_por_semana ?></td>
-                                <td style="text-align: center;"><?= $campo->numero_semanas ?></td>
+                                <td style="text-align: center;">$<?= $campo->monto_pagar ?></td>
+                                <td style="text-align: center;">$<?= $campo->monto_por_semana ?></td>
+                                <td style="text-align: center;">$<?= $campo->numero_semanas ?></td>
                                 <td style="text-align: center;"><?= $campo->est ?></td>
                                 <td style="text-align: center;">
                                     <?php if ($campo->estatus == "1") { ?>

@@ -32,4 +32,11 @@ if ($accion == "GUARDAR") {
     } else {
         echo "Sistema@Ha ocurrido un error al guardar la información , vuelva a intentarlo o consulte con el administrador del sistema.@warning";
     }
+} else if ($accion == "PrestamoActivo") {
+    $oPrestamos = new prestamos(true, $_POST);
+    
+    $resultado = $oPrestamos->Existe();
+    if ($resultado) {
+        echo "El empleado ya tiene un prestamo activo";
+    }
 }

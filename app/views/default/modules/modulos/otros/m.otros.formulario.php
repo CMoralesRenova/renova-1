@@ -74,9 +74,19 @@ $lstEmpleados = $oEmpleados->Listado();
             </div>
         </div>
         <div class="form-group">
-            <strong class="">Motivo:</strong>
+            <strong class="">Causa del cargo:</strong>
             <div class="form-group">
-                <input type="text" description="Ingrese el motivo" aria-describedby="" id="motivo" required name="motivo" class="form-control obligado" />
+                <select id="motivo" description="Seleccione el cargo" class="form-control obligado" name="motivo">
+                <option value='0' >--Seleccione--</option>
+                <option value='1' >1</option>
+                <option value='2' >2</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <strong class="">Detalles:</strong>
+            <div class="form-group">
+                <input type="text" description="" aria-describedby="" id="detalles" required name="detalles" class="form-control" />
             </div>
         </div>
     </div>

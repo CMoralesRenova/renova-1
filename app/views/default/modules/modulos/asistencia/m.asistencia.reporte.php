@@ -18,7 +18,7 @@ $lstasistencia = $oAsistencia->Listado_asistencia();
         $(document).ready(function() {
             $('#dataTable2').DataTable({
                 "paging": false,
-                dom: 'Bfrtip',
+                dom: 'Brtip',
                 buttons: [{
                     extend: 'pdfHtml5',
                     title: 'Reporte Nomina Semana <?= $nombre ?>',
@@ -41,7 +41,8 @@ $lstasistencia = $oAsistencia->Listado_asistencia();
                     <tr>
                         <th>Nombre Empleado</th>
                         <th>Fecha</th>
-                        <th>Hora</th>
+                        <th>Hora entrada</th>
+                        <th>Hora salida</th>
                         <th>Dia</th>
                     </tr>
                 </thead>
@@ -52,8 +53,9 @@ $lstasistencia = $oAsistencia->Listado_asistencia();
                     ?>
                             <tr>
                             <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
-                                <td style="text-align: center;"><?= $campo->fecha ?></td>
-                                <td style="text-align: center;"><?= $campo->hora ?></td>
+                                <td style="text-align: center;"><?php echo date_format(date_create($campo->fecha),'d-m-Y') ?></td>
+                                <td style="text-align: center;"<?php  if($campo->retraso == 'A tiempo'){echo "";}else{echo "class='btn-danger'";} ?> ><?php echo date("g:i a",strtotime($campo->hora_entrada))."<br>".$campo->retraso;  ?></td>
+                                <td style="text-align: center;"><?= date("g:i a",strtotime($campo->hora_salida)); ?></td>
                                 <td style="text-align: center;"><?= $campo->dia ?></td>
                             </tr>
                     <?php

@@ -15,6 +15,9 @@ $oAsistencia->ValidaNivelUsuario("asistencia");
 <script type="text/javascript">
     $(document).ready(function(e) {
         Listado();
+        $('#fecha_inicial').change(Listado);
+        $('#fecha_final').change(Listado);
+
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
             var frmTrue = true;
@@ -32,9 +35,6 @@ $oAsistencia->ValidaNivelUsuario("asistencia");
             if (frmTrue == true) {
                 $("#frmFormulario").submit();
             }
-        });
-        $("#btnBuscar").button().click(function(e) {
-            Listado();
         });
     });
 
@@ -124,9 +124,7 @@ $oAsistencia->ValidaNivelUsuario("asistencia");
                                     </div>
                                 </div>
                             </div>
-                            <div class="row-lg" style="float: right;">
-                                <input type="button" id="btnBuscar" class="btn btn-danger" name="btnBuscar" value="Buscar">
-                            </div>
+                            
                         </div>
                         <!-- cerrar contenido pagina-->
                         <div id="divListado"></div>
@@ -135,7 +133,7 @@ $oAsistencia->ValidaNivelUsuario("asistencia");
 
                 <!-- Logout Modal-->
                 <div class="modal fade bd-example-modal-lg" id="myModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg"> role="document">
+                    <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel"><strong id="nameModal"></strong>

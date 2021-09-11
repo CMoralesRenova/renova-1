@@ -12,7 +12,8 @@ class asistencia extends AW
     var $id;
     var $id_empleado;
     var $fecha;
-    var $hora;
+    var $hora_entrada;
+    var $hora_salida;
     var $estatus;
     var $dia;
 
@@ -45,10 +46,14 @@ class asistencia extends AW
     }
 
     public function Listado_asistencia(){
-        $sql = "SELECT b.nombres, b.ape_paterno, b.ape_materno, a.fecha, a.hora, 
-        if(a.dia = 0, 'Lunes', if(a.dia = 1, 'Martes',if(a.dia = 2, 'Miercoles',if(a.dia = 3, 'Jueves',if(a.dia = 4, 'Viernes',if(a.dia = 5, 'Sabado',if(a.dia = 6, 'Domingo',''))))))) as dia
+        $sql = "SELECT b.nombres, b.ape_paterno, b.ape_materno, a.fecha, a.hora_entrada,a.hora_salida, 
+        if(a.dia = 0, 'Lunes', if(a.dia = 1, 'Martes',if(a.dia = 2, 'Miercoles',if(a.dia = 3, 'Jueves',if(a.dia = 4, 'Viernes',if(a.dia = 5, 'Sabado',if(a.dia = 6, 'Domingo',''))))))) as dia,
+        c.tiempo_tolerancia, if(hora_entrada > tiempo_tolerancia, 'Retraso', 'A tiempo') as retraso
         FROM renova.asistencia as a 
-        left join empleados as b on b.id = a.id_empleado where 1=1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' and id_empleado = '{$this->id_empleado}' order by a.dia asc";
+        left join empleados as b on b.id = a.id_empleado
+        left join horarios as c on c.id = b.id_horario
+        where 1=1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' and id_empleado = '{$this->id_empleado}' order by a.dia asc";
+
         return $this->Query($sql);
 
     }

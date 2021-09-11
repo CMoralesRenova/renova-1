@@ -8,6 +8,7 @@ session_start();
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "/app/model/empleados.class.php");
 require_once($_SITE_PATH . "/app/model/puestos.class.php");
+require_once($_SITE_PATH . "/app/model/horarios.class.php");
 
 $oEmpleados = new empleados();
 $oEmpleados->id = addslashes(filter_input(INPUT_POST, "id"));
@@ -18,6 +19,9 @@ $lstJefes = $oEmpleados->jefes();
 
 $oPuestos = new puestos();
 $lstpuestos = $oPuestos->Listado();
+
+$oHorarios = new horarios();
+$lsthorarios = $oHorarios->Listado();
 
 ?>
 <script type="text/javascript">
@@ -214,10 +218,36 @@ $lstpuestos = $oPuestos->Listado();
                 </div>
             </div>
         </div>
-        <div class="form-group">
-            <strong class="">Reloj checador:</strong>
-            <div class="form-group">
-                <input type="text" description="Conecte el lector para leer el numero" aria-describedby="" id="checador" required name="checador" value="<?= $oEmpleados->checador ?>" class="form-control obligado" />
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Reloj checador:</strong>
+                    <div class="form-group">
+                        <input type="text" description="Conecte el lector para leer el numero" aria-describedby="" id="checador" required name="checador" value="<?= $oEmpleados->checador ?>" class="form-control obligado" />
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Horario:</strong>
+                    <div class="form-group">
+                        <select id="id_horario" description="Seleccione el horario" class="form-control obligado" name="id_horario">
+                            <?php
+                            print_r($oEmpleados);
+                            if (count($lsthorarios) > 0) {
+                                echo "<option value='0' >-- SELECCIONE --</option>\n";
+                                foreach ($lsthorarios as $idx => $campo) {
+                                    if ($campo->id == $oEmpleados->id_horario) {
+                                        echo "<option value='{$campo->id}' selected>{$campo->nombre}</option>\n";
+                                    } else {
+                                        echo "<option value='{$campo->id}' >{$campo->nombre}</option>\n";
+                                    }
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
         <input type="hidden" id="id" name="id" value="<?= $oEmpleados->id ?>" />
