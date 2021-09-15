@@ -15,6 +15,8 @@ $oAhorros->ValidaNivelUsuario("ahorros");
 <script type="text/javascript">
     $(document).ready(function(e) {
         Listado();
+        $('#fecha_inicial').change(Listado);
+        $('#fecha_final').change(Listado);
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
             var frmTrue = true;
@@ -36,11 +38,13 @@ $oAhorros->ValidaNivelUsuario("ahorros");
         $("#btnBuscar").button().click(function(e) {
             Listado();
         });
-
+        $("#id_empleado").change(AhorroActivo);
     });
 
     function Listado() {
         var jsonDatos = {
+            "fecha_inicial": $("#fecha_inicial").val(),
+            "fecha_final": $("#fecha_final").val(),
             "accion": "BUSCAR"
         };
         $.ajax({
@@ -113,24 +117,22 @@ $oAhorros->ValidaNivelUsuario("ahorros");
                     backdrop: "true"
                 });
                 break;
-            default:
-                $.ajax({
-                    data: "id=" + id + "&nombre=" + nombre,
-                    type: "POST",
-                    url: "app/views/default/modules/modulos/ahorros/m.ahorros.formulario.php",
-                    beforeSend: function() {
-                        $("#divFormulario").html(
-                            '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
-                        );
-                    },
-                    success: function(datos) {
-                        $("#divFormulario").html(datos);
-                    }
-                });
-                $("#myModal").modal({
-                    backdrop: "true"
-                });
         }
+    }
+
+    function AhorroActivo() {
+        $.ajax({
+            data: "accion=AhorroActivo&id_empleado=" + $("#id_empleado").val(),
+            type: "POST",
+            url: "app/views/default/modules/modulos/ahorros/m.ahorros.procesa.php",
+            beforeSend: function() {},
+            success: function(datos) {
+                if (datos == "El empleado ya tiene un ahorro activo") {
+                    Alert("", datos, "warning", 1000, false);
+                    Empty($("#id_empleado").val());
+                }
+            }
+        });
     }
 </script>
 
@@ -158,7 +160,26 @@ $oAhorros->ValidaNivelUsuario("ahorros");
                 <?php require_once('app/views/default/header.php'); ?>
                 <div class="container-fluid">
                     <!-- contenido de la pagina -->
-
+                    <div class="card shadow mb-4">
+                        <center>
+                            <div class="card-header py-3" style="text-align:left">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <strong class="">Desde:</strong>
+                                            <input type="date" aria-describedby="" id="fecha_inicial" value="<?php echo date('Y-m-d'); ?>" required name="fecha_inicial" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <strong class="">Hasta:</strong>
+                                        <div class="form-group">
+                                            <input type="date" aria-describedby="" id="fecha_final" value="<?php echo date('Y-m-d'); ?>" required name="fecha_final" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </center>
+                    </div>
                     <!-- cerrar contenido pagina-->
                     <div id="divListado"></div>
                 </div>

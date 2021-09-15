@@ -187,35 +187,23 @@ $lsthorarios = $oHorarios->Listado();
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <div class="form-group">
-                    <strong class="">Jefe Directo:</strong>
-                    <div class="form-group">
-                        <select id="id_jefe" description="Seleccione el jefe directo" class="form-control obligado" name="id_jefe">
-                            <?php
-                            if (count($lstJefes) > 0) {
-                                echo "<option value='0' >-- SELECCIONE --</option>\n";
-                                foreach ($lstJefes as $idx => $campo) {
-                                    if ($campo->id == $oEmpleados->id_jefe) {
-                                        echo "<option value='{$campo->id}' selected>{$campo->empleado}</option>\n";
-                                    } else {
-                                        echo "<option value='{$campo->id}' >{$campo->empleado}</option>\n";
-                                    }
-                                }
+        <div class="form-group">
+            <strong class="">Jefe Directo:</strong>
+            <div class="form-group">
+                <select id="id_jefe" description="Seleccione el jefe directo" class="form-control obligado" name="id_jefe">
+                    <?php
+                    if (count($lstJefes) > 0) {
+                        echo "<option value='0' >-- SELECCIONE --</option>\n";
+                        foreach ($lstJefes as $idx => $campo) {
+                            if ($campo->id == $oEmpleados->id_jefe) {
+                                echo "<option value='{$campo->id}' selected>{$campo->empleado}</option>\n";
+                            } else {
+                                echo "<option value='{$campo->id}' >{$campo->empleado}</option>\n";
                             }
-                            ?>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="form-group">
-                    <strong class="">Sueldo Base Diario:</strong>
-                    <div class="form-group">
-                        <input type="text" description="Ingrese sueldo base" aria-describedby="" id="salario_diario" required name="salario_diario" value="<?= $oEmpleados->salario_diario ?>" class="form-control obligado" />
-                    </div>
-                </div>
+                        }
+                    }
+                    ?>
+                </select>
             </div>
         </div>
         <div class="row">
@@ -246,6 +234,51 @@ $lsthorarios = $oHorarios->Listado();
                             }
                             ?>
                         </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-header py-3">
+            <center>
+                <strong class="center">Desglose de sueldo</strong>
+            </center>
+            <div class="row">
+                <div class="col">
+                    <strong class="">Sueldo Base Diario:</strong>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                        </div>
+                        <input type="text" description="Ingrese sueldo base" aria-describedby="" id="salario_diario" required name="salario_diario" value="<?= $oEmpleados->salario_diario ?>" class="form-control obligado" />
+                    </div>
+                </div>
+                <div class="col">
+                    <strong class=""> Premio de asistencia:</strong>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                        </div>
+                        <input type="text" description="Ingrese premio de asistencia" aria-describedby="" id="salario_asistencia" required name="salario_asistencia" value="<?= $oEmpleados->salario_asistencia ?>" class="form-control obligado" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <strong class="">Premio puntualidad:</strong>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                        </div>
+                        <input type="text" description="Ingrese el premio de puntualidad" aria-describedby="" id="salario_puntualidad" required name="salario_puntualidad" value="<?= $oEmpleados->salario_puntualidad ?>" class="form-control obligado" />
+                    </div>
+                </div>
+                <div class="col">
+                    <strong class=""> Premio de productividad:</strong>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                        </div>
+                        <input type="text" description="Ingrese premio de productividad" aria-describedby="" id="salario_productividad" required name="salario_productividad" value="<?= $oEmpleados->salario_productividad ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>

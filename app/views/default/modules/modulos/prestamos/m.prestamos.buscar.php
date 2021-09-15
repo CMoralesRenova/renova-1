@@ -15,6 +15,8 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
 <script type="text/javascript">
     $(document).ready(function(e) {
         Listado();
+        $('#fecha_inicial').change(Listado);
+        $('#fecha_final').change(Listado);
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
             var frmTrue = true;
@@ -41,6 +43,9 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
 
     function Listado() {
         var jsonDatos = {
+            "fecha_inicial": $("#fecha_inicial").val(),
+            "fecha_final": $("#fecha_final").val(),
+            "estatus1": $("#estatus").val(),
             "accion": "BUSCAR"
         };
         $.ajax({
@@ -58,7 +63,7 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
         });
     }
 
-    function Editar(id, nombre) {
+    function Editar(id, nombre, empleado) {
         switch (nombre) {
             case 'Liquidar':
                 swal({
@@ -106,6 +111,28 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
                         );
                     },
                     success: function(datos) {
+                        $("#btnGuardar").show();
+                        $("#imprimir").hide();
+                        $("#divFormulario").html(datos);
+                    }
+                });
+                $("#myModal").modal({
+                    backdrop: "true"
+                });
+                break;
+            case 'Detalles':
+                $.ajax({
+                    data: "id=" + id + "&nombre=" + nombre + "&empleado=" + empleado,
+                    type: "POST",
+                    url: "app/views/default/modules/modulos/prestamos/m.prestamos.formulario.detalles.php",
+                    beforeSend: function() {
+                        $("#divFormulario").html(
+                            '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
+                        );
+                    },
+                    success: function(datos) {
+                        $("#btnGuardar").hide();
+                        $("#imprimir").show();
                         $("#divFormulario").html(datos);
                     }
                 });
@@ -116,23 +143,63 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
         }
     }
 
-    function PrestamoActivo () {
-        console.log("hii");
+    function PrestamoActivo() {
         $.ajax({
-            data: "accion=PrestamoActivo&id_empleado=" + $("#id_empleado").val(),
+            data: "accion=PrestamoActivo&id_empleado=" + $("#id_empleado").val() + "&prestamo=1",
             type: "POST",
             url: "app/views/default/modules/modulos/prestamos/m.prestamos.procesa.php",
-            beforeSend: function() {
-                console.log("before");
-            },
+            beforeSend: function() {},
             success: function(datos) {
-                console.log(datos);
-                if (datos == "El empleado ya tiene un prestamo activo") {
-                    Alert("", datos, "warning", 1000, false);
-                    Empty($("#id_empleado").val());
+                var str = datos;
+                var datos0 = str.split("@")[0];
+                var datos1 = str.split("@")[1];
+                var datos2 = str.split("@")[2];
+
+                if (datos0 != '' && datos1 != '') {
+                    swal({
+                        title: "¿El empleado tiene un prestamo activo, desea sumar el restante que es de $" + datos0 + " a el nuevo prestamo?",
+                        text: "",
+                        icon: "warning",
+                        buttons: [
+                            'No',
+                            'Si'
+                        ],
+                        dangerMode: true,
+                    }).then(function(isConfirm) {
+                        if (isConfirm) {
+                            swal({
+                                title: 'Liquidado!',
+                                text: 'Prestamo Liquidado y el restante sera sumado al sigueinte prestamo',
+                                icon: 'success'
+                            }).then(function() {
+                                $("#restoVisible").show();
+                                $("#restante").val(datos0);
+                                $("#restoVisible").val(datos0);
+                                $("#id_prestamo").val(datos1);
+                                $("#Semanas").val(datos2);
+                            });
+                        } else {
+                            swal("Cancelado", "Prestamo no liquidado", "error");
+                        }
+                    });
                 }
             }
         });
+    }
+
+    function imprSelec(nombre) {
+        var ficha = document.getElementById(nombre);
+        var ventimp = window.open(' ', '');
+        ventimp.document.write(ficha.innerHTML);
+        ventimp.document.close();
+        var css = ventimp.document.createElement("link");
+
+        css.setAttribute("href", "app/views/default/css/sb-admin-2.min.css");
+        css.setAttribute("rel", "stylesheet");
+        css.setAttribute("type", "text/css");
+        ventimp.document.head.appendChild(css);
+        ventimp.print();
+        ventimp.close();
     }
 </script>
 
@@ -160,7 +227,34 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
                 <?php require_once('app/views/default/header.php'); ?>
                 <div class="container-fluid">
                     <!-- contenido de la pagina -->
-
+                    <div class="card shadow mb-4">
+                        <center>
+                            <div class="card-header py-3" style="text-align:left">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <strong class="">Desde:</strong>
+                                            <input type="date" aria-describedby="" id="fecha_inicial" value="<?php echo date('Y-m-d'); ?>" required name="fecha_inicial" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <strong class="">Hasta:</strong>
+                                        <div class="form-group">
+                                            <input type="date" aria-describedby="" id="fecha_final" value="<?php echo date('Y-m-d'); ?>" required name="fecha_final" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <strong class="">Estado:</strong>
+                                    <select id="estatus" class="form-control obligado" onchange="Listado()">
+                                        <option value=''>--TODOS--</option>
+                                        <option value='0'>Liquidado</option>
+                                        <option value='1'>Pagando</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </center>
+                    </div>
                     <!-- cerrar contenido pagina-->
                     <div id="divListado"></div>
                 </div>
@@ -184,6 +278,7 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
                         </div>
                         <div class="modal-footer">
                             <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Guardar">
+                            <a href="javascript:imprSelec('divFormulario')" class="btn btn-danger" id="imprimir">Imprimir recibo</a>
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>

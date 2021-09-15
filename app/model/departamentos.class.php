@@ -12,6 +12,7 @@ class departamentos extends AW {
     var $nombre;
     var $estatus;
     var $user_id;
+    var $form;
 
 
     public function __construct($sesion = true, $datos = NULL) {
@@ -31,8 +32,12 @@ class departamentos extends AW {
     }
 
     public function Listado() {
-        $sql = "SELECT * FROM departamentos  ";
-        //echo nl2br($sql);
+        $sqlForm="";
+        if (! empty($this->form)) {
+            $sqlForm = "where estatus = '1'";
+        }
+
+        $sql = "SELECT * FROM departamentos {$sqlForm} ";
         return $this->Query($sql);
         
     }
@@ -89,7 +94,6 @@ class departamentos extends AW {
     }
 
     public function Agregar() {
-
 
         $sql = "insert into departamentos
                 (`id`,`nombre`,`estatus`,`usuario_creacion`)

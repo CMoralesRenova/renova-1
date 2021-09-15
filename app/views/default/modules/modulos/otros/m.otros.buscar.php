@@ -15,6 +15,8 @@ $oOtros->ValidaNivelUsuario("otros");
 <script type="text/javascript">
     $(document).ready(function(e) {
         Listado();
+        $('#fecha_inicial').change(Listado);
+        $('#fecha_final').change(Listado);
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
             var frmTrue = true;
@@ -41,6 +43,8 @@ $oOtros->ValidaNivelUsuario("otros");
 
     function Listado() {
         var jsonDatos = {
+            "fecha_inicial": $("#fecha_inicial").val(),
+            "fecha_final": $("#fecha_final").val(),
             "accion": "BUSCAR"
         };
         $.ajax({
@@ -123,7 +127,7 @@ $oOtros->ValidaNivelUsuario("otros");
     <?php require_once('app/views/default/head.html'); ?>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <title>otros</title>
+    <title>Otros Cargos</title>
 </head>
 
 <body id="page-top">
@@ -141,7 +145,26 @@ $oOtros->ValidaNivelUsuario("otros");
                 <?php require_once('app/views/default/header.php'); ?>
                 <div class="container-fluid">
                     <!-- contenido de la pagina -->
-
+                    <div class="card shadow mb-4">
+                        <center>
+                            <div class="card-header py-3" style="text-align:left">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <strong class="">Desde:</strong>
+                                            <input type="date" aria-describedby="" id="fecha_inicial" value="<?php echo date('Y-m-d'); ?>" required name="fecha_inicial" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <strong class="">Hasta:</strong>
+                                        <div class="form-group">
+                                            <input type="date" aria-describedby="" id="fecha_final" value="<?php echo date('Y-m-d'); ?>" required name="fecha_final" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </center>
+                    </div>
                     <!-- cerrar contenido pagina-->
                     <div id="divListado"></div>
                 </div>

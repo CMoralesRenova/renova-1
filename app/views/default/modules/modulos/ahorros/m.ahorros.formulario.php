@@ -49,7 +49,7 @@ $lstEmpleados = $oEmpleados->Listado();
         <div class="form-group">
             <strong class="">Empleado:</strong>
             <div class="form-group">
-                <select id="id_empleado" description="Seleccione a el empleado" class="form-control obligado" name="id_empleado">
+                <select id="id_empleado" description="Seleccione a el empleado" class="form-control obligado" name="id_empleado"  onchange="AhorroActivo()">
                     <?php
                     if (count($lstEmpleados) > 0) {
                         echo "<option value='0' >-- SELECCIONE --</option>\n";

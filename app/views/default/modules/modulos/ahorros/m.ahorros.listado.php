@@ -8,7 +8,7 @@ session_start();
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "/app/model/ahorros.class.php");
 
-$oAhorros = new ahorros();
+$oAhorros = new ahorros(true, $_POST);
 $lstahorros = $oAhorros->Listado();
 ?>
 <script type="text/javascript">

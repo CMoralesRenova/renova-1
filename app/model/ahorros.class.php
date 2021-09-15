@@ -15,8 +15,7 @@ class ahorros extends AW
     var $monto;
     var $fecha_registro;
     var $estatus;
-
-
+    var $acumulado;
 
     public function __construct($sesion = true, $datos = NULL)
     {
@@ -41,6 +40,7 @@ class ahorros extends AW
         ELSE 'OTRO' END AS est,
         b.nombres, b.ape_paterno, b.ape_materno
         FROM ahorros AS a LEFT JOIN empleados AS b ON a.id_empleado = b.id
+        where fecha_registro between '{$this->fecha_inicial}' and '{$this->fecha_final}'
         ORDER BY a.id ASC";
         return $this->Query($sql);
     }
@@ -77,6 +77,19 @@ class ahorros extends AW
     public function Existe()
     {
         $sql = "select id from ahorros where estatus='1' and id_empleado='{$this->id_empleado}'";
+        $res = $this->Query($sql);
+
+        $bExiste = false;
+
+        if (count($res) > 0) {
+            $bExiste = true;
+        }
+        return $bExiste;
+    }
+    public function AhorroActivo()
+    {
+        $sql = "select id from ahorros where estatus='0' and id_empleado='{$this->id_empleado}' and 
+        fecha_registro between concat(year(now()),'-01-01') and concat(year(now()),'-12-31') ";
         $res = $this->Query($sql);
 
         $bExiste = false;

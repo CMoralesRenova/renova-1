@@ -15,27 +15,7 @@ $lstasistencia = $oAsistencia->Listado();
     $(document).ready(function(e) {
         //$('#dataTable').DataTable();
         $('#dataTable').DataTable({
-            "paging": false,
-            dom: 'Bfrtip',
-            buttons: [{
-                extend: 'pdfHtml5',
-                customize: function(win) {
-                    $(win.document.body)
-                        .css('font-size', '10pt')
-                        .prepend(
-                            '<img src="http://datatables.net/media/images/logo-fade.png" style="position:absolute; top:0; left:0;" />'
-                        );
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                },
-                title: '',
-                text: 'Exportar a pdf',
-                exportOptions: {
-                    columns: [0, 1, 2, 3]
-                }
-            }]
+            "paging": true,
         });
 
         $("#btnAgregar").button().click(function(e) {

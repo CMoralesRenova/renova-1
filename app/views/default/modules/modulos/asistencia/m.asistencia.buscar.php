@@ -63,7 +63,7 @@ $oAsistencia->ValidaNivelUsuario("asistencia");
         switch (nombre) {
             case 'Reporte':
                 $.ajax({
-                    data: "nombre=" + nombre+"&id_empleado="+id+"&fecha_inicial="+$("#fecha_inicial").val()+"&fecha_final="+$("#fecha_final").val(),
+                    data: "nombre=" + nombre + "&id_empleado=" + id + "&fecha_inicial=" + $("#fecha_inicial").val() + "&fecha_final=" + $("#fecha_final").val(),
                     type: "POST",
                     url: "app/views/default/modules/modulos/asistencia/m.asistencia.reporte.php",
                     beforeSend: function() {
@@ -124,47 +124,47 @@ $oAsistencia->ValidaNivelUsuario("asistencia");
                                     </div>
                                 </div>
                             </div>
-                            
-                        </div>
-                        <!-- cerrar contenido pagina-->
-                        <div id="divListado"></div>
-                    </div>
-                </div>
 
-                <!-- Logout Modal-->
-                <div class="modal fade bd-example-modal-lg" id="myModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel"><strong id="nameModal"></strong>
-                                </h5>
-                                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">×</span>
-                                </button>
+                        </div>
+                    </div>
+                    <!-- cerrar contenido pagina-->
+                    <div id="divListado"></div>
+                </div>
+            </div>
+
+            <!-- Logout Modal-->
+            <div class="modal fade bd-example-modal-lg" id="myModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel"><strong id="nameModal"></strong>
+                            </h5>
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- contenido del modal-->
+                            <div style="width:100%;" class="modal-body" id="divFormulario">
                             </div>
-                            <div class="modal-body">
-                                <!-- contenido del modal-->
-                                <div style="width:100%;" class="modal-body" id="divFormulario">
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Guardar">
-                                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cerrar</button>
                         </div>
                     </div>
                 </div>
-                <!-- Modal -->
-                <!-- archivo Footer -->
-                <?php require_once('app/views/default/footer.php'); ?>
-                <!-- End of Footer -->
             </div>
+            <!-- Modal -->
+            <!-- archivo Footer -->
+            <?php require_once('app/views/default/footer.php'); ?>
+            <!-- End of Footer -->
         </div>
-        <!-- Scroll to Top Button-->
-        <a class="scroll-to-top rounded" href="#page-top">
-            <i class="fas fa-angle-up"></i>
-        </a>
-        <?php require_once('app/views/default/script_f.html'); ?>
+    </div>
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+    <?php require_once('app/views/default/script_f.html'); ?>
 </body>
 
 </html>

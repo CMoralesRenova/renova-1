@@ -8,7 +8,7 @@ session_start();
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "/app/model/prestamos.class.php");
 
-$oPrestamos = new prestamos();
+$oPrestamos = new prestamos(true, $_POST);
 $lstprestamos = $oPrestamos->Listado();
 ?>
 <script type="text/javascript">
@@ -68,9 +68,17 @@ $lstprestamos = $oPrestamos->Listado();
                                 <td style="text-align: center;"><?= $campo->numero_semanas ?></td>
                                 <td style="text-align: center;"><?= $campo->est ?></td>
                                 <td style="text-align: center;">
+                                <div class="row">
+                                    <div class="col">
+                                <a class="btn btn-sm btn-danger" href="javascript:Editar('<?= $campo->id ?>','Detalles','<?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?>')">
+                                    <span class="glyphicon glyphicon-ok">Ver Detalles</a><br>
+                                    </div>
                                     <?php if ($campo->estatus == "1") { ?>
+                                        <div class="col">
                                         <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','Liquidar')"><span class="glyphicon glyphicon-ok">Liquidar</a>
+                                        </div>
                                     <?php } ?>
+                                </div>
                                 </td>
                             </tr>
                     <?php

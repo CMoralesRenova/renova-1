@@ -41,6 +41,9 @@ $lstEmpleados = $oEmpleados->Listado();
         $('#id_empleado').select2({
             width: '100%'
         });
+        $('#motivo').select2({
+            width: '100%'
+        });
     });
 </script>
 <!-- DataTales Example -->
@@ -77,9 +80,13 @@ $lstEmpleados = $oEmpleados->Listado();
             <strong class="">Causa del cargo:</strong>
             <div class="form-group">
                 <select id="motivo" description="Seleccione el cargo" class="form-control obligado" name="motivo">
-                <option value='0' >--Seleccione--</option>
-                <option value='1' >1</option>
-                <option value='2' >2</option>
+                    <option value='0'>--SELECCIONE--</option>
+                    <option value='Daños a unidad'>Daños a unidad</option>
+                    <option value='Daños/cambio a uniforme'>Daños/cambio a uniforme</option>
+                    <option value='Descuento adelanto de nomina'>Descuento adelanto de nómina</option>
+                    <option value='Daño/Extravio de celular'>Daño/Extravío de celular</option>
+                    <option value='Perdida de carga'>Perdida de carga</option>
+                    <option value='Perdida de herramienta almacen'>Perdida de herramienta almacén</option>
                 </select>
             </div>
         </div>

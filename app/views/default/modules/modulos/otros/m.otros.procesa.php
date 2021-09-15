@@ -13,17 +13,11 @@ $accion = addslashes(filter_input(INPUT_POST, "accion"));
 
 if ($accion == "GUARDAR") {
     $oOtros = new otros(true, $_POST);
-
-    $resultado = $oOtros->Existe();
-    if ($resultado) {
-        echo "Sistema@El empleado ya tiene una deduccion activa. @warning";
-    } else {
         if ($oOtros->Guardar() === true) {
             echo "Sistema@Se ha registrado exitosamente la información. @success";
         } else {
             echo "Sistema@Ha ocurrido un error al guardar la información , vuelva a intentarlo o consulte con el administrador del sistema.@warning";
         }
-    }
 } else if ($accion == "Liquidado") {
     $oOtros = new otros(true, $_POST);
 

@@ -18,8 +18,16 @@ class prestamos extends AW
     var $interes;
     var $monto_por_semana;
     var $monto_pagar;
+    var $restante;
+    var $semana_actual;
+    //sumar prestamo
+    VAR $prestamo;
+    //actualizar prestamo
+    var $id_prestamo;
+    var $Semanas;
 
-
+    //busqueda 
+    var $estatus1;
 
     public function __construct($sesion = true, $datos = NULL)
     {
@@ -40,21 +48,24 @@ class prestamos extends AW
 
     public function Listado()
     {
-        $sql = "SELECT
-        a.*, CASE
-    WHEN a.estatus = 0 THEN
-        'LIQUIDADO'
-    WHEN a.estatus = 1 THEN
-        'PAGANDO'
-    ELSE
-        'OTRO'
-    END AS est,
-     b.nombres, b.ape_paterno, b.ape_materno
-    FROM
-        prestamos AS a
-    LEFT JOIN empleados AS b ON a.id_empleado = b.id
-    ORDER BY
-        a.id ASC";
+        $sqlEstatus = "";
+        if ($this->estatus1 != '') {
+            $sqlEstatus = "{$this->estatus1}";
+        }
+
+        $sql = "SELECT a.*, CASE WHEN a.estatus = 0 THEN
+            'LIQUIDADO'
+        WHEN a.estatus = 1 THEN
+            'PAGANDO'
+        ELSE
+            'OTRO'
+        END AS est,
+        b.nombres, b.ape_paterno, b.ape_materno
+        FROM prestamos AS a
+        LEFT JOIN empleados AS b ON a.id_empleado = b.id
+        where a.estatus like '%{$sqlEstatus}%' and fecha_registro between '{$this->fecha_inicial}' and '{$this->fecha_final}'
+        ORDER BY
+            a.id ASC";
         return $this->Query($sql);
     }
 
@@ -62,6 +73,26 @@ class prestamos extends AW
     {
 
         $sql = "select * from prestamos where  id='{$this->id}'";
+        $res = parent::Query($sql);
+
+        if (!empty($res) && !($res === NULL)) {
+            foreach ($res[0] as $idx => $valor) {
+                $this->{$idx} = $valor;
+            }
+        } else {
+            $res = NULL;
+        }
+
+        return $res;
+    }
+    public function AhorroActivo()
+    {
+        $sqlPrestamo="";
+        if (! empty($this->prestamo)) {
+            $sqlPrestamo = " estatus='1' and id_empleado='{$this->id_empleado}'";
+        }
+
+        $sql = "select * from prestamos where {$sqlPrestamo}";
         $res = parent::Query($sql);
 
         if (!empty($res) && !($res === NULL)) {
@@ -101,23 +132,39 @@ class prestamos extends AW
         return $bExiste;
     }
 
-    public function Actualizar()
+    public function Actualizar($id_prestamo,$Semanas)
     {
-        return true;
+        $sql = "update
+                    prestamos
+                set
+                estatus ='0',
+                restante = '0',
+                semana_actual =  '{$Semanas}'
+                where
+                  id='{$id_prestamo}'";
+        //print_r($sql);
+        return $this->NonQuery($sql);
     }
 
     public function Agregar()
     {
+        $restanteCantidad = 0;
+        if (!empty($this->restante)) {
+            $restanteCantidad = $this->monto + $this->restante;
+        } else {
+            $restanteCantidad = $this->monto;
+        }
+        
         $interes = $this->numero_semanas * 1.5;
-        $cantidad = ($this->monto * $interes) / 100;
-        $monto_pagar = $this->monto + $cantidad;
-        $interes_pagar = $monto_pagar - $this->monto;
+        $cantidad = ($restanteCantidad * $interes) / 100;
+        $monto_pagar = $restanteCantidad + $cantidad;
+        $interes_pagar = $monto_pagar - $restanteCantidad;
         $monto_por_semana = $monto_pagar / $this->numero_semanas;
 
         $sql = "insert into prestamos
-                (`id`,`id_empleado`,`monto`,`interes`,`monto_por_semana`,`numero_semanas`,`fecha_registro`,`monto_pagar`,`estatus`)
+                (`id`,`id_empleado`,`monto`,`interes`,`monto_por_semana`,`numero_semanas`,`fecha_registro`,`monto_pagar`,`estatus`,`restante`)
                 values
-                ('0','{$this->id_empleado}','{$this->monto}','$interes_pagar','$monto_por_semana','{$this->numero_semanas}',now(),'$monto_pagar','1')";
+                ('0','{$this->id_empleado}','".$restanteCantidad."','$interes_pagar','$monto_por_semana','{$this->numero_semanas}',now(),'$monto_pagar','1','{$monto_pagar}')";
         $bResultado = $this->NonQuery($sql);
 
         $sql1 = "select id from prestamos order by id desc limit 1";
@@ -131,10 +178,8 @@ class prestamos extends AW
     public function Guardar()
     {
         $bRes = false;
-        if ($this->Existe() === true) {
-            $bRes = $this->Actualizar();
-        } else {
-            $bRes = $this->Agregar();
+        if ($bRes = $this->Agregar()) {
+
         }
 
         return $bRes;

@@ -21,6 +21,7 @@ $lstEmpleados = $oEmpleados->Listado();
 <script type="text/javascript">
     $(document).ready(function(e) {
         $("#nameModal").text("<?php echo $nombre ?> Prestamo");
+        $("#restoVisible").hide();
         $("#frmFormulario").ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {},
             success: function(data) {
@@ -41,6 +42,7 @@ $lstEmpleados = $oEmpleados->Listado();
         $('#id_empleado').select2({
             width: '100%'
         });
+        $('[data-toggle="tooltip"]').tooltip();
     });
 </script>
 <!-- DataTales Example -->
@@ -64,6 +66,7 @@ $lstEmpleados = $oEmpleados->Listado();
         <div class="form-group">
             <strong class="">Monto a Prestar:</strong>
             <div class="form-group">
+                <input type="number" readonly="true" aria-describedby="" id="restoVisible" class="form-control" data-toggle="tooltip" title="" data-original-title="La cantidad aqui sera sumada al prestamo actual"/>
                 <input type="number" description="Ingrese el monto a prestar" aria-describedby="" id="monto" required name="monto" class="form-control obligado" />
             </div>
         </div>
@@ -76,6 +79,9 @@ $lstEmpleados = $oEmpleados->Listado();
     </div>
     <input type="hidden" id="id" name="id" value="<?= $oPrestamos->id ?>" />
     <input type="hidden" id="user_id" name="user_id" value="<?= $sesion->id ?>">
+    <input type="hidden" id="id_prestamo" name="id_prestamo" value="" />
+    <input type="hidden" id="restante" name="restante" value="" />
+    <input type="hidden" id="Semanas" name="Semanas" value="" />
     <input type="hidden" id="accion" name="accion" value="GUARDAR" />
     </div>
 </form>

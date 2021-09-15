@@ -14,8 +14,12 @@ $accion = addslashes(filter_input(INPUT_POST, "accion"));
 if ($accion == "GUARDAR") {
     $oAhorros = new ahorros(true, $_POST);
     $resultado = $oAhorros->Existe();
+    $resultado1 = $oAhorros->AhorroActivo();
+
     if ($resultado) {
-        echo "Sistema@El empleado ya tiene un ahorrro. @warning";
+        echo "Sistema@El empleado ya tiene un ahorro activo este año. @warning";
+    } else if ($resultado1) {
+        echo "Sistema@El empleado ya tiene un ahorro detenido y no puede seguir ahorrando. @warning";
     } else {
         if ($oAhorros->Guardar() === true) {
             echo "Sistema@Se ha registrado exitosamente la información. @success";
@@ -30,5 +34,12 @@ if ($accion == "GUARDAR") {
         echo "Sistema@Se ha registrado exitosamente la información. @success";
     } else {
         echo "Sistema@Ha ocurrido un error al guardar la información , vuelva a intentarlo o consulte con el administrador del sistema.@warning";
+    }
+} else if ($accion == "AhorroActivo") {
+    $oAhorros = new ahorros(true, $_POST);
+    
+    $resultado = $oAhorros->Existe();
+    if ($resultado) {
+        echo "El empleado ya tiene un ahorro activo";
     }
 }

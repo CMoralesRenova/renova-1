@@ -21,10 +21,10 @@ $lstasistencia = $oAsistencia->Listado_asistencia();
                 dom: 'Brtip',
                 buttons: [{
                     extend: 'pdfHtml5',
-                    title: 'Reporte Nomina Semana <?= $nombre ?>',
+                    title: 'Reporte Asistencia del '+$("#fecha_inicial").val()+' al '+$("#fecha_final").val(),
                     text: 'Exportar a pdf',
                     exportOptions: {
-                        columns: [0, 1, 2, 3]
+                        columns: [0, 1, 2, 3, 4, 5]
                     }
                 }]
             });
@@ -43,6 +43,7 @@ $lstasistencia = $oAsistencia->Listado_asistencia();
                         <th>Fecha</th>
                         <th>Hora entrada</th>
                         <th>Hora salida</th>
+                        <th>Estatus</th>
                         <th>Dia</th>
                     </tr>
                 </thead>
@@ -54,8 +55,9 @@ $lstasistencia = $oAsistencia->Listado_asistencia();
                             <tr>
                             <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
                                 <td style="text-align: center;"><?php echo date_format(date_create($campo->fecha),'d-m-Y') ?></td>
-                                <td style="text-align: center;"<?php  if($campo->retraso == 'A tiempo'){echo "";}else{echo "class='btn-danger'";} ?> ><?php echo date("g:i a",strtotime($campo->hora_entrada))."<br>".$campo->retraso;  ?></td>
+                                <td style="text-align: center;"<?php  if($campo->retraso == 'A tiempo'){echo "";}else{echo "class='btn-danger'";} ?> ><?php echo date("g:i a",strtotime($campo->hora_entrada)) ?></td>
                                 <td style="text-align: center;"><?= date("g:i a",strtotime($campo->hora_salida)); ?></td>
+                                <td style="text-align: center;"><?= $campo->retraso; ?></td>
                                 <td style="text-align: center;"><?= $campo->dia ?></td>
                             </tr>
                     <?php

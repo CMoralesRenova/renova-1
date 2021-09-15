@@ -32,7 +32,8 @@ class nominas extends AW {
 
     public function Listado() {
         $sql = "SELECT nominas.fecha, nominas.id,CONCAT('$',sum( nomina_detalle.total )) AS total_nomina,CASE WHEN nominas.estatus = 0 THEN 'NO PAGADA' WHEN nominas.estatus = 1 THEN
-        'PAGADA' ELSE 'OTRO'END AS estatus, WEEK ( nominas.fecha ) AS semana FROM nominas LEFT JOIN nomina_detalle ON nominas.id = nomina_detalle.id_nomina GROUP BY nominas.fecha, nominas.id 
+        'PAGADA' ELSE 'OTRO'END AS estatus, WEEK ( nominas.fecha ) AS semana FROM nominas LEFT JOIN nomina_detalle ON nominas.id = nomina_detalle.id_nomina 
+        where fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' GROUP BY nominas.fecha, nominas.id 
         ORDER BY fecha ASC  ";
         //echo nl2br($sql);
         return $this->Query($sql);

@@ -16,6 +16,7 @@ $sesion = $_SESSION[$oPuestos->NombreSesion];
 $oPuestos->Informacion();
 
 $oDepartamentos = new departamentos();
+$oDepartamentos->form = '1';
 $lstdepartamentos = $oDepartamentos->Listado();
 
 ?>

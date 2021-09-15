@@ -8,7 +8,7 @@ session_start();
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "/app/model/nominas.class.php");
 
-$oNominas = new nominas();
+$oNominas = new nominas(true, $_POST);
 $lstnominas = $oNominas->Listado();
 ?>
 <script type="text/javascript">

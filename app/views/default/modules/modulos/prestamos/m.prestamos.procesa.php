@@ -13,10 +13,14 @@ $accion = addslashes(filter_input(INPUT_POST, "accion"));
 
 if ($accion == "GUARDAR") {
     $oPrestamos = new prestamos(true, $_POST);
-
-    $resultado = $oPrestamos->Existe();
-    if ($resultado) {
-        echo "Sistema@El empleado ya tiene un prestamo activo. @warning";
+    if (!empty($oPrestamos->id_prestamo) && !empty($oPrestamos->restante)) {
+        if ($oPrestamos->Actualizar($oPrestamos->id_prestamo, $oPrestamos->Semanas) === true) {
+            if ($oPrestamos->Guardar() === true) {
+                echo "Sistema@Se ha registrado exitosamente la información. @success";
+            } else {
+                echo "Sistema@Ha ocurrido un error al guardar la información , vuelva a intentarlo o consulte con el administrador del sistema.@warning";
+            }
+        }
     } else {
         if ($oPrestamos->Guardar() === true) {
             echo "Sistema@Se ha registrado exitosamente la información. @success";
@@ -34,9 +38,11 @@ if ($accion == "GUARDAR") {
     }
 } else if ($accion == "PrestamoActivo") {
     $oPrestamos = new prestamos(true, $_POST);
-    
-    $resultado = $oPrestamos->Existe();
+
+    $resultado = $oPrestamos->AhorroActivo();
     if ($resultado) {
-        echo "El empleado ya tiene un prestamo activo";
+        if (count($resultado) > 0) {
+            echo $resultado[0]->restante . "@" . $resultado[0]->id . "@" . $resultado[0]->numero_semanas;
+        }
     }
 }

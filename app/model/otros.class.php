@@ -17,6 +17,7 @@ class otros extends AW
     var $estatus;
     var $monto_por_semana;
     var $monto_pagar;
+    var $motivo;
     var $detalles;
 
 
@@ -53,6 +54,7 @@ class otros extends AW
     FROM
         otros AS a
     LEFT JOIN empleados AS b ON a.id_empleado = b.id
+    where fecha_registro between '{$this->fecha_inicial}' and '{$this->fecha_final}'
     ORDER BY
         a.id ASC";
         return $this->Query($sql);
@@ -89,7 +91,7 @@ class otros extends AW
 
     public function Existe()
     {
-        $sql = "select id from otros where estatus='1' and id_empleado='{$this->id_empleado}'";
+        $sql = "select id from otros where id='{$this->id}'";
         //print_r($sql);
         $res = $this->Query($sql);
 
@@ -108,16 +110,15 @@ class otros extends AW
 
     public function Agregar()
     {
-        //$interes = $this->numero_semanas * 1.5;
-        //$cantidad = ($this->monto ) / 100;
+
         $monto_pagar = $this->monto;
-        //$interes_pagar = $monto_pagar - $this->monto;
         $monto_por_semana = $monto_pagar / $this->numero_semanas;
 
         $sql = "insert into otros
-                (`id`,`id_empleado`,`monto`,`monto_por_semana`,`numero_semanas`,`fecha_registro`,`monto_pagar`,`detalles`,`estatus`)
+                (`id`,`id_empleado`,`monto`,`monto_por_semana`,`numero_semanas`,`fecha_registro`,`monto_pagar`,`motivo`,`detalles`,`estatus`)
                 values
-                ('0','{$this->id_empleado}','{$this->monto}','$monto_por_semana','{$this->numero_semanas}',now(),'$monto_pagar','{$this->detalles}','1')";
+                ('0','{$this->id_empleado}','{$this->monto}','$monto_por_semana','{$this->numero_semanas}',now(),'$monto_pagar','{$this->motivo}','{$this->detalles}','1')";
+                //echo nl2br($sql);
         $bResultado = $this->NonQuery($sql);
 
         $sql1 = "select id from otros order by id desc limit 1";
