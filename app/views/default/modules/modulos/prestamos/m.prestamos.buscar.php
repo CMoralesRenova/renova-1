@@ -140,6 +140,26 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
                     backdrop: "true"
                 });
                 break;
+            case 'Editar':
+                $.ajax({
+                    data: "id="+id+"&nombre=" + nombre,
+                    type: "POST",
+                    url: "app/views/default/modules/modulos/prestamos/m.prestamos.editar.php",
+                    beforeSend: function() {
+                        $("#divFormulario").html(
+                            '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
+                        );
+                    },
+                    success: function(datos) {
+                        $("#btnGuardar").show();
+                        $("#imprimir").hide();
+                        $("#divFormulario").html(datos);
+                    }
+                });
+                $("#myModal").modal({
+                    backdrop: "true"
+                });
+                break;
         }
     }
 

@@ -28,6 +28,14 @@ if ($accion == "GUARDAR") {
             echo "Sistema@Ha ocurrido un error al guardar la información , vuelva a intentarlo o consulte con el administrador del sistema.@warning";
         }
     }
+} else if ($accion == "ACTUALIZAR") {
+    $oPrestamos = new prestamos(true, $_POST);
+
+    if ($oPrestamos->Editar() === true) {
+        echo "Sistema@Se actualizo el prestamo. @success";
+    } else {
+        echo "Sistema@Ha ocurrido un error al guardar la información , vuelva a intentarlo o consulte con el administrador del sistema.@warning";
+    }
 } else if ($accion == "Liquidado") {
     $oPrestamos = new prestamos(true, $_POST);
 

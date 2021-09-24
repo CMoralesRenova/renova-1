@@ -20,6 +20,7 @@ class prestamos extends AW
     var $monto_pagar;
     var $restante;
     var $semana_actual;
+    var $user_id;
     //sumar prestamo
     VAR $prestamo;
     //actualizar prestamo
@@ -165,6 +166,41 @@ class prestamos extends AW
                 (`id`,`id_empleado`,`monto`,`interes`,`monto_por_semana`,`numero_semanas`,`fecha_registro`,`monto_pagar`,`estatus`,`restante`)
                 values
                 ('0','{$this->id_empleado}','".$restanteCantidad."','$interes_pagar','$monto_por_semana','{$this->numero_semanas}',now(),'$monto_pagar','1','{$monto_pagar}')";
+        $bResultado = $this->NonQuery($sql);
+
+        $sql1 = "select id from prestamos order by id desc limit 1";
+        $res = $this->Query($sql1);
+
+        $this->id = $res[0]->id;
+
+        return $bResultado;
+    }
+
+    public function Editar()
+    {
+        $restanteCantidad = 0;
+        if (!empty($this->restante)) {
+            $restanteCantidad = $this->monto + $this->restante;
+        } else {
+            $restanteCantidad = $this->monto;
+        }
+        
+        $interes = $this->numero_semanas * 1.5;
+        $cantidad = ($restanteCantidad * $interes) / 100;
+        $monto_pagar = $restanteCantidad + $cantidad;
+        $interes_pagar = $monto_pagar - $restanteCantidad;
+        $monto_por_semana = $monto_pagar / $this->numero_semanas;
+
+        $sql = "update prestamos set
+                monto = '".$restanteCantidad."',
+                interes = '$interes_pagar',
+                monto_por_semana = '$monto_por_semana',
+                numero_semanas = '{$this->numero_semanas}',
+                monto_pagar = '$monto_pagar',
+                restante = {$monto_pagar},
+                usuario_edicion = '{$this->user_id}',
+                fecha_modificacion = now()
+                where id='{$this->id}'";
         $bResultado = $this->NonQuery($sql);
 
         $sql1 = "select id from prestamos order by id desc limit 1";

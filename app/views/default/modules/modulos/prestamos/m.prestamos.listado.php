@@ -10,6 +10,7 @@ require_once($_SITE_PATH . "/app/model/prestamos.class.php");
 
 $oPrestamos = new prestamos(true, $_POST);
 $lstprestamos = $oPrestamos->Listado();
+
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
@@ -60,25 +61,28 @@ $lstprestamos = $oPrestamos->Listado();
                         foreach ($lstprestamos as $idx => $campo) {
                     ?>
                             <tr>
-                                <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
-                                <td style="text-align: center;"><?= $campo->fecha_registro ?></td>
-                                <td style="text-align: center;">$<?= $campo->monto ?></td>
-                                <td style="text-align: center;">$<?= $campo->monto_pagar ?></td>
-                                <td style="text-align: center;">$<?= $campo->monto_por_semana ?></td>
-                                <td style="text-align: center;"><?= $campo->numero_semanas ?></td>
-                                <td style="text-align: center;"><?= $campo->est ?></td>
-                                <td style="text-align: center;">
-                                <div class="row">
-                                    <div class="col">
-                                <a class="btn btn-sm btn-danger" href="javascript:Editar('<?= $campo->id ?>','Detalles','<?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?>')">
-                                    <span class="glyphicon glyphicon-ok">Ver Detalles</a><br>
+                                <td style="text-align: ;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
+                                <td style="text-align: ;"><?= $campo->fecha_registro ?></td>
+                                <td style="text-align: ;">$<?= $campo->monto ?></td>
+                                <td style="text-align: ;">$<?= $campo->monto_pagar ?></td>
+                                <td style="text-align: ;">$<?= $campo->monto_por_semana ?></td>
+                                <td style="text-align: ;"><?= $campo->numero_semanas ?></td>
+                                <td style="text-align: ;"><?= $campo->est ?></td>
+                                <td style="text-align: ;width: 20%;">
+                                    <div class="row">
+                                        <a class="btn btn-sm btn-danger" href="javascript:Editar('<?= $campo->id ?>','Detalles','<?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?>')">
+                                            <span class="glyphicon glyphicon-ok">Ver Detalles</a><br>
                                     </div>
-                                    <?php if ($campo->estatus == "1") { ?>
-                                        <div class="col">
-                                        <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','Liquidar')"><span class="glyphicon glyphicon-ok">Liquidar</a>
+                                    <?php if (empty($campo->semana_actual) && $campo->estatus == "1") { ?>
+                                        <div class="row" style="margin-top: 1%;">
+                                            <a class="btn btn-sm btn-success" href="javascript:Editar('<?= $campo->id ?>','Editar')"><span class="glyphicon glyphicon-ok">Editar</a>
                                         </div>
                                     <?php } ?>
-                                </div>
+                                    <?php if ($campo->estatus == "1") { ?>
+                                        <div class="row" style="margin-top: 1%;">
+                                            <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','Liquidar')"><span class="glyphicon glyphicon-ok">Liquidar</a>
+                                        </div>
+                                    <?php } ?>
                                 </td>
                             </tr>
                     <?php

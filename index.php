@@ -63,6 +63,8 @@ if ($action === "login") {
         $mvc_default->servicio();
     }else if ($action === "asistencia") {
         $mvc_default->asistencia();
+    }else if ($action === "permisos") {
+        $mvc_default->permisos();
     }else if ($action === "cerrar_sesion") {
         $mvc->CerrarSesion();
     }else if ($action === "acceso_denegado") {
