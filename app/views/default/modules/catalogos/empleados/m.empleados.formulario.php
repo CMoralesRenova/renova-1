@@ -261,17 +261,17 @@ $lsthorarios = $oHorarios->Listado();
                         <input type="text" description="Ingrese premio de asistencia" aria-describedby="" id="salario_asistencia" required name="salario_asistencia" value="<?= $oEmpleados->salario_asistencia ?>" class="form-control obligado" />
                     </div>
                 </div>
-            </div>
-            <div class="row">
                 <div class="col">
-                    <strong class="">Premio puntualidad:</strong>
+                    <strong class=""> Premio de puntualidad:</strong>
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text">$</span>
                         </div>
-                        <input type="text" description="Ingrese el premio de puntualidad" aria-describedby="" id="salario_puntualidad" required name="salario_puntualidad" value="<?= $oEmpleados->salario_puntualidad ?>" class="form-control obligado" />
+                        <input type="text" description="Ingrese premio de puntualidad" aria-describedby="" id="salario_puntualidad" required name="salario_puntualidad" value="<?= $oEmpleados->salario_puntualidad ?>" class="form-control obligado" />
                     </div>
                 </div>
+            </div>
+            <div class="row">
                 <div class="col">
                     <strong class=""> Premio de productividad:</strong>
                     <div class="input-group mb-3">
@@ -279,6 +279,24 @@ $lsthorarios = $oHorarios->Listado();
                             <span class="input-group-text">$</span>
                         </div>
                         <input type="text" description="Ingrese premio de productividad" aria-describedby="" id="salario_productividad" required name="salario_productividad" value="<?= $oEmpleados->salario_productividad ?>" class="form-control obligado" />
+                    </div>
+                </div>
+                <div class="col">
+                    <strong class=""> Bono 12 horas:</strong>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                        </div>
+                        <input type="text" description="" aria-describedby="" id="bono_doce" name="bono_doce" value="<?= $oEmpleados->bono_doce ?>" class="form-control" />
+                    </div>
+                </div>
+                <div class="col">
+                    <strong class=""> Complemento de sueldo:</strong>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                        </div>
+                        <input type="text" description="" aria-describedby="" id="complemento_sueldo" name="complemento_sueldo" value="<?= $oEmpleados->complemento_sueldo ?>" class="form-control" />
                     </div>
                 </div>
             </div>

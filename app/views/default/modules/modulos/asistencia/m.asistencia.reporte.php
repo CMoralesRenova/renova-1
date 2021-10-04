@@ -14,21 +14,23 @@ $nombre = addslashes(filter_input(INPUT_POST, "nombre"));
 $lstasistencia = $oAsistencia->Listado_asistencia();
 ?>
 <script type="text/javascript">
-    $(document).ready(function(e) {
-        $(document).ready(function() {
-            $('#dataTable2').DataTable({
-                "paging": false,
-                dom: 'Brtip',
-                buttons: [{
-                    extend: 'pdfHtml5',
-                    title: 'Reporte Asistencia del '+$("#fecha_inicial").val()+' al '+$("#fecha_final").val(),
-                    text: 'Exportar a pdf',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5]
-                    }
-                }]
-            });
-            $(".buttons-html5 ").addClass("btn btn-danger");
+    $(document).ready(function() {
+        $('#dataTable2').DataTable({
+            "paging": false,
+            dom: 'Brtip',
+            buttons: [{
+                extend: 'pdfHtml5',
+                title: 'Reporte Asistencia del ' + $("#fecha_inicial").val() + ' al ' + $("#fecha_final").val(),
+                text: 'Exportar a pdf',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 5]
+                }
+            }]
+        });
+        $(".buttons-html5 ").addClass("btn btn-danger");
+        $(".dt-buttons").attr("hidden", "hidden");
+        $("#btn").button().click(function(e) {
+            $(".buttons-pdf").trigger('click');
         });
     });
 </script>
@@ -53,11 +55,19 @@ $lstasistencia = $oAsistencia->Listado_asistencia();
                         foreach ($lstasistencia as $idx => $campo) {
                     ?>
                             <tr>
-                            <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
-                                <td style="text-align: center;"><?php echo date_format(date_create($campo->fecha),'d-m-Y') ?></td>
-                                <td style="text-align: center;"<?php  if($campo->retraso == 'A tiempo'){echo "";}else{echo "class='btn-danger'";} ?> ><?php echo date("g:i a",strtotime($campo->hora_entrada)) ?></td>
-                                <td style="text-align: center;"><?= date("g:i a",strtotime($campo->hora_salida)); ?></td>
-                                <td style="text-align: center;"><?= $campo->retraso; ?></td>
+                                <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
+                                <td style="text-align: center;"><?php echo date_format(date_create($campo->fecha), 'd-m-Y') ?></td>
+                                <td style="text-align: center;" <?php if ($campo->retraso == 'A tiempo') {
+                                                                    echo "";
+                                                                } else if ($campo->permiso == 'Permiso entrada'){
+                                                                    echo "class='bg-warning'";
+                                                                } else if ($campo->estatus_entrada == 1) {
+                                                                    echo "";
+                                                                } else {
+                                                                    echo "class='btn-danger'";
+                                                                } ?>><?php echo date("g:i A", strtotime($campo->hora_entrada)) ?></td>
+                                <td style="text-align: center;"><?php if (!empty($campo->hora_salida)) echo (date("h:i:s A", strtotime($campo->hora_salida))); ?></td>
+                                <td style="text-align: center;"><?= $campo->retraso == ''? $campo->permiso:$campo->retraso?></td>
                                 <td style="text-align: center;"><?= $campo->dia ?></td>
                             </tr>
                     <?php

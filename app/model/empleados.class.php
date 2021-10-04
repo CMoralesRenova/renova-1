@@ -26,6 +26,8 @@ class empleados extends AW
     var $salario_puntualidad;
     var $salario_productividad;
     var $salario_semanal;
+    var $complemento_sueldo;
+    var $bono_doce;
     var $nivel_estudios;
     var $direccion;
     var $estado_civil;
@@ -144,8 +146,10 @@ class empleados extends AW
                 id_jefe = '{$this->id_jefe}',
                 {$sqlSalario}
                 salario_asistencia = '{$this->salario_asistencia}',
-                salario_puntualidad= '{$this->salario_puntualidad}',
+                salario_puntualidad = '{$this->salario_puntualidad}',
                 salario_productividad = '{$this->salario_productividad}',
+                complemento_sueldo = '{$this->complemento_sueldo}',
+                bono_doce = '{$this->bono_doce}',
                 checador = '{$this->checador}',
                 id_horario = '{$this->id_horario}',
                 usuario_edicion = '{$this->user_id}'
@@ -160,11 +164,11 @@ class empleados extends AW
         $sql = "insert into empleados
                 (id,nombres, ape_paterno,ape_materno, fecha_nacimiento, direccion, estado_civil,
                  rfc, curp, nss, nivel_estudios, id_puesto, id_jefe, salario_diario,salario_asistencia,salario_puntualidad,
-                 salario_productividad, salario_semanal, fecha_ingreso, estatus, checador,id_horario, usuario_creacion)
+                 salario_productividad, salario_semanal,complemento_sueldo, bono_doce fecha_ingreso, estatus, checador,id_horario, usuario_creacion)
                 values
                 ('0','{$this->nombres}', '{$this->ape_paterno}', '{$this->ape_materno}','".$this->fecha_nacimiento."', '{$this->direccion}', '{$this->estado_civil}',
                  '{$this->rfc}', '{$this->curp}', '{$this->nss}', '{$this->nivel_estudios}', '{$this->id_puesto}', '{$this->id_jefe}','{$this->salario_diario}',
-                 '{$this->salario_asistencia}','{$this->salario_puntualidad}','{$this->salario_productividad}','".$this->salario_diario * 7 ."', '".date('Y-m-d')."',
+                 '{$this->salario_asistencia}','{$this->salario_puntualidad}','{$this->salario_productividad}','{$this->complemento_sueldo}','{$this->bono_doce}',".$this->salario_diario * 7 ."', '".date('Y-m-d')."',
                  '{$this->checador}','{$this->id_horario}','1', '{$this->user_id}')";
         $bResultado = $this->NonQuery($sql);
 

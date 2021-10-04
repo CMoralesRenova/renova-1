@@ -41,6 +41,11 @@ class mvc_controller extends Configuracion
         include_once("app/views/default/modules/login/m.login.php");
     }
 
+    public function checador()
+    {
+        include_once("app/views/default/modules/checador/m.checador.php");
+    }
+
     public function acceso_denegado()
     {
         include_once("app/views/default/modules/m.acceso_denegado.php");

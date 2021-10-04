@@ -58,11 +58,11 @@ $lstnominas = $oNominas->Listado_nomina();
                     ?>
                             <tr>
                                 <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
-                                <td style="text-align: center;"><?= $campo->salario_diario ?></td>
-                                <td style="text-align: center;"><?= $campo->salario_semanal ?></td>
-                                <td style="text-align: center;"><?= $campo->estatus ?></td>
-                                <td style="text-align: center;"><?= $campo->estatus ?></td>
-                                <td style="text-align: center;"><?= $campo->horas ?></td>
+                                <td style="text-align: center;"><?= bcdiv($campo->salario_diario, '1', 2) ?></td>
+                                <td style="text-align: center;"><?= bcdiv($campo->salario_semanal, '1', 2) ?></td>
+                                <td style="text-align: center;"><?= $campo->dias_laborados ?></td>
+                                <td style="text-align: center;"><?= $campo->dias_laborados ?></td>
+                                <td style="text-align: center;"><?= bcdiv($campo->horas_extras, '1', 2) ?></td>
                                 <td style="text-align: center;"><?= $campo->percepciones ?></td>
                                 <td style="text-align: center;"><?= $campo->retenciones ?></td>
                                 <td style="text-align: center;"><?= $campo->total ?></td>

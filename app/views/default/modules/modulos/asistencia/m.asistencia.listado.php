@@ -10,6 +10,7 @@ require_once($_SITE_PATH . "/app/model/asistencia.class.php");
 
 $oAsistencia = new asistencia(true, $_POST);
 $lstasistencia = $oAsistencia->Listado();
+
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {

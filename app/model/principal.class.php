@@ -22,8 +22,8 @@ class AW extends database
          */
         parent::__construct();
 
-        if ($valida_sesion === true)
-            $this->ExisteSesion();
+        //if ($valida_sesion === true)
+         //   $this->ExisteSesion();
     }
 
     public function ExisteSesion()

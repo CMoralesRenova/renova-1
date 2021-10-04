@@ -19,24 +19,23 @@ $oNominas->ValidaNivelUsuario("nominas");
         $('#fecha_final').change(Listado);
 
         $("#btnGuardar").button().click(function(e) {
-            $("#frmFormulario_").find(':input').each(function() {
-                $(".form-control").css('border', '1px solid #d1d3e2');
-                var frmTrue = true;
+            $(".form-control").css('border', '1px solid #d1d3e2');
+            var frmTrue = true;
 
-                $("#frmFormulario_").find('select, input, textarea').each(function() {
-                    var elemento = this;
-                    if ($(elemento).hasClass("obligado")) {
-                        if (elemento.value == "" || elemento.value == 0) {
-                            Alert("", $(elemento).attr("description"), "warning", 900, false);
-                            Empty(elemento.id);
-                            frmTrue = false;
-                        }
+            $("#frmFormulario_").find('select, input').each(function() {
+                var elemento = this;
+                if ($(elemento).hasClass("obligado")) {
+                    if (elemento.value == "" || elemento.value == 0) {
+                        Alert("", $(elemento).attr("description"), "warning", 900, false);
+                        Empty(elemento.id);
+                        frmTrue = false;
                     }
-                });
-                if (frmTrue == true) {
-                    $("#frmFormulario_").submit();
                 }
             });
+
+            if (frmTrue == true) {
+                $('#frmFormulario_').submit();
+            }
         });
         $("#btnBuscar").button().click(function(e) {
             Listado();

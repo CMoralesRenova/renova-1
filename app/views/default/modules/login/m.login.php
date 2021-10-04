@@ -11,80 +11,80 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
     <?php require_once('app/views/default/head.html'); ?>
     <?php require_once('app/views/default/script_h.html'); ?>
     <style>
-    .may {
-        -webkit-border-radius: 10px 10px;
-        /* Safari  */
-        -moz-border-radius: 10px 10px;
-        /* Firefox */
-    }
+        .may {
+            -webkit-border-radius: 10px 10px;
+            /* Safari  */
+            -moz-border-radius: 10px 10px;
+            /* Firefox */
+        }
 
-    #may {
-        padding: 1px 77px;
-        background: #FF0;
-        box-shadow: 8px 9px 4px #a5a5a5;
-        border-radius: 37px;
-        color: #fff;
-    }
+        #may {
+            padding: 1px 77px;
+            background: #FF0;
+            box-shadow: 8px 9px 4px #a5a5a5;
+            border-radius: 37px;
+            color: #fff;
+        }
     </style>
     <script type="text/javascript">
-    $(document).ready(function(e) {
-        $("#may").hide();
+        $(document).ready(function(e) {
+            $("#may").hide();
 
-        $("#usr, #pass").keyup(function(event) {
-            var tecla = event.keyCode;
-            if (tecla == 13) {
+            $("#usr, #pass").keyup(function(event) {
+                var tecla = event.keyCode;
+                if (tecla == 13) {
+                    Login();
+                }
+            });
+
+            $("#btnLogin").click(function(e) {
+                //Alert("boton login");
                 Login();
-            }
-        });
+            });
 
-        $("#btnLogin").click(function(e) {
-            //Alert("boton login");
-            Login();
-        });
-
-        $('#pass').keypress(function(e) {
-            kc = e.keyCode ? e.keyCode : e.which;
-            sk = e.shiftKey ? e.shiftKey : ((kc == 16) ? true : false);
-            if (((kc >= 65 && kc <= 90) && !sk) || ((kc >= 97 && kc <= 122) && sk)) {
-                $("#may").show();
-            } else {
-                $("#may").hide();
-            }
-        });
-
-    });
-
-    function Login() {
-        var jsonDatos = {
-            "usr": $("#usr").val(),
-            "pass": $("#pass").val(),
-            "accion": "LOGIN"
-        };
-
-        $.ajax({
-            data: jsonDatos,
-            type: "post",
-            dataType: "json",
-            url: "app/views/default/modules/login/m.login_procesa.php",
-            beforeSend: function() {},
-            success: function(datos) {
-                if (datos.valido === true) {
-                    Alert("Bienvenido", "", "success");
-                    document.location = datos.msg;
-                } else
-                    Alert("Error acceso", datos.msg, "error");
-            }
+            $('#pass').keypress(function(e) {
+                kc = e.keyCode ? e.keyCode : e.which;
+                sk = e.shiftKey ? e.shiftKey : ((kc == 16) ? true : false);
+                if (((kc >= 65 && kc <= 90) && !sk) || ((kc >= 97 && kc <= 122) && sk)) {
+                    $("#may").show();
+                } else {
+                    $("#may").hide();
+                }
+            });
 
         });
-    }
 
-    function Alert(tit, msg, iconn) {
-        swal({
-            title: tit,
-            text: msg,
-            icon: iconn,
-        })
-    }
+        function Login() {
+            var jsonDatos = {
+                "usr": $("#usr").val(),
+                "pass": $("#pass").val(),
+                "accion": "LOGIN"
+            };
+
+            $.ajax({
+                data: jsonDatos,
+                type: "post",
+                dataType: "json",
+                url: "app/views/default/modules/login/m.login_procesa.php",
+                beforeSend: function() {},
+                success: function(datos) {
+                    if (datos.valido === true) {
+                        Alert("Bienvenido", "", "success");
+                        document.location = datos.msg;
+                    } else
+                        Alert("Error acceso", datos.msg, "error");
+                }
+
+            });
+        }
+
+        function Alert(tit, msg, iconn) {
+            swal({
+                title: tit,
+                text: msg,
+                icon: iconn,
+            })
+        }
     </script>
 
 <body class="bg-gradient-danger">
@@ -105,13 +105,10 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
                                 <div class="p-5">
                                     <form class="user">
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-user"
-                                                aria-describedby="emailHelp" name="usr" id="usr"
-                                                placeholder="usuario" required="required">
+                                            <input type="text" class="form-control form-control-user" aria-describedby="emailHelp" name="usr" id="usr" placeholder="usuario" required="required">
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" class="form-control form-control-user"
-                                                placeholder="Password" id="pass" name='pass'>
+                                            <input type="password" class="form-control form-control-user" placeholder="Password" id="pass" name='pass'>
                                         </div>
                                         <div class="clearfix" id="may">
                                             <h4 class="pull-right" style="color:#FF0000;font-size:20px;">Bloq Mayús
@@ -124,10 +121,14 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
                                                     Me</label>
                                             </div>
                                         </div>
-                                        <input type="button" id="btnLogin"
-                                            class="btn bg-gradient-danger btn-user btn-block" name="btnLogin"
-                                            value="Login" style="color:#000;">
+                                        <input type="button" id="btnLogin" class="btn bg-gradient-danger btn-user btn-block" name="btnLogin" value="Login" style="color:#000;">
                                     </form>
+                                    <div class="form-group" style="">
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </div>
+                                    <div class="text-right " >
+                                        <a href="index.php?action=checador" id="" class="btn btn-info"><label> Checador</label></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -139,7 +140,7 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
         </div>
         <div class="navbar-default navbar-fixed-bottom">
             <div class="text-center footer" style="color:#000;">Copyright © <script>
-                document.write(new Date().getFullYear());
+                    document.write(new Date().getFullYear());
                 </script> Angel Contreras. All Right Reserved.</div>
         </div>
     </div>

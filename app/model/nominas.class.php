@@ -6,7 +6,8 @@
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "/app/model/principal.class.php");
 
-class nominas extends AW {
+class nominas extends AW
+{
 
     var $id;
     var $fecha;
@@ -14,7 +15,8 @@ class nominas extends AW {
     var $user_id;
 
 
-    public function __construct($sesion = true, $datos = NULL) {
+    public function __construct($sesion = true, $datos = NULL)
+    {
         parent::__construct($sesion);
 
         if (!($datos == NULL)) {
@@ -30,42 +32,58 @@ class nominas extends AW {
         }
     }
 
-    public function Listado() {
+    public function Listado()
+    {
         $sql = "SELECT nominas.fecha, nominas.id,CONCAT('$',sum( nomina_detalle.total )) AS total_nomina,CASE WHEN nominas.estatus = 0 THEN 'NO PAGADA' WHEN nominas.estatus = 1 THEN
         'PAGADA' ELSE 'OTRO'END AS estatus, WEEK ( nominas.fecha ) AS semana FROM nominas LEFT JOIN nomina_detalle ON nominas.id = nomina_detalle.id_nomina 
         where fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' GROUP BY nominas.fecha, nominas.id 
         ORDER BY fecha ASC  ";
         //echo nl2br($sql);
         return $this->Query($sql);
-        
     }
-    public function Listado_nomina() {
-        $sql = "SELECT a.*, b.*, c.*, WEEK ( a.fecha ) AS semana,d.horas FROM nominas a 
-            LEFT JOIN nomina_detalle b ON a.id = b.id_nomina
-            LEFT JOIN empleados c ON b.id_empleado = c.id LEFT JOIN ( SELECT horas_extras.id_empleado, horas_extras AS horas FROM horas_extras WHERE estatus = 2 ) d ON c.id = d.id_empleado 
-        WHERE a.id ='{$this->id}'";
+    public function Listado_nomina()
+    {
+        $sql = "SELECT a.*, c.nombres, c.ape_paterno, c.ape_materno, WEEK ( a.fecha ) AS semana,
+        c.salario_semanal,
+        c.salario_diario,
+        c.salario_asistencia,
+        c.salario_puntualidad,
+        c.salario_productividad,
+        c.complemento_sueldo,
+        c.bono_doce,
+        (select count(dia) from asistencia where id_empleado = c.id and estatus_entrada = 1 and fecha between date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) as dias_laborados,
+        ((select sum(horas_extras) from horas_extras where id_empleado = c.id and estatus = 2 and fecha_registro between date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) * (c.salario_diario / 8)) as horas_extras,
+        ((select count(dia) from asistencia where id_empleado = c.id and estatus_entrada = 1 and fecha between date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) * c.salario_diario) as esperado,
+        (if((select count(dia) from asistencia where id_empleado = c.id and estatus_entrada = 1 and fecha between date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) < 7,
+        c.salario_asistencia + c.salario_productividad + c.complemento_sueldo + c.bono_doce + (d.horas_extras * (c.salario_diario / 8)) ,'no')) as totalPago
+        FROM nominas a
+        LEFT JOIN empleados c ON  c.id 
+        LEFT JOIN horas_extras as d on c.id = d.id_empleado 
+        inner JOIN ( SELECT dia, id_empleado, fecha FROM renova.asistencia) e ON c.id = e.id_empleado
+        WHERE a.id ='{$this->id}' group by c.nombres";
         //echo nl2br($sql);
         return $this->Query($sql);
-        
     }
-    public function Pagar() {
+    public function Pagar()
+    {
         $sql = "update
                     nominas
                 set
                 estatus = '1',
-                fecha_pago = ".date("Y-m-d")."
+                fecha_pago = " . date("Y-m-d") . "
                 where
                   id='{$this->id}'";
         return $this->NonQuery($sql);
     }
 
-    public function Informacion() {
+    public function Informacion()
+    {
 
         $sql = "select * from nominas where  id='{$this->id}'";
         $res = parent::Query($sql);
 
         if (!empty($res) && !($res === NULL)) {
-            foreach ($res [0] as $idx => $valor) {
+            foreach ($res[0] as $idx => $valor) {
                 $this->{$idx} = $valor;
             }
         } else {
@@ -75,7 +93,8 @@ class nominas extends AW {
         return $res;
     }
 
-    public function Existe() {
+    public function Existe()
+    {
         $sql = "select id from nominas where id='{$this->id}'";
         $res = $this->Query($sql);
 
@@ -87,7 +106,8 @@ class nominas extends AW {
         return $bExiste;
     }
 
-    public function Actualizar() {
+    public function Actualizar()
+    {
 
         $sql = "update
                     nominas
@@ -103,7 +123,8 @@ class nominas extends AW {
         return $this->NonQuery($sql);
     }
 
-    public function Desactivar() {
+    public function Desactivar()
+    {
 
         $sql = "update
                     nominas
@@ -111,11 +132,12 @@ class nominas extends AW {
                 estatus = '{$this->estatus}'
                 where
                   id='{$this->id}'";
-                 // echo nl2br($sql);
+        // echo nl2br($sql);
         return $this->NonQuery($sql);
     }
 
-    public function Agregar() {
+    public function Agregar()
+    {
 
 
         $sql = "insert into nominas
@@ -123,16 +145,17 @@ class nominas extends AW {
                 values
                 ('0','{$this->fecha}','0')";
         $bResultado = $this->NonQuery($sql);
-        
+
         $sql1 = "select id from nominas order by id desc limit 1";
         $res = $this->Query($sql1);
-        
+
         $this->id = $res[0]->id;
 
         return $bResultado;
     }
 
-    public function Guardar() {
+    public function Guardar()
+    {
         $bRes = false;
         if ($this->Existe() === true) {
             $bRes = $this->Actualizar();

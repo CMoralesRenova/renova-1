@@ -149,6 +149,7 @@ $oAsistencia->ValidaNivelUsuario("asistencia");
                             </div>
                         </div>
                         <div class="modal-footer">
+                            <input type="button" id="btn" class="btn btn-danger" name="btn" value="Imprimir">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cerrar</button>
                         </div>
                     </div>

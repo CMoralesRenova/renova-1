@@ -14,6 +14,8 @@ $action = addslashes(filter_input(INPUT_GET, "action"));
 session_start();
 if ($action === "login") {
     $mvc->login();
+} else if ($action === "checador") {
+    $mvc->checador();
 }  else {
     $mvc->ExisteSesion();
 
