@@ -36,9 +36,11 @@ $lstotros = $oOtros->Listado();
                     <tr>
                         <th>Empleado</th>
                         <th>Fecha de registro</th>
+                        <th>Fecha pago</th>
                         <th>Monto A Pagar</th>
                         <th>Cantidad A Pagar Por Semana</th>
                         <th>Semanas</th>
+                        <th>Semana actual</th>
                         <th>Motivo</th>
                         <th>Estatus</th>
                         <th>Acciones</th>
@@ -47,9 +49,11 @@ $lstotros = $oOtros->Listado();
                 <tfoot>
                     <th>Empleado</th>
                     <th>Fecha de registro</th>
+                    <th>Fecha pago</th>
                     <th>Monto A Pagar</th>
                     <th>Cantidad A Pagar Por Semana</th>
                     <th>Semanas</th>
+                    <th>Semana actual</th>
                     <th>Motivo</th>
                     <th>Estatus</th>
                     <th>Acciones</th>
@@ -62,9 +66,11 @@ $lstotros = $oOtros->Listado();
                             <tr>
                                 <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
                                 <td style="text-align: center;"><?= $campo->fecha_registro ?></td>
+                                <td style="text-align: center;"><?= $campo->fecha_pago ?></td>
                                 <td style="text-align: center;">$<?= $campo->monto_pagar ?></td>
                                 <td style="text-align: center;">$<?= $campo->monto_por_semana ?></td>
                                 <td style="text-align: center;"><?= $campo->numero_semanas ?></td>
+                                <td style="text-align: center;"><?= $campo->semana_actual ?></td>
                                 <td style="text-align: center;"><?= $campo->motivo ?></td>
                                 <td style="text-align: center;"><?= $campo->est ?></td>
                                 <td style="text-align: center;">

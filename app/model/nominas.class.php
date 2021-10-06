@@ -43,7 +43,7 @@ class nominas extends AW
     }
     public function Listado_nomina()
     {
-        $sql = "SELECT a.*, c.nombres, c.ape_paterno, c.ape_materno, WEEK ( a.fecha ) AS semana,
+        $sql = "SELECT a.*, c.id as id_empleado,nombres, c.ape_paterno, c.ape_materno, WEEK ( a.fecha ) AS semana,
         c.salario_semanal,
         c.salario_diario,
         c.salario_asistencia,
@@ -51,15 +51,19 @@ class nominas extends AW
         c.salario_productividad,
         c.complemento_sueldo,
         c.bono_doce,
-        (select count(dia) from asistencia where id_empleado = c.id and estatus_entrada = 1 and fecha between date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) as dias_laborados,
+        (select count(dia) + 1 from asistencia where id_empleado = c.id and estatus_entrada = 1 and fecha between date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) as dias_laborados,
         ((select sum(horas_extras) from horas_extras where id_empleado = c.id and estatus = 2 and fecha_registro between date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) * (c.salario_diario / 8)) as horas_extras,
-        ((select count(dia) from asistencia where id_empleado = c.id and estatus_entrada = 1 and fecha between date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) * c.salario_diario) as esperado,
-        (if((select count(dia) from asistencia where id_empleado = c.id and estatus_entrada = 1 and fecha between date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) < 7,
-        c.salario_asistencia + c.salario_productividad + c.complemento_sueldo + c.bono_doce + (d.horas_extras * (c.salario_diario / 8)) ,'no')) as totalPago
+        ((select count(dia) + 1 from asistencia where id_empleado = c.id and estatus_entrada = 1 and fecha between date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) * c.salario_diario) as esperado,
+        (select sum(monto_por_semana) from otros where id_empleado = c.id and estatus = 1 and fecha_pago between date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) as otros_descuentos,
+        (select sum(monto_por_semana) from prestamos where id_empleado = c.id and estatus = 1 and fecha_pago between date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) as prestamos,
+        ((select sum(monto_por_semana) from otros where id_empleado = c.id and estatus = 1 and fecha_pago between date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) +
+        (select sum(monto_por_semana) from prestamos where id_empleado = c.id and estatus = 1 and fecha_pago between date_add(a.fecha, INTERVAL -7 DAY) and a.fecha)) as retenciones
         FROM nominas a
         LEFT JOIN empleados c ON  c.id 
         LEFT JOIN horas_extras as d on c.id = d.id_empleado 
-        inner JOIN ( SELECT dia, id_empleado, fecha FROM renova.asistencia) e ON c.id = e.id_empleado
+        inner JOIN ( SELECT dia, id_empleado, fecha FROM asistencia) e ON c.id = e.id_empleado
+        left JOIN ( SELECT * FROM otros) f ON c.id = f.id_empleado
+        left JOIN ( SELECT * FROM prestamos) g ON c.id = g.id_empleado
         WHERE a.id ='{$this->id}' group by c.nombres";
         //echo nl2br($sql);
         return $this->Query($sql);

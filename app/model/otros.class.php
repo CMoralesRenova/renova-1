@@ -19,7 +19,7 @@ class otros extends AW
     var $monto_pagar;
     var $motivo;
     var $detalles;
-
+    var $fecha_pago;
 
 
     public function __construct($sesion = true, $datos = NULL)
@@ -115,9 +115,9 @@ class otros extends AW
         $monto_por_semana = $monto_pagar / $this->numero_semanas;
 
         $sql = "insert into otros
-                (`id`,`id_empleado`,`monto`,`monto_por_semana`,`numero_semanas`,`fecha_registro`,`monto_pagar`,`motivo`,`detalles`,`estatus`)
+                (`id`,`id_empleado`,`monto`,`monto_por_semana`,`numero_semanas`,`fecha_registro`,`fecha_pago`,`monto_pagar`,`motivo`,`detalles`,`estatus`)
                 values
-                ('0','{$this->id_empleado}','{$this->monto}','$monto_por_semana','{$this->numero_semanas}',now(),'$monto_pagar','{$this->motivo}','{$this->detalles}','1')";
+                ('0','{$this->id_empleado}','{$this->monto}','$monto_por_semana','{$this->numero_semanas}',now(),'{$this->fecha_pago}','$monto_pagar','{$this->motivo}','{$this->detalles}','1')";
                 //echo nl2br($sql);
         $bResultado = $this->NonQuery($sql);
 

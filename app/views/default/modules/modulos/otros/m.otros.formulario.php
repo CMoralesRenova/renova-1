@@ -71,6 +71,12 @@ $lstEmpleados = $oEmpleados->Listado();
             </div>
         </div>
         <div class="form-group">
+            <strong class="">Fecha pago:</strong>
+            <div class="form-group">
+                <input type="date" description="Seleccione la fecha del pago" aria-describedby="" id="fecha_pago" required name="fecha_pago" class="form-control obligado" />
+            </div>
+        </div>
+        <div class="form-group">
             <strong class="">Numero de Semanas:</strong>
             <div class="form-group">
                 <input type="number" description="Ingrese el numero de semanas" aria-describedby="" id="numero_semanas" required name="numero_semanas" class="form-control obligado" />

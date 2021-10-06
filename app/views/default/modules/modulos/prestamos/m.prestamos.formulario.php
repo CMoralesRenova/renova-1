@@ -64,6 +64,12 @@ $lstEmpleados = $oEmpleados->Listado();
             </div>
         </div>
         <div class="form-group">
+            <strong class="">Seleccionar fecha inicial de pago:</strong>
+            <div class="form-group">
+                <input type="date" description="Seleccione la fecha inicial del pago" aria-describedby="" id="fecha_pago" required name="fecha_pago" class="form-control obligado" />
+            </div>
+        </div>
+        <div class="form-group">
             <strong class="">Monto a Prestar:</strong>
             <div class="form-group">
                 <input type="number" readonly="true" aria-describedby="" id="restoVisible" class="form-control" data-toggle="tooltip" title="" data-original-title="La cantidad aqui sera sumada al prestamo actual"/>

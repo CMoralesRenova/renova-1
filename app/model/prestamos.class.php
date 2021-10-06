@@ -14,6 +14,7 @@ class prestamos extends AW
     var $numero_semanas;
     var $monto;
     var $fecha_registro;
+    var $fecha_pago;
     var $estatus;
     var $interes;
     var $monto_por_semana;
@@ -163,9 +164,9 @@ class prestamos extends AW
         $monto_por_semana = $monto_pagar / $this->numero_semanas;
 
         $sql = "insert into prestamos
-                (`id`,`id_empleado`,`monto`,`interes`,`monto_por_semana`,`numero_semanas`,`fecha_registro`,`monto_pagar`,`estatus`,`restante`)
+                (`id`,`id_empleado`,`monto`,`interes`,`monto_por_semana`,`numero_semanas`,`fecha_registro`,`fecha_pago`,`monto_pagar`,`estatus`,`restante`)
                 values
-                ('0','{$this->id_empleado}','".$restanteCantidad."','$interes_pagar','$monto_por_semana','{$this->numero_semanas}',now(),'$monto_pagar','1','{$monto_pagar}')";
+                ('0','{$this->id_empleado}','".$restanteCantidad."','$interes_pagar','$monto_por_semana','{$this->numero_semanas}',now(),'{$this->fecha_pago}','$monto_pagar','1','{$monto_pagar}')";
         $bResultado = $this->NonQuery($sql);
 
         $sql1 = "select id from prestamos order by id desc limit 1";

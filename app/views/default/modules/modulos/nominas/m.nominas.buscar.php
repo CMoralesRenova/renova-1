@@ -45,8 +45,8 @@ $oNominas->ValidaNivelUsuario("nominas");
 
     function Listado() {
         var jsonDatos = {
-            "fecha_inicial":$("#fecha_inicial").val(),
-            "fecha_final":$("#fecha_final").val(), 
+            "fecha_inicial": $("#fecha_inicial").val(),
+            "fecha_final": $("#fecha_final").val(),
             "accion": "BUSCAR"
         };
         $.ajax({
@@ -63,6 +63,33 @@ $oNominas->ValidaNivelUsuario("nominas");
             }
         });
     }
+
+    function Reporte(id_, id_empleado) {
+        $.ajax({
+            data: "id=" + id_ + "&id_empleado=" + id_empleado,
+            type: "POST",
+            url: "app/views/default/modules/modulos/nominas/m.nominas.items.php",
+            beforeSend: function() {
+                $("#divFormulario_item").html(
+                    '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
+                );
+            },
+            success: function(datos) {
+                $("#divFormulario_item").html(datos);
+            }
+        });
+        $("#myModal_item").modal({
+            backdrop: "true"
+        });
+    }
+    function printDiv() {
+          var objeto=document.getElementById('divFormulario_item');  //obtenemos el objeto a imprimir
+          var ventana=window.open('','_blank');  //abrimos una ventana vacía nueva
+          ventana.document.write(objeto.innerHTML);  //imprimimos el HTML del objeto en la nueva ventana
+          ventana.document.close();  //cerramos el documento
+          ventana.print();  //imprimimos la ventana
+          ventana.close();  //cerramos la ventana
+        }
 
     function Editar(id, nombre) {
         switch (nombre) {
@@ -141,6 +168,7 @@ $oNominas->ValidaNivelUsuario("nominas");
 </script>
 
 <?php require_once('app/views/default/link.html'); ?>
+<script src="app/views/default/js/jsPDF/jspdf.js"></script>
 
 <head>
     <?php require_once('app/views/default/head.html'); ?>
@@ -228,6 +256,31 @@ $oNominas->ValidaNivelUsuario("nominas");
                         </div>
                         <div class="modal-footer">
                             <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Crear Nomina">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal -->
+
+            <!-- Logout Modal-->
+            <div class="modal fade bd-example-modal-lg" id="myModal_item" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel"><strong id="nameModal"></strong>
+                            </h5>
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- contenido del modal-->
+                                <div style="width:100%;" class="modal-body" id="divFormulario_item">
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="button" id="btnPrint" class="btn btn-danger" name="btnPrint" onclick="printDiv()" value="Imprimir">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>

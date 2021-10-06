@@ -37,10 +37,12 @@ $lstprestamos = $oPrestamos->Listado();
                     <tr>
                         <th>Empleado</th>
                         <th>Fecha de registro</th>
+                        <th>Fecha pago</th>
                         <th>Monto Solicitado</th>
                         <th>Monto A Pagar</th>
                         <th>Cantidad A Pagar Por Semana</th>
                         <th>Semanas</th>
+                        <th>Semana actual</th>
                         <th>Estatus</th>
                         <th>Acciones</th>
                     </tr>
@@ -48,10 +50,12 @@ $lstprestamos = $oPrestamos->Listado();
                 <tfoot>
                     <th>Empleado</th>
                     <th>Fecha de registro</th>
+                    <th>Fecha pago</th>
                     <th>Monto Solicitado</th>
                     <th>Monto A Pagar</th>
                     <th>Cantidad A Pagar Por Semana</th>
                     <th>Semanas</th>
+                    <th>Semana actual</th>
                     <th>Estatus</th>
                     <th>Acciones</th>
                 </tfoot>
@@ -67,6 +71,7 @@ $lstprestamos = $oPrestamos->Listado();
                                 <td style="text-align: ;">$<?= $campo->monto_pagar ?></td>
                                 <td style="text-align: ;">$<?= $campo->monto_por_semana ?></td>
                                 <td style="text-align: ;"><?= $campo->numero_semanas ?></td>
+                                <td style="text-align: ;"><?= $campo->semana_actual ?></td>
                                 <td style="text-align: ;"><?= $campo->est ?></td>
                                 <td style="text-align: ;width: 20%;">
                                     <div class="row">
