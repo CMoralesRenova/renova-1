@@ -40,24 +40,36 @@ class otros extends AW
     }
 
     public function Listado()
-    {
+    {   
+        $sqlEmpleado = "";
+        if (!empty($this->id_empleado)) {
+            $sqlEmpleado = "a.id_empleado='{$this->id_empleado}'";
+        }
+
+        $sqlFecha = "";
+        if (!empty($this->fecha_pago)) {
+            $sqlFecha = "  and a.fecha_pago='{$this->fecha_pago}'";
+        } else {
+            $sqlFecha = "fecha_registro between '{$this->fecha_inicial}' and '{$this->fecha_final}'";
+        }
         $sql = "SELECT
-        a.*, CASE
-    WHEN a.estatus = 0 THEN
-        'LIQUIDADO'
-    WHEN a.estatus = 1 THEN
-        'PAGANDO'
-    ELSE
-        'OTRO'
-    END AS est,
-     b.nombres, b.ape_paterno, b.ape_materno
-    FROM
-        otros AS a
-    LEFT JOIN empleados AS b ON a.id_empleado = b.id
-    where fecha_registro between '{$this->fecha_inicial}' and '{$this->fecha_final}'
-    ORDER BY
-        a.id ASC";
-        return $this->Query($sql);
+            a.*, CASE
+            WHEN a.estatus = 0 THEN
+                'LIQUIDADO'
+            WHEN a.estatus = 1 THEN
+                'PAGANDO'
+            ELSE
+                'OTRO'
+            END AS est,
+            b.nombres, b.ape_paterno, b.ape_materno
+            FROM
+                otros AS a
+            LEFT JOIN empleados AS b ON a.id_empleado = b.id
+            where  {$sqlEmpleado} {$sqlFecha}
+        ORDER BY
+            a.id ASC";
+
+            return $this->Query($sql);
     }
 
     public function Informacion()
@@ -118,7 +130,7 @@ class otros extends AW
                 (`id`,`id_empleado`,`monto`,`monto_por_semana`,`numero_semanas`,`fecha_registro`,`fecha_pago`,`monto_pagar`,`motivo`,`detalles`,`estatus`)
                 values
                 ('0','{$this->id_empleado}','{$this->monto}','$monto_por_semana','{$this->numero_semanas}',now(),'{$this->fecha_pago}','$monto_pagar','{$this->motivo}','{$this->detalles}','1')";
-                //echo nl2br($sql);
+        //echo nl2br($sql);
         $bResultado = $this->NonQuery($sql);
 
         $sql1 = "select id from otros order by id desc limit 1";

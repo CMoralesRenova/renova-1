@@ -109,3 +109,113 @@ function DatosVacios(obj, input) {
     });
     return datosVacios;
 }
+
+var timestamp = null;
+
+function activarSensor(srn) {
+    $.ajax({
+        type: "POST",
+        url: "app/views/default/modules/catalogos/empleados/m.empleados.procesa.php",
+        data: "accion=ActivarSensor&token=" + srn,
+        dataType: "json",
+        beforeSubmit: function(formData, jqForm, options) {alert("se queda aca");},
+        success: function(data) {
+            if (data === 1) {
+                $("#activeSensorLocal").attr("disabled", true);
+                $("#fingerPrint").css("display", "block");
+            }
+        }
+    });
+}
+
+function cargar_push() {
+    $.ajax({
+        async: true,
+        type: "POST",
+        url: "app/sensor/httpush.php",
+        data: "&&timestamp=" + timestamp + "&token=" + $("#token").val(),
+        dataType: "json",
+        success: function(data) {
+            $("#usr").val('');
+            //$("#id").val('');
+
+            var json = JSON.parse(JSON.stringify(data));
+            console.log(json);
+            timestamp = json["timestamp"];
+            imageHuella = json["imgHuella"];
+            tipo = json["tipo"];
+            id = json["id"];
+            $("#" + id + "_status").text(json["statusPlantilla"]);
+            $("#" + id + "_texto").text(json["texto"]);
+            if (imageHuella !== null) {
+                $("#" + id).attr("src", "data:image/png;base64," + imageHuella);
+                if (tipo === "leer") {
+                    if (json["statusPlantilla"] == "El usuario no existe"){
+                        Alert("", json["statusPlantilla"], "warning", 900, false);
+                    } else {
+                        $("#usr").val(json["documento"]);
+                        $("#id").val(json["documento"]);
+                        console.log("accion=CHECAR&usr=" + $("#usr").val()+"&fecha_inicial="+$("#fecha_").val()+
+                        "&fecha_final="+$("#fecha_").val()+"&hora="+$("#hora").val()+"&diaActual="+$("#diaActual").val());
+                        $.ajax({
+                            type: "POST",
+                            url: "app/views/default/modules/checador/m.checador_procesa.php",
+                            data: "accion=CHECAR&usr=" + $("#usr").val()+"&fecha_inicial="+$("#fecha_").val()+
+                            "&fecha_final="+$("#fecha_").val()+"&hora="+$("#hora").val()+"&diaActual="+$("#diaActual").val(),
+                            success: function(response) {
+                                var str = response;
+                                var datos0 = str.split("@")[0];
+                                var datos1 = str.split("@")[1];
+                                var datos2 = str.split("@")[2];
+                                if ((datos3 = str.split("@")[3]) === undefined) {
+                                    datos3 = "";
+                                } else {
+                                    datos3 = str.split("@")[3];
+                                }
+                                Alert(datos0, datos1 + "" + datos3, datos2, 1100, false);
+                                Listado();
+                            }
+                        });
+                    }
+                }
+            }
+            setTimeout("cargar_push()", 1000);
+        }
+    });
+}
+
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+
+function showMessageBox(mensaje, type) {
+    var clas = "";
+    var icono = "";
+    switch (type) {
+        case "success":
+            clas = "mensaje_success";
+            icono = "imagenes/success_16.png";
+            break;
+        case "warning":
+            clas = "mensaje_warning";
+            icono = "imagenes/warning_16.png";
+            break;
+        case "danger":
+            clas = "mensaje_danger";
+            icono = "imagenes/danger_16.png";
+            break;
+    }
+
+    $("#mensaje").addClass(clas);
+    $("#txtMensaje").html(mensaje);
+    $("#imageMenssage").attr("src", icono);
+    $("#mensaje").fadeIn(5);
+    setTimeout(function () {
+        $("#mensaje").fadeOut(1500);
+    }, 3000);
+
+}

@@ -24,7 +24,7 @@ $lstnominas = $oNominas->Listado_nomina();
                     title: 'Reporte Nomina Semana <?= $nombre ?>',
                     text: 'Exportar a pdf',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                        columns: [0, 5,8,9,10,11,12,13,14]
                     }
                 }]
             });
@@ -49,6 +49,7 @@ $lstnominas = $oNominas->Listado_nomina();
                         <th>Dias Laborados</th>
                         <th>Horas Extras</th>
                         <th>Total Percepciones</th>
+                        <th>Ahorro</th>
                         <th>Prestamos</th>
                         <th>Otros Cargos</th>
                         <th>Total Retenciones</th>
@@ -60,6 +61,7 @@ $lstnominas = $oNominas->Listado_nomina();
                     <?php
                     if (count($lstnominas) > 0) {
                         foreach ($lstnominas as $idx => $campo) {
+                            print_r($campo->estatusAhorro);
                     ?>
                             <tr>
                                 <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
@@ -72,16 +74,26 @@ $lstnominas = $oNominas->Listado_nomina();
                                 <td style="text-align: center;"><?= $campo->dias_laborados ?></td>
                                 <td style="text-align: center;"><?= bcdiv($campo->horas_extras, '1', 2) ?></td>
                                 <td style="text-align: center;"><?php
-                                                                 $totalEsperado = 0;
+                                                                $totalEsperado = 0;
                                                                 if ($campo->dias_laborados < 7) {
                                                                     $totalEsperado = bcdiv($campo->esperado + $campo->bono_doce + $campo->complemento_sueldo + $campo->salario_productividad + $campo->horas_extras, '1', 2);
                                                                 } else {
                                                                     $totalEsperado = bcdiv($campo->esperado + $campo->bono_doce + $campo->complemento_sueldo + $campo->salario_productividad + $campo->salario_puntualidad + $campo->salario_asistencia + $campo->horas_extras, '1', 2);
                                                                 }
                                                                 echo $totalEsperado; ?></td>
+                                <td style="text-align: center;"><?php if ($campo->estatusAhorro == 1) {
+                                                                    echo "-".$campo->monto;
+                                                                } else {
+                                                                    echo "-0.00";
+                                                                } ?></td>
+
                                 <td style="text-align: center;"><?= "-" . bcdiv($campo->prestamos, '1', 2) ?></td>
                                 <td style="text-align: center;"><?= "-" . bcdiv($campo->otros_descuentos, '1', 2) ?></td>
-                                <td style="text-align: center;"><?= "-" . $campo->retenciones ?></td>
+                                <td style="text-align: center;"><?php  
+                                                                if ($campo->estatusAhorro == 1) {
+                                                                    $campo->retenciones + $campo->monto;
+                                                                }
+                                                                echo "-" . $campo->retenciones; ?></td>
                                 <td style="text-align: center;"><?php
                                                                 $totalTotal = 0;
                                                                 if ($campo->dias_laborados < 7) {
@@ -91,7 +103,7 @@ $lstnominas = $oNominas->Listado_nomina();
                                                                 }
                                                                 echo $totalTotal; ?></td>
                                 <td style="text-align: center;">
-                                    <?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno."<br>" ?>
+                                    <?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno . "<br>" ?>
                                     <a class="btn btn-sm btn-warning" href="javascript:Reporte('<?= $campo->id ?>','<?= $campo->id_empleado ?>')">Ver</a>
                                 </td>
                             </tr>

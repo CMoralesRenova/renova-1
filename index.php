@@ -14,7 +14,7 @@ $action = addslashes(filter_input(INPUT_GET, "action"));
 session_start();
 if ($action === "login") {
     $mvc->login();
-} else if ($action === "checador") {
+} else if (strpos($action, "checador") !== false) {
     $mvc->checador();
 }  else {
     $mvc->ExisteSesion();
@@ -23,10 +23,7 @@ if ($action === "login") {
 
     if ($action === "bienvenida") {// muestra el modulo de bienvenida
         $mvc_default->bienvenida();
-    } else if ($action === "dashboard") {
-        $mvc_admin = new mvc_controller_administrador();
-        $mvc_admin->dashboard();
-    } else if ($action === "usuarios") {
+    }else if ($action === "usuarios") {
         $mvc_admin = new mvc_controller_administrador();
         $mvc_admin->usuarios();
     }else if ($action === "choferes") {
@@ -45,7 +42,7 @@ if ($action === "login") {
         $mvc_default->horarios();
     }else if ($action === "horas") {
         $mvc_default->horas();
-    }else if ($action === "empleados") {
+    }else if (strpos($action, "empleados") !== false) {
         $mvc_default->empleados();
     }else if ($action === "proveedores") {
         $mvc_default->proveedores();

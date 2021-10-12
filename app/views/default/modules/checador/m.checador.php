@@ -12,10 +12,14 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
     <?php require_once('app/views/default/head.html'); ?>
     <?php require_once('app/views/default/script_h.html'); ?>
     <script type="text/javascript">
+        window.onkeydown = opcionChecador;
         $(document).ready(function(e) {
+            $("#selectOptions").show();
+            $("#token").val('<?php echo $_GET["token"]; ?>');
+            $("#id").val('');
+            $("#usr").val('');
             Listado();
-
-            $("#usr").focus();
+            //$("#usr").focus();
             $("#usr").change(function() {
                 var value = $("#usr").val();
                 $("#id").val(value);
@@ -23,43 +27,49 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
             $("#usr").keyup(function(event) {
                 var tecla = event.keyCode;
                 if (tecla == 13) {
-                    $('#frmFormulario').submit(function(e) {
-                        e.preventDefault();
-                        $.ajax({
-                            type: "POST",
-                            url: $(this).attr('action'),
-                            data: $(this).serialize(),
-                            success: function(response) {
-                                var str = response;
-                                var datos0 = str.split("@")[0];
-                                var datos1 = str.split("@")[1];
-                                var datos2 = str.split("@")[2];
-                                if ((datos3 = str.split("@")[3]) === undefined) {
-                                    datos3 = "";
-                                } else {
-                                    datos3 = str.split("@")[3];
-                                }
-                                Alert(datos0, datos1 + "" + datos3, datos2, 1100, false);
-                                Listado();
-                                $("#usr").val("");
-                                $("#usr").focus();
-                            }
-                        });
-                        if ($(this).valid()) {
-                            $(this).submit(function() {
-                                return false;
-                            });
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    });
+                    Guardar($("#id").val());
                     //$("#frmFormulario").submit();
                 }
             });
         });
 
+        function Guardar() {
+            $('#frmFormulario').submit(function(e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: $(this).attr('action'),
+                    data: "usr=" + $("#id").val(),
+                    success: function(response) {
+                        var str = response;
+                        var datos0 = str.split("@")[0];
+                        var datos1 = str.split("@")[1];
+                        var datos2 = str.split("@")[2];
+                        if ((datos3 = str.split("@")[3]) === undefined) {
+                            datos3 = "";
+                        } else {
+                            datos3 = str.split("@")[3];
+                        }
+                        Alert(datos0, datos1 + "" + datos3, datos2, 1100, false);
+                        Listado();
+                        $("#usr").val("");
+                        $("#usr").focus();
+                    }
+                });
+                if ($(this).valid()) {
+                    $(this).submit(function() {
+                        return false;
+                    });
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+        }
+
         function Listado() {
+            $("#id").val('');
+            $("#usr").val('');
             var jsonDatos = {};
             $.ajax({
                 data: jsonDatos,
@@ -74,6 +84,25 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
                     $("#divListado").html(datos);
                 }
             });
+        }
+
+        function opcionChecador() {
+            var tecla = event.keyCode;
+            if (tecla == 109 ) {
+                //disparar el evento del checador_procesa
+                $.ajax({
+                    data: "token=<?php echo $_GET["token"]; ?>",
+                    type: "POST",
+                    url: "app/sensor/ActivarSensorReader.php",
+                    beforeSend: function() {},
+                    success: function(datos) {}
+                });
+                cargar_push();
+                $("#selectOptions").hide();
+
+            } else if (tecla == 107) {
+                alert("que pedo por que le picas al 2");
+            }
         }
 
         function mueveReloj() {
@@ -126,6 +155,19 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
                         <div class="row">
 
                             <div class="col-lg-12">
+                                <div id="selectOptions" class="">
+                                    <h1 class="text-center">Como quieres registrar tu entrada</h1>
+                                    <div class="row text-center">
+                                        <div class="col">
+                                            <img class="rounded" style="width:20%;" src="app/views/default/img/finger.gif"></img><br>
+                                            <h3>Presiona 1</h3>
+                                        </div>
+                                        <div class="col">
+                                            <img class="rounded" style="width:20%;" src="app/views/default/img/finger.gif"></img>
+                                            <h3>Presiona 2</h3>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="p-5">
                                     <form class="user" id="frmFormulario" name="frmFormulario" action="app\views\default\modules\checador\m.checador_procesa.php" enctype="multipart/form-data" method="post" target="_self" class="">
                                         <div class="form-group">
@@ -134,10 +176,11 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
                                         </div>
                                         <input type="hidden" name="accion" value="CHECAR">
                                         <input type="hidden" name="usr" id="id" value="">
-                                        <input type="hidden" name="fecha_inicial" value="<?= date('Y-m-d') ?>">
+                                        <input type="hidden" name="fecha_inicial" id="fecha_" value="<?= date('Y-m-d') ?>">
                                         <input type="hidden" name="fecha_final" value="<?= date('Y-m-d') ?>">
                                         <input type="hidden" name="hora" id="hora" value="">
                                         <input type="hidden" name="diaActual" id="diaActual" value="">
+                                        <input type="hidden" name="" id="token" value="">
                                     </form>
                                 </div>
                                 <div id="divListado"></div>

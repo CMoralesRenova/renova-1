@@ -26,5 +26,15 @@ if ($accion == "GUARDAR") {
     } else {
         echo "Sistema@Ha ocurrido un error al guardar la información , vuelva a intentarlo o consulte con el administrador del sistema.@warning";
     }
+} else if ($accion == 'ActivarSensor'){
+    $oEmpleados = new empleados(true, $_POST);
+    $resultado = $oEmpleados->ActivarSensor();
+        print_r($resultado);
+        //echo json_encode("{\"filas\":{$valor}");
+} else if ($accion == 'carga_push'){
+    $oEmpleados = new empleados(true, $_POST);
+    $resultado = $oEmpleados->CargaPush();
+        print_r($resultado);
+        //echo json_encode("{\"filas\":{$valor}");
 }
 ?>

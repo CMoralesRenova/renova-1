@@ -2,12 +2,25 @@
 session_start();
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "app/model/nominas.class.php");
-require_once($_SITE_PATH . "app/model/ezpdf/class.ezpdf.php");
+require_once($_SITE_PATH . "app/model/prestamos.class.php");
+require_once($_SITE_PATH . "app/model/otros.class.php");
 
-$oNominas = new nominas();
-$oNominas->id = addslashes(filter_input(INPUT_POST, "id"));
-$oNominas->id_empleado = addslashes(filter_input(INPUT_POST, "id_empleado"));
-$lstnominas = $oNominas->Listado_nomina();
+$oNominas = new nominas(true, $_POST);
+$oNominas->id = empty($_GET['id']) ? "" : $_GET['id'];
+$oNominas->id_empleado = empty($_GET['id_empleado']) ? "" : $_GET['id_empleado'];
+$oNominas->Listado_nomina();
+
+$oPrestamos = new prestamos(true, $_POST);
+$oPrestamos->id = $oNominas->id_prestamo;
+$oPrestamos->Informacion();
+
+$oOtros = new otros(true, $_POST);
+$oOtros->id_empleado = empty($_GET['id_empleado']) ? "" : $_GET['id_empleado'];
+$oOtros->fecha_pago = $oNominas->fecha;
+$LstOtros = $oOtros->Listado();
+
+$totalaPagar = 0;
+$totalaRetencion = 0;
 ?>
 <style>
     #encabezado .fila #col_1 {
@@ -78,56 +91,314 @@ $lstnominas = $oNominas->Listado_nomina();
         height: 6%
     }
 </style>
-<div class="table-responsive" style="border: solid 1px #000;">
-    <table>
+<page backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm" style="border: #00 1px solid;">
+    <table style="margin-top: -10px;">
+        <tr>
+            <td>
+                <label style="margin-left:150px; font-size:18px;">RENOVA CHATARRAS INDUSTRIALES S.A. DE C.V</label>
+            </td>
+        </tr>
+        <br />
+    </table>
+    <table border="1" style="margin-left:10px; position:relative;">
         <thead>
-            <th>
-                <tr>
-                    <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                    <td>&nbsp;&nbsp;&nbsp;</td>-->
-                    <td>
-                        <h3 style="margin-left:240px;">RENOVA CHATARRAS INDUSTRIALES S.A DE C.V</h3>
-                    </td>
-                    </td>
-                </tr>
-            </th>
+            <tr>
+                <h1>Recibo de nómina</h1>
+            </tr>
         </thead>
     </table>
-    <table>
+    <table style="margin-left:270px; position:relative; margin-top: -4px;">
+        <thead>
+            <tr>
+                <td>RFC: RC112222255522</td>
+            </tr>
+        </thead>
         <tbody>
             <tr>
-                <td>
-                    <h1>Recibo de nómina </h1>
-                    <!--<td>&nbsp;&nbsp;&nbsp;&nbsp;<label style="font-size: 10px;"> RFC: RCI411223RA</label></td>
-                    <td><label style="font-size: 10px;"> RFC: RCI411223RA</label></td>-->
-                <td>
-                <td>
-                    <tabble>
-                        <thead>
-                            <tr>
-                                <th>Frecuencia de pago</th>
-                                <th>Fecha</th>
-                            </tr>
-                        </thead>
-                    </tabble>
-                </td>
-        <tbody>
-            <tr>
-                <td></td>
-                <td>Fecha</td>
+                <td>IMSS: A407855596</td>
             </tr>
         </tbody>
-        <td>
-            </tr>
-            <tr>
-                <td>&nbsp;&nbsp;&nbsp;</td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>&nbsp;&nbsp;&nbsp;</td>
-                <td><label> RFC: RCI411223RA</label></td>
-            </tr>
-            </tbody>
     </table>
-</div>
+    <table border="1" style="margin-left:460px; position:relative; margin-top: -30px; border-collapse: collapse; width: 310px;">
+        <thead>
+            <tr>
+                <th style="color: #f3eded; background-color: #000;width:135px;">Frecuancia de pago</th>
+                <th style="color: #f3eded; background-color: #000;width:135px;">Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>SEMANAL</td>
+                <td><?= $oNominas->fecha ?></td>
+            </tr>
+        </tbody>
+    </table>
+    <table style="margin-left:0px; position:relative; margin-top: 10px; border: #00 1px solid;">
+        <tr>
+            <th style="color: #f3eded; background-color: #000;width:450px;  text-align:center;" COLSPAN=2>Empleado</th>
+        </tr>
+        <tr>
+            <td><Label>Nombre:</Label></td>
+            <td><?= $oNominas->nombres . " " . $oNominas->ape_paterno . " " . $oNominas->ape_materno  ?></td>
+        </tr>
+        <tr>
+            <td><Label>Puesto:</Label></td>
+            <td><?= $oNominas->puesto ?></td>
+        </tr>
+        <tr>
+            <td><Label>Departamento:</Label></td>
+            <td><?= $oNominas->departamento ?></td>
+        </tr>
+        <tr>
+            <td><Label>RFC:</Label></td>
+            <td><?= $oNominas->rfc ?></td>
+        </tr>
+        <tr>
+            <td><Label>CURP:</Label></td>
+            <td><?= $oNominas->curp ?></td>
+        </tr>
+    </table>
+    <table style="margin-left:458px; position:relative; margin-top: -112px; border: #00 1px solid;">
+        <tr>
+            <th style="color: #f3eded; background-color: #000;width:275px; text-align:center;" COLSPAN=2>Seguridad Social</th>
+        </tr>
+        <tr>
+            <td><Label>Registro:</Label></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><Label>Tipo de salario:</Label></td>
+            <td>Fijo</td>
+        </tr>
+        <tr>
+            <td><Label>Salario integrado:</Label></td>
+            <td><?= $oNominas->salario_diario ?> diario</td>
+        </tr>
+        <tr>
+            <td><Label>Jornada:</Label></td>
+            <td>8:00 horas</td>
+        </tr>
+        <tr>
+            <td><Label>Fecha de ingreso:</Label></td>
+            <td><?= $oNominas->fecha_ingreso ?></td>
+        </tr>
+    </table>
+    <table style="margin-left:0px; position:relative; margin-top: 5px; border: #00 1px solid;">
+        <tr>
+            <th style="color: #f3eded; background-color: #000;width:170px; text-align:center;">Percepción</th>
+            <th style="color: #f3eded; background-color: #000;width:80px; text-align:center;">Monto</th>
+            <th style="color: #f3eded; background-color: #000;width:70px; height:14px; text-align:center;">Unidades</th>
+            <th></th>
+            <th style="margin-left:10px;color: #f3eded; background-color: #000;width:134px; text-align:center;">Concepto</th>
+            <th style="color: #f3eded; background-color: #000;width:80px;  text-align:center;">Monto</th>
+            <th style="color: #f3eded; background-color: #000;width:80px;  text-align:center;">Retención</th>
+            <th style="color: #f3eded; background-color: #000;width:100px; text-align:center;">Saldo</th>
+        </tr>
+        <tr>
+            <td><Label>Sueldo normal</Label></td>
+            <?php $totalaPagar = $totalaPagar + $oNominas->dias_laborados * $oNominas->salario_diario; ?>
+            <td><?= $oNominas->dias_laborados * $oNominas->salario_diario ?></td>
+            <td><?= $oNominas->dias_laborados ?> dias</td>
+            <td>&nbsp;</td>
+            <?php if ($oNominas->prestamos > 0) {
+                $totalaRetencion = $totalaRetencion + $oPrestamos->monto_por_semana ?>
+                <td>Prestamo</td>
+                <td><?= $oPrestamos->monto_pagar ?> </td>
+                <td><?= $oPrestamos->monto_por_semana ?></td>
+                <td><?= $oPrestamos->restante ?></td>
+            <?php } else { ?>
+                <td>&nbsp;</td>
+            <?php } ?>
+        </tr>
+        <tr>
+            <?php if ($oNominas->dias_laborados == 7) {
+                $totalaPagar = $totalaPagar + $oNominas->salario_asistencia;  ?>
+                <td><Label>Premio de Asistencia</Label></td>
+                <td><?= $oNominas->salario_asistencia ?></td>
+            <?php } else { ?>
+                <td><Label>&nbsp;</Label></td>
+                <td>&nbsp;</td>
+            <?php } ?>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>Servicio de comedor</td>
+            <td>&nbsp;</td>
+            <td>200</td>
+        </tr>
+        <tr>
+            <?php if ($oNominas->dias_laborados == 7) {
+                $totalaPagar = $totalaPagar + $oNominas->salario_puntualidad; ?>
+                <td><Label>Premio de Puntualidad</Label></td>
+                <td><?= $oNominas->salario_puntualidad ?> </td>
+            <?php } else { ?>
+                <td><Label>&nbsp;</Label></td>
+                <td>&nbsp;</td>
+            <?php } ?>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <?php if ($oNominas->otros_descuentos > 0) { ?>
+                <?php
+                $totalDescuentos = 0;
+                $totalSemana = 0;
+                $totalRestante = 0;
+                if (count($LstOtros) > 0) {
+
+                    foreach ($LstOtros as $idx => $campo) {
+                        $totalDescuentos = $totalDescuentos + $campo->monto_pagar;
+                        $totalSemana = $totalSemana + $campo->monto_por_semana;
+                        $totalRestante = $totalRestante + $campo->restante;
+                    }
+                    $totalaRetencion = $totalaRetencion + $totalSemana;
+                    echo "<td>Otros Cargos</td>";
+                    echo "<td>$totalDescuentos</td>";
+                    echo "<td>$totalSemana</td>";
+                    echo "<td>$totalRestante</td>";
+                } ?>
+            <?php } ?>
+        </tr>
+        <tr>
+            <?php if ($oNominas->salario_productividad > 0) {
+                $totalaPagar = $totalaPagar +  $oNominas->salario_productividad; ?>
+                <td><Label>Bono de productividad</Label></td>
+                <td><?= $oNominas->salario_productividad ?> </td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <?php if ($oNominas->monto > 0) { ?>
+                    <td><Label>Caja de ahorro</Label></td>
+                    <td></td>
+                    <?php if ($oNominas->estatusAhorro == 1) {
+                        $totalaRetencion = $totalaRetencion + $oNominas->monto;
+                        echo "<td>$oNominas->monto</td>";
+                    } else {
+                        echo "<td>Ahorro detenido</td>";
+                    } ?>
+                    <td><?= $oNominas->monto * $oNominas->frecuencia ?></td>
+                <?php } else { ?>
+                    <td><Label>&nbsp;</Label></td>
+                    <td>&nbsp;</td>
+                <?php } ?>
+            <?php } ?>
+        </tr>
+        <tr>
+            <?php if ($oNominas->horas_extras > 0) {
+                $totalaPagar = $totalaPagar + $oNominas->horas_extras; ?>
+                <td><Label>Horas extras</Label></td>
+                <td><?= bcdiv($oNominas->horas_extras, '1', 2) ?> </td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            <?php } ?>
+        </tr>
+        <tr>
+            <td><Label></Label></td>
+            <td> </td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
+    <table style="margin-left:0px; position:relative; margin-top: 0px; border: #00 1px solid;" >
+        <tr>
+            <td style="width:529px;"><Label style=" font-size:12px;">Recibí de esta empresa la cantidad que señala este recibo de pago, estando conforme con las<br>
+                    percepciones y las retenciones descritas, por lo que certifico que no se me adeuda cantidad alguna<br>
+                    por ningún concepto.</Label></td>
+        </tr>
+        <tr>
+            <td style=" height: 40px;width:190px; text-align:center;"><Label>______________________________________<br>Firma del empleado</Label></td>
+        </tr>
+    </table>
+    <table style="margin-left:538px; position:relative; margin-top: -93px; border: #00 1px solid; heig">
+        <tr>
+            <td style="font-size:14px;">Total de<br> percepciones: </td>
+            <td style="width=101px;"><?= bcdiv($totalaPagar, '1', 2) ?></td>
+        </tr>
+        <tr>
+            <td style="font-size:15px;">Total de <br>retenciones: </td>
+            <td><u>-<?= bcdiv($totalaRetencion, '1', 2)  ?>&nbsp;</u></td>
+        </tr>
+        <tr >
+            <td style="">Pago: </td> 
+            <td><?= bcdiv($totalaPagar - $totalaRetencion, '1', 2) ?></td>
+        </tr>
+
+    </table>
+    <table style="margin-left:0px; position:relative; margin-top: -1px; border: #00 1px solid;">
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td><Label>&nbsp;</Label></td>
+            <td><Label>&nbsp;</Label></td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td><Label>&nbsp;</Label></td>
+            <td><Label>&nbsp;</Label></td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td><Label>&nbsp;</Label></td>
+            <td><Label>&nbsp;</Label></td>
+        </tr>
+        <tr>
+            <td style="width:730px; text-align:center; " colspan="3"><Label>Este pago de nómina no cuenta con un CFDI generado y certificado.</Label></td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td><Label>&nbsp;</Label></td>
+            <td><Label>&nbsp;</Label></td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td><Label>&nbsp;</Label></td>
+            <td><Label>&nbsp;</Label></td>
+        </tr>
+        <tr>
+            <td><Label>&nbsp;</Label></td>
+            <td><Label>&nbsp;</Label></td>
+            <td><Label>&nbsp;</Label></td>
+        </tr>
+    </table>
+</page>

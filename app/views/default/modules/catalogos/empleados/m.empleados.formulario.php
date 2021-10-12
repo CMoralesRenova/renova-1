@@ -10,12 +10,19 @@ require_once($_SITE_PATH . "/app/model/empleados.class.php");
 require_once($_SITE_PATH . "/app/model/puestos.class.php");
 require_once($_SITE_PATH . "/app/model/horarios.class.php");
 
-$oEmpleados = new empleados();
+$oEmpleados = new empleados(true, $_POST);
 $oEmpleados->id = addslashes(filter_input(INPUT_POST, "id"));
 $nombre = addslashes(filter_input(INPUT_POST, "nombre"));
 $sesion = $_SESSION[$oEmpleados->NombreSesion];
 $oEmpleados->Informacion();
 $lstJefes = $oEmpleados->jefes();
+
+if ($oEmpleados->id != "") {
+    $oEmpleados1 = new empleados();
+    $oEmpleados1->id = addslashes(filter_input(INPUT_POST, "id"));
+    $lstHuellas = $oEmpleados1->huellas();
+}
+
 
 $oPuestos = new puestos();
 $lstpuestos = $oPuestos->Listado();
@@ -25,6 +32,17 @@ $lsthorarios = $oHorarios->Listado();
 
 ?>
 <script type="text/javascript">
+    $("#token").val(localStorage.getItem("srnPc"));
+    $('.id_token').attr('id', $("#token").val());
+    $('.id_token').attr('name', $("#token").val());
+    $('._status').attr('id', $("#token").val() + "_status");
+    $('._texto').attr('id', $("#token").val() + "_texto");
+
+    function upSensor() {
+        $("#nombre_dedo").addClass("obligado");
+        activarSensor($("#token").val());
+        cargar_push();
+    }
     $(document).ready(function(e) {
         $("#nameModal").text("<?php echo $nombre ?> Empleado");
         $("#frmFormulario").ajaxForm({
@@ -42,6 +60,8 @@ $lsthorarios = $oHorarios->Listado();
                 Alert(datos0, datos1 + "" + datos3, datos2);
                 Listado();
                 $("#myModal_1").modal("hide");
+                $("#" + $("#token").val()).attr("src", "imagenes/finger.png");
+                $("#fingerPrint").css("display", "none");
             }
         });
         $('#estado_civil').select2({
@@ -206,36 +226,82 @@ $lsthorarios = $oHorarios->Listado();
                 </select>
             </div>
         </div>
-        <div class="row">
-            <div class="col">
+        <div class="form-group">
+            <strong class="">Reloj checador:</strong>
+            <div class="form-group">
+                <input type="text" description="Conecte el lector para leer el numero" aria-describedby="" id="checador" required name="checador" value="<?= $oEmpleados->checador ?>" class="form-control obligado" />
+            </div>
+        </div>
+        <div class="form-group">
+            <input id="activeSensorLocal" onclick="upSensor()" style="margin-top: 5px;" type="button" value="Asociar Huella" class="btn btn-primary btn-block" />
+        </div>
+        <div class="form-group">
+            <div id="fingerPrint" class="form-group" style="display:none;">
+                <div class="row">
+                    <div class="col">
+                        <?php
+                        if ($oEmpleados->id != "") {
+                            if (!($lstHuellas == NULL)) {
+                                if (count($lstHuellas) > 0) {
+                                    $indiceHuella = "";
+                                    foreach ($lstHuellas as $idx => $campo) {
+                                        $indiceHuella .= $campo->nombre_dedo . " ";
+                                    }
+                                    echo "Huellas Registradas: <span> " . $indiceHuella . "</span> <br>";
+                                }
+                            }
+                        }
+                        ?>
+                        <img class="img-responsive id_token" style="border: solid; width:30%;" src="app/views/default/img/finger.gif">
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <select id="nombre_dedo" description="Seleccione el dedo a registrar" class="form-control" name="nombre_dedo">
+                                <option value=''>--SELECCIONE--</option>
+                                <option value='A'>A</option>
+                                <option value='B'>B</option>
+                                <option value='C'>C</option>
+                                <option value='D'>D</option>
+                                <option value='E'>E</option>
+                                <option value='F'>F</option>
+                                <option value='G'>G</option>
+                                <option value='H'>H</option>
+                                <option value='I'>I</option>
+                                <option value='J'>J</option>
+                            </select>
+                        </div>
+                        <img class="img-responsive" style="border: solid; width:80%;" src="app/views/default/img/dedos.png">
+                    </div>
+                </div>
                 <div class="form-group">
-                    <strong class="">Reloj checador:</strong>
+                    <label class="_status">
+                        Estado del sensor: Inactivo
+                    </label>
                     <div class="form-group">
-                        <input type="text" description="Conecte el lector para leer el numero" aria-describedby="" id="checador" required name="checador" value="<?= $oEmpleados->checador ?>" class="form-control obligado" />
+                        <strong class="_texto">
+                            ---
+                        </strong>
                     </div>
                 </div>
             </div>
-            <div class="col">
-                <div class="form-group">
-                    <strong class="">Horario:</strong>
-                    <div class="form-group">
-                        <select id="id_horario" description="Seleccione el horario" class="form-control obligado" name="id_horario">
-                            <?php
-                            print_r($oEmpleados);
-                            if (count($lsthorarios) > 0) {
-                                echo "<option value='0' >-- SELECCIONE --</option>\n";
-                                foreach ($lsthorarios as $idx => $campo) {
-                                    if ($campo->id == $oEmpleados->id_horario) {
-                                        echo "<option value='{$campo->id}' selected>{$campo->nombre}</option>\n";
-                                    } else {
-                                        echo "<option value='{$campo->id}' >{$campo->nombre}</option>\n";
-                                    }
-                                }
+        </div>
+        <div class="form-group">
+            <strong class="">Horario:</strong>
+            <div class="form-group">
+                <select id="id_horario" description="Seleccione el horario" class="form-control obligado" name="id_horario">
+                    <?php
+                    if (count($lsthorarios) > 0) {
+                        echo "<option value='0' >-- SELECCIONE --</option>\n";
+                        foreach ($lsthorarios as $idx => $campo) {
+                            if ($campo->id == $oEmpleados->id_horario) {
+                                echo "<option value='{$campo->id}' selected>{$campo->nombre}</option>\n";
+                            } else {
+                                echo "<option value='{$campo->id}' >{$campo->nombre}</option>\n";
                             }
-                            ?>
-                        </select>
-                    </div>
-                </div>
+                        }
+                    }
+                    ?>
+                </select>
             </div>
         </div>
         <div class="card-header py-3">
@@ -303,6 +369,7 @@ $lsthorarios = $oHorarios->Listado();
         </div>
         <input type="hidden" id="id" name="id" value="<?= $oEmpleados->id ?>" />
         <input type="hidden" id="user_id" name="user_id" value="<?= $sesion->id ?>">
+        <input type="hidden" id="token" name="token" value="">
         <input type="hidden" id="accion" name="accion" value="GUARDAR" />
     </div>
 </form>

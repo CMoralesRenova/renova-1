@@ -53,7 +53,7 @@ class asistencia extends AW
         if (!empty($this->id_empleado)) {
             $sqlEmpleado = "and id_empleado = '{$this->id_empleado}' order by a.fecha asc";
         } else {
-            $sqlEmpleado = "order by a.order desc limit 2";
+            $sqlEmpleado = "order by a.order desc limit 5";
         }
 
         $sql = "SELECT b.nombres, b.ape_paterno, b.ape_materno, a.fecha, a.hora_entrada,a.hora_salida,a.estatus_entrada, 
@@ -73,7 +73,6 @@ class asistencia extends AW
             left join empleados as b on b.id = a.id_empleado
             left join horarios as c on c.id = b.id_horario
             where 1=1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' {$sqlEmpleado} ";
-        print_r($sql);
         return $this->Query($sql);
     }
 
@@ -109,13 +108,15 @@ class asistencia extends AW
     public function Existe()
     {
         $sql1 = "select * from empleados where checador = '{$this->usr}' order by id desc limit 1";
-        $res1 = $this->Query($sql1);
+        $res1 = $this->Query($sql1); 
+
         $bExiste = 0;
         if (count($res1) > 0) {
             $this->id_empleado = $res1[0]->id;
 
             $sql = "SELECT * FROM asistencia where fecha = '{$this->fecha_inicial}' and id_empleado = '{$this->id_empleado}' order by id desc limit 1";
             $res = $this->Query($sql);
+            print_r($sql);
 
             if (count($res) > 0) {
                 if (!empty($res[0]->hora_salida)) {

@@ -13,6 +13,11 @@ $oUsuario->Informacion();
 
 $aPermisos = empty($oUsuario->perfiles_id) ? array() : explode("@", $oUsuario->perfiles_id);
 ?>
+<script>
+    $(document).ready(function(e) {
+        $('#empleados').attr('href', "index.php?action=empleados&token=" + localStorage.getItem("srnPc"));
+    });
+</script>
 <!-- Sidebar -->
 <ul class="navbar-nav bg-gradient-danger sidebar sidebar-dark accordion" id="accordionSidebar">
 
@@ -64,7 +69,7 @@ $aPermisos = empty($oUsuario->perfiles_id) ? array() : explode("@", $oUsuario->p
                     <a class='collapse-item' href='index.php?action=horas'>Horas extras</a>
                 <?php } ?>
                 <?php if ($oUsuario->ExistePermiso("empleados", $aPermisos) === true) { ?>
-                    <a class='collapse-item' href='index.php?action=empleados'>Empleados</a>
+                    <a class='collapse-item' id="empleados">Empleados</a>
                 <?php } ?>
                 <?php if ($oUsuario->ExistePermiso("proveedores", $aPermisos) === true) { ?>
                     <a class='collapse-item' href='index.php?action=proveedores'>Proveedores</a>

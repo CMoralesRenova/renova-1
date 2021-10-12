@@ -15,6 +15,7 @@ $oEmpleados->ValidaNivelUsuario("empleados");
 <script type="text/javascript">
     $(document).ready(function(e) {
         Listado();
+        
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
             var frmTrue = true;
@@ -22,13 +23,13 @@ $oEmpleados->ValidaNivelUsuario("empleados");
                 var elemento = this;
                 if ($(elemento).hasClass("obligado")) {
                     if (elemento.value == "" || elemento.value == 0) {
-                        Alert("", $(elemento).attr("description"), "warning",900,false);
+                        Alert("", $(elemento).attr("description"), "warning", 900, false);
                         Empty(elemento.id);
                         frmTrue = false;
                     }
                 }
             });
-            if(frmTrue == true) {
+            if (frmTrue == true) {
                 $("#frmFormulario").submit();
             }
         });
@@ -99,7 +100,9 @@ $oEmpleados->ValidaNivelUsuario("empleados");
                 }
             });
             $("#myModal_1").modal({
-                backdrop: "true"
+                backdrop: "true",
+                backdrop: 'static',
+                keyboard: false
             });
         }
     }

@@ -28,6 +28,7 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
     </style>
     <script type="text/javascript">
         $(document).ready(function(e) {
+            $('#checador').attr('href', "index.php?action=checador&token=" + localStorage.getItem("srnPc"));
             $("#may").hide();
 
             $("#usr, #pass").keyup(function(event) {
@@ -127,7 +128,7 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     </div>
                                     <div class="text-right " >
-                                        <a href="index.php?action=checador" id="" class="btn btn-info"><label> Checador</label></a>
+                                        <a id="checador" class="btn btn-info"><label> Checador</label></a>
                                     </div>
                                 </div>
                             </div>

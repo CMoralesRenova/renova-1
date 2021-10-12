@@ -16,12 +16,12 @@ class database extends Configuracion
         @mysqli_set_charset($this->Link, 'utf8');
 
         if ($this->Link === false) {
-            echo $this->MensajeAlerta("Base de Datos", "Conexión fallida al servidor {$this->mysql_host}, {$this->mysql_user}/{$this->mysql_pass}, Base de datos: {$this->mysql_database}");
+            echo "Base de Datos: ". "Conexión fallida al servidor {$this->mysql_host}, {$this->mysql_user}/{$this->mysql_pass}, Base de datos: {$this->mysql_database}";
             exit ();
         } else {
             $db_selected = mysqli_select_db($this->Link, $this->mysql_database);
             if ($db_selected === false) {
-                echo $this->MensajeAlerta("Base de Datos", $this->GetMySQLError());
+                echo "Base de Datos: ". $this->GetMySQLError();
                 exit ();
             }
         }
@@ -38,7 +38,7 @@ class database extends Configuracion
     private function IsConected()
     {
         if ($this->Link === false) {
-            echo $this->MensajeAlerta("Base de Datos", $this->MensajeAlerta("<p><b>No se encuentra conectado al servidor de base de datos.</b></p>"));
+            echo "Base de Datos: "."<p><b>No se encuentra conectado al servidor de base de datos.</b></p>";
             return false;
         }
         return true;
@@ -47,7 +47,7 @@ class database extends Configuracion
     // -----------------------------------------------------------------------------------
     private function GetMySQLError()
     {
-        return $this->MensajeAlerta("Base de Datos", "Error [" . mysqli_errno($this->Link) . "]: " . mysqli_errno($this->Link));
+        return "Base de Datos: ". "Error [" . mysqli_errno($this->Link) . "]: " . mysqli_errno($this->Link);
     }
 
     private function GuardarBitacora($sql){
@@ -78,7 +78,7 @@ class database extends Configuracion
         $res = mysqli_query($this->Link, $sql);
 
         if ($res === false) {
-            echo $this->MensajeAlerta("Base de Datos", $this->GetMySQLError() . "<br /><code>{$sql}</code>");
+            echo "Base de Datos: ". $this->GetMySQLError() . "<br /><code>{$sql}</code>";
             return false;
         }
 
@@ -107,7 +107,7 @@ class database extends Configuracion
         $res = mysqli_query($this->Link, $sql);
 		
         if ($res == false) {
-            echo $this->MensajeAlerta("Base de Datos", $this->GetMySQLError() . "<br /><code>SQL:{$sql}</code>");
+            echo "Base de Datos: ". $this->GetMySQLError() . "<br /><code>SQL:{$sql}</code>";
             return false;
         }
 
@@ -126,7 +126,7 @@ class database extends Configuracion
 
         $db_selected = @mysqli_select_db($this->Link, $database);
         if ($db_selected === false) {
-            echo $this->MensajeAlerta("Base de Datos", $this->GetMySQLError());
+            echo "Base de Datos: ". $this->GetMySQLError();
             return false;
         }
         return true;

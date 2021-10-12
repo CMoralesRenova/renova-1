@@ -65,22 +65,13 @@ $oNominas->ValidaNivelUsuario("nominas");
     }
 
     function Reporte(id_, id_empleado) {
-        $.ajax({
-            data: "id=" + id_ + "&id_empleado=" + id_empleado,
-            type: "POST",
-            url: "app/views/default/modules/modulos/nominas/m.nominas.items.php",
-            beforeSend: function() {
-                $("#divFormulario_item").html(
-                    '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
-                );
-            },
-            success: function(datos) {
-                $("#divFormulario_item").html(datos);
-            }
-        });
-        $("#myModal_item").modal({
-            backdrop: "true"
-        });
+
+        var opc = "fullscreen=no, menubar=no, resizable=no, scrollbars=yes, status=yes, titlebar=yes, toolbar=no, width=750, height=580";
+    	var pagina = "app/views/default/modules/modulos/nominas/m.nominas.recibo.pdf.php?";
+
+    	pagina += "id="+ id_+"&id_empleado="+ id_empleado;
+
+    	window.open(pagina, "reporte", opc);   
     }
     function printDiv() {
           var objeto=document.getElementById('divFormulario_item');  //obtenemos el objeto a imprimir
