@@ -17,7 +17,8 @@ if ($method == "GET") {
     $desde = $_GET['desde'];
     $hasta = $_GET['hasta'];
 
-    $sql = "select u.checador as documento, u.nombres as nombre_completo, h.nombre_dedo, h.huella, h.imgHuella from empleados u inner join huellas h on u.id  = h.id_empleado limit " . $desde . "," . $hasta . " ";
+    $sql = "select u.checador as documento, u.nombres as nombre_completo, h.nombre_dedo, h.huella, h.imgHuella from empleados u
+     inner join huellas h on u.id  = h.id_empleado where h.huella is not null and h.imgHuella is not null limit " . $desde . "," . $hasta . " ";
     $rs = $con->findAll($sql);    
     
     

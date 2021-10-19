@@ -28,7 +28,8 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
     </style>
     <script type="text/javascript">
         $(document).ready(function(e) {
-            $('#checador').attr('href', "index.php?action=checador&token=" + localStorage.getItem("srnPc"));
+            $('#checador').attr('href', "index.php?action=checador&token=" + $("#token").val());
+            $('#comedor').attr('href', "index.php?action=comedor&token=" + $("#token").val());
             $("#may").hide();
 
             $("#usr, #pass").keyup(function(event) {
@@ -79,6 +80,25 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
             });
         }
 
+        function srnPc() {
+            var d = new Date();
+            var dateint = d.getTime();
+            var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var total = letters.length;
+            var keyTemp = "";
+            for (var i = 0; i < 6; i++) {
+                keyTemp += letters[parseInt((Math.random() * (total - 1) + 1))];
+            }
+            keyTemp += dateint;
+            return keyTemp;
+        }
+
+        function saveSrnPc() {
+            localStorage.setItem("srnPc", srnPc());
+            //    saveToken();
+            //    localStorage.removeItem("srnPc");
+        }
+
         function Alert(tit, msg, iconn) {
             swal({
                 title: tit,
@@ -127,7 +147,10 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
                                     <div class="form-group" style="">
                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     </div>
-                                    <div class="text-right " >
+                                    <div class="text-right ">
+                                        <a id="comedor" class="btn btn-info"><label> Comedor</label></a>
+                                    </div>
+                                    <div class="text-right ">
                                         <a id="checador" class="btn btn-info"><label> Checador</label></a>
                                     </div>
                                 </div>
@@ -137,7 +160,7 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
                 </div>
 
             </div>
-
+            <input type="hidden" name="token" id="token">
         </div>
         <div class="navbar-default navbar-fixed-bottom">
             <div class="text-center footer" style="color:#000;">Copyright © <script>
@@ -146,6 +169,15 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
         </div>
     </div>
     <?php require_once('app/views/default/script_f.html'); ?>
+    <script>
+        //localStorage.removeItem("srnPc");
+        if (localStorage.getItem("srnPc") === null) {
+            localStorage.setItem("srnPc", srnPc());
+            //saveSrnPc();
+        } else {
+            $("#token").val(localStorage.getItem("srnPc"));
+        }
+    </script>
 </body>
 
 </html>

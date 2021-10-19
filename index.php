@@ -16,6 +16,8 @@ if ($action === "login") {
     $mvc->login();
 } else if (strpos($action, "checador") !== false) {
     $mvc->checador();
+} else if (strpos($action, "comedor") !== false) {
+    $mvc->comedor();
 }  else {
     $mvc->ExisteSesion();
 

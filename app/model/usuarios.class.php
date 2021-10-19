@@ -111,7 +111,7 @@ class usuarios extends AW {
 
     public function Agregar() {
         $sPermisos = "";
-        if (! empty($this->perfiles_id)) {
+        if (!empty($this->perfiles_id)) {
             foreach ($this->perfiles_id as $idx => $valor) {
                 $sPermisos .= $valor . "@";
             }

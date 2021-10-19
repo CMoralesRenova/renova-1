@@ -128,62 +128,6 @@ function activarSensor(srn) {
     });
 }
 
-function cargar_push() {
-    $.ajax({
-        async: true,
-        type: "POST",
-        url: "app/sensor/httpush.php",
-        data: "&&timestamp=" + timestamp + "&token=" + $("#token").val(),
-        dataType: "json",
-        success: function(data) {
-            $("#usr").val('');
-            //$("#id").val('');
-
-            var json = JSON.parse(JSON.stringify(data));
-            console.log(json);
-            timestamp = json["timestamp"];
-            imageHuella = json["imgHuella"];
-            tipo = json["tipo"];
-            id = json["id"];
-            $("#" + id + "_status").text(json["statusPlantilla"]);
-            $("#" + id + "_texto").text(json["texto"]);
-            if (imageHuella !== null) {
-                $("#" + id).attr("src", "data:image/png;base64," + imageHuella);
-                if (tipo === "leer") {
-                    if (json["statusPlantilla"] == "El usuario no existe"){
-                        Alert("", json["statusPlantilla"], "warning", 900, false);
-                    } else {
-                        $("#usr").val(json["documento"]);
-                        $("#id").val(json["documento"]);
-                        console.log("accion=CHECAR&usr=" + $("#usr").val()+"&fecha_inicial="+$("#fecha_").val()+
-                        "&fecha_final="+$("#fecha_").val()+"&hora="+$("#hora").val()+"&diaActual="+$("#diaActual").val());
-                        $.ajax({
-                            type: "POST",
-                            url: "app/views/default/modules/checador/m.checador_procesa.php",
-                            data: "accion=CHECAR&usr=" + $("#usr").val()+"&fecha_inicial="+$("#fecha_").val()+
-                            "&fecha_final="+$("#fecha_").val()+"&hora="+$("#hora").val()+"&diaActual="+$("#diaActual").val(),
-                            success: function(response) {
-                                var str = response;
-                                var datos0 = str.split("@")[0];
-                                var datos1 = str.split("@")[1];
-                                var datos2 = str.split("@")[2];
-                                if ((datos3 = str.split("@")[3]) === undefined) {
-                                    datos3 = "";
-                                } else {
-                                    datos3 = str.split("@")[3];
-                                }
-                                Alert(datos0, datos1 + "" + datos3, datos2, 1100, false);
-                                Listado();
-                            }
-                        });
-                    }
-                }
-            }
-            setTimeout("cargar_push()", 1000);
-        }
-    });
-}
-
 function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),

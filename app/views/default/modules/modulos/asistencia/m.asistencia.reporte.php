@@ -66,7 +66,7 @@ $lstasistencia = $oAsistencia->Listado_asistencia();
                                                                 } else {
                                                                     echo "class='btn-danger'";
                                                                 } ?>><?php echo date("g:i A", strtotime($campo->hora_entrada)) ?></td>
-                                <td style="text-align: center;"><?php if (!empty($campo->hora_salida)) echo (date("h:i:s A", strtotime($campo->hora_salida))); ?></td>
+                                <td style="text-align: center;"><?php if (!empty($campo->hora_salida) && $campo->estatus_salida > 0) echo (date("h:i:s A", strtotime($campo->hora_salida))); ?></td>
                                 <td style="text-align: center;"><?= $campo->retraso == ''? $campo->permiso:$campo->retraso?></td>
                                 <td style="text-align: center;"><?= $campo->dia ?></td>
                             </tr>

@@ -7,7 +7,7 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
 <?php require_once('app/views/default/link.html'); ?>
 
 <head>
-    <title>Renova</title>
+    <title>Comedor</title>
     <meta http-equiv="refresh" content="600">
 
     <?php require_once('app/views/default/head.html'); ?>
@@ -18,7 +18,7 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
             $("#id").val('');
             $("#usr").val('');
             Listado();
-            opcionChecador()
+            opcioncomedor()
             //$("#usr").focus();
             $("#usr").change(function() {
                 var value = $("#usr").val();
@@ -74,7 +74,7 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
             $.ajax({
                 data: jsonDatos,
                 type: "POST",
-                url: "app/views/default/modules/checador/checador.listado.php",
+                url: "app/views/default/modules/comedor/comedor.listado.php",
                 beforeSend: function() {
                     $("#divListado").html(
                         '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Leyendo información de la Base de Datos, espere un momento por favor...</center></div>'
@@ -114,7 +114,7 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
                                 $("#usr").val(json["documento"]);
                                 $.ajax({
                                     type: "POST",
-                                    url: "app/views/default/modules/checador/m.checador_procesa.php",
+                                    url: "app/views/default/modules/comedor/m.comedor_procesa.php",
                                     data: "accion=CHECAR&usr=" + $("#usr").val() + "&fecha_inicial=" + $("#fecha_").val() +
                                         "&fecha_final=" + $("#fecha_").val() + "&hora=" + $("#hora").val() + "&diaActual=" + $("#diaActual").val(),
                                     success: function(response) {
@@ -139,8 +139,8 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
             });
         }
 
-        function opcionChecador() {
-            //disparar el evento del checador_procesa
+        function opcioncomedor() {
+            //disparar el evento del comedor_procesa
             $.ajax({
                 data: "token=<?php echo $_GET["token"]; ?>",
                 type: "POST",
@@ -202,7 +202,7 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
 
                             <div class="col-lg-12">
                                 <div class="p-5">
-                                    <form class="user" id="frmFormulario" name="frmFormulario" action="app\views\default\modules\checador\m.checador_procesa.php" enctype="multipart/form-data" method="post" target="_self" class="">
+                                    <form class="user" id="frmFormulario" name="frmFormulario" action="app\views\default\modules\comedor\m.comedor_procesa.php" enctype="multipart/form-data" method="post" target="_self" class="">
                                         <div class="form-group">
                                             <h1 id="horalocal" class="text-center"></h1>
                                             <input type="text" class="form-control form-control-user" aria-describedby="emailHelp" autocomplete="off" id="usr" placeholder="" required="required">

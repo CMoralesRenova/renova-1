@@ -11,6 +11,7 @@ class bd {
 
     public function __construct() {
         try {
+            //$this->con = new PDO('mysql:host=renova-mx.com:3306;dbname=renovamx_db_2021_10_12;charset=utf8', "renovamx_db_user", "@DXTLS2021*",
             $this->con = new PDO('mysql:host=localhost:3306;dbname=renova;charset=utf8', "root", "",
                     array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
             $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

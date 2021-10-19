@@ -43,12 +43,12 @@ class nominas extends AW
         return $this->Query($sql);
     }
     public function Listado_nomina()
-    {   
+    {
         $sqlEmpleado = "";
-        if (! empty($this->id_empleado)) {
+        if (!empty($this->id_empleado)) {
             $sqlEmpleado = " and c.id='{$this->id_empleado}'";
         }
-        
+
         $sql = "SELECT a.*, c.id as id_empleado,nombres, c.ape_paterno, c.ape_materno,h.nombre as puesto,
         i.nombre as departamento,
         c.rfc,c.curp,c.fecha_ingreso,
@@ -80,8 +80,7 @@ class nominas extends AW
         left join (select * from departamentos) i on h.id_departamento = i.id
         left join (select * from ahorros) j on c.id = j.id_empleado 
         WHERE a.id ='{$this->id}' {$sqlEmpleado} group by c.nombres";
-        //echo nl2br($sql);
-        if (! empty($this->id_empleado)) {
+        if (!empty($this->id_empleado)) {
             $res = parent::Query($sql);
             if (!empty($res) && !($res === NULL)) {
                 foreach ($res[0] as $idx => $valor) {
@@ -90,22 +89,89 @@ class nominas extends AW
             } else {
                 $res = NULL;
             }
-    
+
             return $res;
         } else {
             return $this->Query($sql);
-        } 
+        }
     }
     public function Pagar()
     {
-        $sql = "update
+        $sql = "SELECT a.*, c.id as id_empleado,nombres, c.ape_paterno, c.ape_materno,h.nombre as puesto,
+        i.nombre as departamento,
+        c.rfc,c.curp,c.fecha_ingreso,
+        WEEK ( a.fecha ) AS semana,
+        c.salario_semanal,c.salario_diario,c.salario_asistencia,
+        c.salario_puntualidad,c.salario_productividad,c.complemento_sueldo,c.bono_doce,
+        (select count(dia) + 1 from asistencia where id_empleado = c.id and estatus_entrada = 1 and fecha between date_add(a.fecha,
+        INTERVAL -7 DAY) and a.fecha) as dias_laborados,
+        ((select sum(horas_extras) from horas_extras where id_empleado = c.id and estatus = 2 and fecha_registro between
+        date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) * (c.salario_diario / 8)) as horas_extras,
+        ((select count(dia) + 1 from asistencia where id_empleado = c.id and estatus_entrada = 1 and fecha between date_add(a.fecha,
+        INTERVAL -7 DAY) and a.fecha) * c.salario_diario) as esperado,
+        (select sum(monto_por_semana) from otros where id_empleado = c.id and estatus = 1 and fecha_pago between date_add(a.fecha,
+        INTERVAL -7 DAY) and a.fecha) as otros_descuentos,
+        (select monto_por_semana from prestamos where id_empleado = c.id and estatus = 1 and fecha_pago between
+        date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) as prestamos,
+        ((select sum(monto_por_semana) from otros where id_empleado = c.id and estatus = 1 and fecha_pago between date_add(a.fecha,
+        INTERVAL -7 DAY) and a.fecha) + if(j.estatus = 1, j.monto, '0') +
+        (select sum(monto_por_semana) from prestamos where id_empleado = c.id and estatus = 1 and fecha_pago between
+        date_add(a.fecha, INTERVAL -7 DAY) and a.fecha)) as retenciones,j.monto, j.frecuencia, j.estatus as estatusAhorro,
+        f.id as id_otros, g.id as id_prestamo, j.id as id_ahorros
+        FROM nominas a
+        LEFT JOIN empleados c ON c.id
+        LEFT JOIN horas_extras as d on c.id = d.id_empleado
+        inner JOIN ( SELECT dia, id_empleado, fecha FROM asistencia) e ON c.id = e.id_empleado
+        left JOIN ( SELECT * FROM otros) f ON c.id = f.id_empleado
+        left JOIN ( SELECT * FROM prestamos) g ON c.id = g.id_empleado
+        left join (select * from puestos) h ON c.id_puesto = h.id
+        left join (select * from departamentos) i on h.id_departamento = i.id
+        left join (select * from ahorros) j on c.id = j.id_empleado 
+        WHERE a.id ='{$this->id}' group by c.nombres";
+
+        $res = parent::Query($sql);
+        if (!empty($res) && !($res === NULL)) {
+            foreach ($res as $idx => $valor) {
+                $percepciones = 0;
+                $retenciones = 0;
+                if ($valor->dias_laborados <= 6) {
+                    $percepciones = $percepciones + $valor->salario_diario * $valor->dias_laborados;
+                    $percepciones = $percepciones + $valor->salario_productividad;
+                    $percepciones = $percepciones + $valor->complemento_sueldo;
+                    $percepciones = $percepciones + $valor->bono_doce;
+                    $percepciones = $percepciones + $valor->horas_extras;
+                } else {
+                    $percepciones = $percepciones + $valor->salario_diario * $valor->dias_laborados;
+                    $percepciones = $percepciones + $valor->salario_productividad;
+                    $percepciones = $percepciones + $valor->complemento_sueldo;
+                    $percepciones = $percepciones + $valor->bono_doce;
+                    $percepciones = $percepciones + $valor->horas_extras;
+                    $percepciones = $percepciones + $valor->salario_asistencia;
+                    $percepciones = $percepciones + $valor->salario_puntualidad;
+                }
+                $retenciones = $retenciones + $valor->otros_descuentos;
+                $retenciones = $retenciones + $valor->prestamos;
+                $retenciones = $retenciones + $valor->retenciones;
+
+                $sql1 = "INSERT INTO `nomina_detalle`
+                (`id_nomina`,`id_empleado`,`percepciones`,`retenciones`, `total`)
+                VALUES
+                ('{$valor->id}','{$valor->id_empleado}','".($percepciones - $retenciones)."','{$retenciones}','{$percepciones}')";
+                print $sql1;
+                $this->NonQuery($sql1); 
+            }
+        } else {
+            $res = NULL;
+        }
+
+        $sql2 = "update
                     nominas
                 set
                 estatus = '1',
-                fecha_pago = " . date("Y-m-d") . "
+                fecha_pago = now()
                 where
                   id='{$this->id}'";
-        return $this->NonQuery($sql);
+        return $this->NonQuery($sql2);
     }
 
     public function Informacion()

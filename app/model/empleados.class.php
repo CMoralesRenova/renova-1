@@ -107,7 +107,7 @@ class empleados extends AW
     {
         $sql = "SELECT a.id, concat(ifnull( a.nombres, ''), ' ',ifnull(a.ape_paterno, ''), ' ', ifnull(ape_materno, '')) as empleado FROM renova.empleados as a 
         join puestos as b on b.id = id_puesto
-        where b.nombre like '%JEFE%'";
+        where b.nombre like '%JEFE%' or b.nombre like '%Geren%'";
 
         return $this->Query($sql);
     }
@@ -116,10 +116,9 @@ class empleados extends AW
     {
         $sql = "SELECT * FROM renova.huellas WHERE id_empleado = {$this->id}";
         $result = $this->Query($sql);
-        if ($result){
+        if ($result) {
             return $result;
         } else {
-
         }
     }
 
@@ -151,6 +150,7 @@ class empleados extends AW
                 ape_paterno = '{$this->ape_paterno}',
                 ape_materno = '{$this->ape_materno}',
                 fecha_nacimiento =  '{$this->fecha_nacimiento}',
+                fecha_ingreso = '{$this->fecha_ingreso}',
                 direccion   = '{$this->direccion}',
                 estado_civil = '{$this->estado_civil}',
                 rfc = '{$this->rfc}',
@@ -172,29 +172,32 @@ class empleados extends AW
                   id='{$this->id}'";
         $result = $this->NonQuery($sql);
 
-        $existeHuella = "SELECT * FROM huellas WHERE id_empleado = {$this->id} AND nombre_dedo = '{$this->nombre_dedo}'";
-        $res = $this->Query($existeHuella);
+        if (!empty($this->nombre_dedo)) {
 
-        if (count($res) > 0) {
-            $updateHuella = "UPDATE `huellas`
+            $existeHuella = "SELECT * FROM huellas WHERE id_empleado = {$this->id} AND nombre_dedo = '{$this->nombre_dedo}'";
+            $res = $this->Query($existeHuella);
+
+            if (count($res) > 0) {
+                $updateHuella = "UPDATE `huellas`
             SET
             `huella` = (select huella from huellas_temp where pc_serial = '{$this->token}'),
             `imgHuella` =(select imgHuella from huellas_temp where pc_serial = '{$this->token}')
             WHERE `id` = '{$res[0]->id}'";
 
-            $this->NonQuery($updateHuella);
+                $this->NonQuery($updateHuella);
 
-            $delete = "delete from huellas_temp where pc_serial = '{$this->token}'";
-            $this->NonQuery($delete);
-        } else {
-            $insertHuella = "insert into huellas (id_empleado, nombre_dedo, huella, imgHuella) "
-                . "values ('{$this->id}', '{$this->nombre_dedo}',"
-                . " (select huella from huellas_temp where pc_serial = '{$this->token}'), "
-                . "(select imgHuella from huellas_temp where pc_serial = '{$this->token}'))";
-            $this->NonQuery($insertHuella);
+                $delete = "delete from huellas_temp where pc_serial = '{$this->token}'";
+                $this->NonQuery($delete);
+            } else {
+                $insertHuella = "insert into huellas (id_empleado, nombre_dedo, huella, imgHuella) "
+                    . "values ('{$this->id}', '{$this->nombre_dedo}',"
+                    . " (select huella from huellas_temp where pc_serial = '{$this->token}'), "
+                    . "(select imgHuella from huellas_temp where pc_serial = '{$this->token}'))";
+                $this->NonQuery($insertHuella);
 
-            $delete = "delete from huellas_temp where pc_serial = '{$this->token}'";
-            $this->NonQuery($delete);
+                $delete = "delete from huellas_temp where pc_serial = '{$this->token}'";
+                $this->NonQuery($delete);
+            }
         }
 
         return $result;
@@ -210,7 +213,7 @@ class empleados extends AW
                 values
                 ('0','{$this->nombres}', '{$this->ape_paterno}', '{$this->ape_materno}','" . $this->fecha_nacimiento . "', '{$this->direccion}', '{$this->estado_civil}',
                  '{$this->rfc}', '{$this->curp}', '{$this->nss}', '{$this->nivel_estudios}', '{$this->id_puesto}', '{$this->id_jefe}','{$this->salario_diario}',
-                 '{$this->salario_asistencia}','{$this->salario_puntualidad}','{$this->salario_productividad}','{$this->complemento_sueldo}','{$this->bono_doce}','". $this->salario_diario * 7 . "', '" . date('Y-m-d') . "',
+                 '{$this->salario_asistencia}','{$this->salario_puntualidad}','{$this->salario_productividad}','{$this->complemento_sueldo}','{$this->bono_doce}','" . $this->salario_diario * 7 . "', '{$this->fecha_ingreso}',
                  '{$this->checador}','{$this->id_horario}', '{$this->user_id}','1')";
         $bResultado = $this->NonQuery($sql);
 
@@ -219,31 +222,32 @@ class empleados extends AW
 
         $this->id = $res[0]->id;
 
-        $existeHuella = "SELECT * FROM huellas WHERE id_empleado = {$this->id} AND nombre_dedo = '{$this->nombre_dedo}'";
-        $res1 = $this->Query($existeHuella);
+        if (!empty($this->nombre_dedo)) {
+            $existeHuella = "SELECT * FROM huellas WHERE id_empleado = {$this->id} AND nombre_dedo = '{$this->nombre_dedo}'";
+            $res1 = $this->Query($existeHuella);
 
-        if (count($res1) > 0) {
-            $updateHuella = "UPDATE `huellas`
+            if (count($res1) > 0) {
+                $updateHuella = "UPDATE `huellas`
             SET
             `huella` = (select huella from huellas_temp where pc_serial = '{$this->token}'),
             `imgHuella` =(select imgHuella from huellas_temp where pc_serial = '{$this->token}')
             WHERE `id` = '{$res[0]->id}'";
 
-            $this->NonQuery($updateHuella);
+                $this->NonQuery($updateHuella);
 
-            $delete = "delete from huellas_temp where pc_serial = '{$this->token}'";
-            $this->NonQuery($delete);
-        } else {
-            $insertHuella = "insert into huellas (id_empleado, nombre_dedo, huella, imgHuella) "
-                . "values ('{$this->id}', '{$this->nombre_dedo}',"
-                . " (select huella from huellas_temp where pc_serial = '{$this->token}'), "
-                . "(select imgHuella from huellas_temp where pc_serial = '{$this->token}'))";
-            $this->NonQuery($insertHuella);
+                $delete = "delete from huellas_temp where pc_serial = '{$this->token}'";
+                $this->NonQuery($delete);
+            } else {
+                $insertHuella = "insert into huellas (id_empleado, nombre_dedo, huella, imgHuella) "
+                    . "values ('{$this->id}', '{$this->nombre_dedo}',"
+                    . " (select huella from huellas_temp where pc_serial = '{$this->token}'), "
+                    . "(select imgHuella from huellas_temp where pc_serial = '{$this->token}'))";
+                $this->NonQuery($insertHuella);
 
-            $delete = "delete from huellas_temp where pc_serial = '{$this->token}'";
-            $this->NonQuery($delete);
+                $delete = "delete from huellas_temp where pc_serial = '{$this->token}'";
+                $this->NonQuery($delete);
+            }
         }
-
         return $bResultado;
     }
 

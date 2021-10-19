@@ -43,6 +43,61 @@ $lsthorarios = $oHorarios->Listado();
         activarSensor($("#token").val());
         cargar_push();
     }
+
+    function cargar_push() {
+        $.ajax({
+            async: true,
+            type: "POST",
+            url: "app/sensor/httpush.php",
+            data: "&&timestamp=" + timestamp + "&token=" + $("#token").val(),
+            dataType: "json",
+            success: function(data) {
+                $("#usr").val('');
+                //$("#id").val('');
+                var json = "";
+                json = JSON.parse(JSON.stringify(data));
+                timestamp = json["timestamp"];
+                imageHuella = json["imgHuella"];
+                tipo = json["tipo"];
+                id = json["id"];
+                $("#" + id + "_status").text(json["statusPlantilla"]);
+                $("#" + id + "_texto").text(json["texto"]);
+                if (imageHuella !== null) {
+                    $("#" + id).attr("src", "data:image/png;base64," + imageHuella);
+                    if (tipo === "leer") {
+                        if (json["statusPlantilla"] == "El usuario no existe") {
+                            Alert("", json["statusPlantilla"], "warning", 900, false);
+                        } else {
+                            $("#usr").val(json["documento"]);
+                            console.log("accion=CHECAR&usr=" + json["documento"] + "&fecha_inicial=" + $("#fecha_").val() +
+                                "&fecha_final=" + $("#fecha_").val() + "&hora=" + $("#hora").val() + "&diaActual=" + $("#diaActual").val());
+                            $.ajax({
+                                type: "POST",
+                                url: "app/views/default/modules/checador/m.checador_procesa.php",
+                                data: "accion=CHECAR&usr=" + $("#usr").val() + "&fecha_inicial=" + $("#fecha_").val() +
+                                    "&fecha_final=" + $("#fecha_").val() + "&hora=" + $("#hora").val() + "&diaActual=" + $("#diaActual").val(),
+                                success: function(response) {
+                                    var str = response;
+                                    var datos0 = str.split("@")[0];
+                                    var datos1 = str.split("@")[1];
+                                    var datos2 = str.split("@")[2];
+                                    if ((datos3 = str.split("@")[3]) === undefined) {
+                                        datos3 = "";
+                                    } else {
+                                        datos3 = str.split("@")[3];
+                                    }
+                                    Alert(datos0, datos1 + "" + datos3, datos2, 1100, false);
+                                    Listado();
+                                }
+                            });
+                        }
+                    }
+                }
+                setTimeout("cargar_push()", 1000);
+            }
+        });
+    }
+
     $(document).ready(function(e) {
         $("#nameModal").text("<?php echo $nombre ?> Empleado");
         $("#frmFormulario").ajaxForm({
@@ -113,6 +168,14 @@ $lsthorarios = $oHorarios->Listado();
                     <strong class="">Fecha Nacimiento:</strong>
                     <div class="form-group">
                         <input type="date" description="Seleccione la fecha de nacimiento" aria-describedby="" id="fecha_nacimiento" required name="fecha_nacimiento" value="<?= $oEmpleados->fecha_nacimiento ?>" class="form-control obligado" />
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Fecha Ingreso:</strong>
+                    <div class="form-group">
+                        <input type="date" description="Seleccione la fecha de ingreso" aria-describedby="" id="fecha_ingreso" required name="fecha_ingreso" value="<?= $oEmpleados->fecha_ingreso ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
@@ -324,7 +387,7 @@ $lsthorarios = $oHorarios->Listado();
                         <div class="input-group-prepend">
                             <span class="input-group-text">$</span>
                         </div>
-                        <input type="text" description="Ingrese premio de asistencia" aria-describedby="" id="salario_asistencia" required name="salario_asistencia" value="<?= $oEmpleados->salario_asistencia ?>" class="form-control obligado" />
+                        <input type="text" description="Ingrese premio de asistencia" aria-describedby="" id="salario_asistencia" required name="salario_asistencia" value="<?= $oEmpleados->salario_asistencia ?>" class="form-control " />
                     </div>
                 </div>
                 <div class="col">
@@ -333,7 +396,7 @@ $lsthorarios = $oHorarios->Listado();
                         <div class="input-group-prepend">
                             <span class="input-group-text">$</span>
                         </div>
-                        <input type="text" description="Ingrese premio de puntualidad" aria-describedby="" id="salario_puntualidad" required name="salario_puntualidad" value="<?= $oEmpleados->salario_puntualidad ?>" class="form-control obligado" />
+                        <input type="text" description="Ingrese premio de puntualidad" aria-describedby="" id="salario_puntualidad" required name="salario_puntualidad" value="<?= $oEmpleados->salario_puntualidad ?>" class="form-control " />
                     </div>
                 </div>
             </div>
@@ -344,7 +407,7 @@ $lsthorarios = $oHorarios->Listado();
                         <div class="input-group-prepend">
                             <span class="input-group-text">$</span>
                         </div>
-                        <input type="text" description="Ingrese premio de productividad" aria-describedby="" id="salario_productividad" required name="salario_productividad" value="<?= $oEmpleados->salario_productividad ?>" class="form-control obligado" />
+                        <input type="text" description="Ingrese premio de productividad" aria-describedby="" id="salario_productividad" required name="salario_productividad" value="<?= $oEmpleados->salario_productividad ?>" class="form-control " />
                     </div>
                 </div>
                 <div class="col">

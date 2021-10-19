@@ -4,6 +4,7 @@ require_once './bd.php';
 set_time_limit(0);
 date_default_timezone_set("America/Mexico_City");
 
+$datosJson = "";
 $fecha_actual = 0;
 $fecha_bd = 0;
 if ($_SERVER['REQUEST_METHOD'] == "POST") {

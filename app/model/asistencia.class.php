@@ -41,9 +41,9 @@ class asistencia extends AW
 
     public function Listado()
     {
-        $sql = "SELECT a.nombres, a.ape_paterno, a.ape_materno, count(dia) as dia, id_empleado  FROM empleados as a 
+        $sql = "SELECT a.nombres, a.ape_paterno, a.ape_materno, count(dia) + 1  as dia, id_empleado  FROM empleados as a 
         left join asistencia as b on a.id = b.id_empleado where 1=1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' group by nombres";
-        //print_r($sql);
+
         return $this->Query($sql);
     }
 
@@ -56,7 +56,7 @@ class asistencia extends AW
             $sqlEmpleado = "order by a.order desc limit 5";
         }
 
-        $sql = "SELECT b.nombres, b.ape_paterno, b.ape_materno, a.fecha, a.hora_entrada,a.hora_salida,a.estatus_entrada, 
+        $sql = "SELECT b.nombres, b.ape_paterno, b.ape_materno, a.fecha, a.hora_entrada,a.hora_salida,a.estatus_entrada,a.estatus_salida, 
             IF(a.dia = 0,'Domingo',
             IF(a.dia = 1,'Lunes',
             IF(a.dia = 2,'Martes',
@@ -69,7 +69,7 @@ class asistencia extends AW
             if(estatus_entrada = 2, 'Retraso', 
             if(estatus_entrada = 3, 'Falta', ''))) AS retraso,
             if(permiso_entrada = 1, 'Permiso entrada', if(permiso_salida = 1, 'Permiso salida', '')) as permiso
-            FROM renova.asistencia as a 
+            FROM asistencia as a 
             left join empleados as b on b.id = a.id_empleado
             left join horarios as c on c.id = b.id_horario
             where 1=1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' {$sqlEmpleado} ";
@@ -116,10 +116,9 @@ class asistencia extends AW
 
             $sql = "SELECT * FROM asistencia where fecha = '{$this->fecha_inicial}' and id_empleado = '{$this->id_empleado}' order by id desc limit 1";
             $res = $this->Query($sql);
-            print_r($sql);
 
             if (count($res) > 0) {
-                if (!empty($res[0]->hora_salida)) {
+                if (!empty($res[0]->hora_salida) && (!empty($res[0]->estatus_salida) and $res[0]->estatus_salida > 0)) {
                     $bExiste = 2;
                 } else {
                     $bExiste = 1;
@@ -148,12 +147,11 @@ class asistencia extends AW
         $sql2 = "select * from horarios where id = '{$res1[0]->id_horario}' order by id desc limit 1";
         $res2 = $this->Query($sql2);
 
-        $sql3 = "SELECT * FROM  `permisos` where fecha = '{$this->fecha_inicial}' and id_empleado = '{$this->id_empleado}'";
+        $sql3 = "SELECT * FROM  `permisos` where fecha = '{$this->fecha_inicial}' and id_empleado = '{$this->id_empleado}' and salida_temprano is not null and salida_temprano != ''";
         $res3 = $this->Query($sql3);
 
         if (count($res3) > 0) {
             if ($res3[0]->salida_temprano == 1) {
-
                 $minutosMenos = strtotime('-15 minute', strtotime($res3[0]->salida));
                 $minutosMenos = date('H:i:s', $minutosMenos);
 
@@ -169,6 +167,7 @@ class asistencia extends AW
                     WHERE `id` = '{$this->id}'";
 
                     $this->NonQuery($sql);
+                    print_r("llega if permiso");
                     $bResultado = 2;
                 } else {
                     $sql = "UPDATE `asistencia`
@@ -178,11 +177,11 @@ class asistencia extends AW
                     `estatus_salida` = '3'
                     WHERE `id` = '{$this->id}'";
                     $this->NonQuery($sql);
+                    print_r($sql." else permiso tarde");
                     $bResultado = 2;
                 }
             }
         } else if (($this->hora >= $res2[0]->salida) && ($this->hora <= $res2[0]->horas_extra)) {
-            print_r($this->id);
             $sql = "UPDATE `asistencia`
                 SET
                 `hora_salida` = '{$this->hora}',
@@ -225,7 +224,7 @@ class asistencia extends AW
         $sql2 = "select * from horarios where id = '{$res1[0]->id_horario}' order by id desc limit 1";
         $res2 = $this->Query($sql2);
 
-        $sql3 = "SELECT * FROM  `permisos` where fecha = '{$this->fecha_inicial}' and id_empleado = '{$this->id_empleado}'";
+        $sql3 = "SELECT * FROM  `permisos` where fecha = '{$this->fecha_inicial}' and id_empleado = '{$this->id_empleado}'  and llegada_tarde is not null and llegada_tarde != ''";
         $res3 = $this->Query($sql3);
 
         $minutosMas = strtotime('+10 minute', strtotime($res2[0]->tiempo_tolerancia));

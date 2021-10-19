@@ -23,5 +23,10 @@ class Configuracion {
         $this->RutaAbsoluta = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 	}
 }
-
+/**
+ *      $this->mysql_database = "renovamx_db_2021_10_12";
+ *       $this->mysql_host = "renova-mx.com";
+ *      $this->mysql_user = "renovamx_db_user";
+ *       $this->mysql_pass = "@DXTLS2021*";
+ */
 ?>

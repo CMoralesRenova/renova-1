@@ -18,7 +18,5 @@ if ($accion === "CHECAR") {
         echo "@Ya se ha registrado la salida.@error";
     } else if ($Guardar == 4) {
         echo "@El empleado no existe.@error";
-    } else {
-        echo "@Se ha registrado la salida.@Warning";
     }
 }

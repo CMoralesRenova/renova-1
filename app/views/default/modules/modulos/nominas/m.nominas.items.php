@@ -185,9 +185,9 @@ $totalaRetencion = 0;
     </table>
     <table style="margin-left:0px; position:relative; margin-top: 5px; border: #00 1px solid;">
         <tr>
-            <th style="color: #f3eded; background-color: #000;width:170px; text-align:center;">Percepción</th>
-            <th style="color: #f3eded; background-color: #000;width:80px; text-align:center;">Monto</th>
-            <th style="color: #f3eded; background-color: #000;width:70px; height:14px; text-align:center;">Unidades</th>
+            <th style="color: #f3eded; background-color: #000;width:175px; text-align:center;">Percepción</th>
+            <th style="color: #f3eded; background-color: #000;width:85px; text-align:center;">Monto</th>
+            <th style="color: #f3eded; background-color: #000;width:60px; height:14px; text-align:center;">Unidades</th>
             <th></th>
             <th style="margin-left:10px;color: #f3eded; background-color: #000;width:134px; text-align:center;">Concepto</th>
             <th style="color: #f3eded; background-color: #000;width:80px;  text-align:center;">Monto</th>
@@ -270,7 +270,7 @@ $totalaRetencion = 0;
                         $totalaRetencion = $totalaRetencion + $oNominas->monto;
                         echo "<td>$oNominas->monto</td>";
                     } else {
-                        echo "<td>Ahorro detenido</td>";
+                        echo "<td>A/D</td>";
                     } ?>
                     <td><?= $oNominas->monto * $oNominas->frecuencia ?></td>
                 <?php } else { ?>

@@ -86,7 +86,7 @@ class horarios extends AW {
 
     public function Actualizar() {
 
-        $sql = "UPDATE `renova`.`horarios`
+        $sql = "UPDATE `horarios`
         SET 
         `nombre` = '{$this->nombre}',
         `A` = '{$this->A}',
@@ -109,7 +109,7 @@ class horarios extends AW {
 
     public function Desactivar() {
 
-        $sql = "UPDATE `renova`.`horarios`
+        $sql = "UPDATE `horarios`
         SET
         `estatus` = '{$this->estatus}'
         WHERE `id` = '{$this->id}';
@@ -121,7 +121,7 @@ class horarios extends AW {
     public function Agregar() {
 
 
-        $sql = "INSERT INTO `renova`.`horarios`
+        $sql = "INSERT INTO `horarios`
         (`id`,`nombre`,
         `A`,`B`,`C`,`D`,`E`,`F`,`G`,`entrada`,`salida`,`comida_1`,`comida_2`,`tiempo_tolerancia`,`horas_extra`,`horas_cumplir`,`estatus`)        
         VALUES        ('{$this->id}','{$this->nombre}',
