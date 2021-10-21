@@ -16,7 +16,7 @@ if ($action === "login") {
     $mvc->login();
 } else if (strpos($action, "checador") !== false) {
     $mvc->checador();
-} else if (strpos($action, "comedor") !== false) {
+} else if (strpos($action, "comedor") !== false && $action != "nomina_comedor") {
     $mvc->comedor();
 }  else {
     $mvc->ExisteSesion();
@@ -66,6 +66,8 @@ if ($action === "login") {
         $mvc_default->asistencia();
     }else if ($action === "permisos") {
         $mvc_default->permisos();
+    }else if ($action === "nomina_comedor") {
+        $mvc_default->nomina_comedor();
     }else if ($action === "cerrar_sesion") {
         $mvc->CerrarSesion();
     }else if ($action === "acceso_denegado") {

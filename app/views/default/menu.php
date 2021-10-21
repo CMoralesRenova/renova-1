@@ -118,6 +118,9 @@ $aPermisos = empty($oUsuario->perfiles_id) ? array() : explode("@", $oUsuario->p
                 <?php if ($oUsuario->ExistePermiso("servicio", $aPermisos) === true) { ?>
                     <a class='collapse-item' href='index.php?action=servicio'>Servicio</a>
                 <?php } ?>
+                <?php if ($oUsuario->ExistePermiso("nomina_comedor", $aPermisos) === true) { ?>
+                    <a class='collapse-item' href='index.php?action=nomina_comedor'>Comedor</a>
+                <?php } ?>
             </div>
         </div>
     </li>

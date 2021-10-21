@@ -11,9 +11,9 @@ class comedor_nominas extends AW
 
     var $id;
     var $id_empleado;
-    var $precio_platillo;
     var $fecha;
-    var $usr;
+    var $sumar;
+    var $user_id;
 
     //busqueda 
     var $fecha_inicial;
@@ -38,9 +38,32 @@ class comedor_nominas extends AW
 
     public function Listado()
     {
-        $sql = "SELECT a.nombres, a.ape_paterno, a.ape_materno, count(dia) + 1  as dia, id_empleado  FROM empleados as a 
-        left join comedor as b on a.id = b.id_empleado where 1=1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' group by nombres";
+        $sql = "SELECT a.nombres, a.ape_paterno, a.ape_materno, b.id, b.id_empleado, b.precio_platillo, b.fecha FROM empleados as a 
+        inner join comedor as b on a.id = b.id_empleado where 1=1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' group by nombres";
 
+        return $this->Query($sql);
+    }
+
+    public function Listado_comedor()
+    {
+        $sqlEmpleado = "";
+        if (!empty($this->id_empleado)) {
+            $sqlEmpleado = "and id_empleado = '{$this->id_empleado}' order by a.fecha asc";
+        } else {
+            $sqlEmpleado = "order by a.id desc limit 5";
+        }
+
+        $sql = "SELECT 
+            b.nombres,
+            b.ape_paterno,
+            b.ape_materno,
+            a.precio_platillo
+        FROM
+            comedor AS a
+                LEFT JOIN
+            empleados AS b ON b.id = a.id_empleado
+        WHERE
+            1 = 1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' {$sqlEmpleado} ";
         return $this->Query($sql);
     }
 
@@ -63,25 +86,28 @@ class comedor_nominas extends AW
 
     public function Existe()
     {
-        $sql1 = "select * from empleados where checador = '{$this->usr}' order by id desc limit 1";
-        $res1 = $this->Query($sql1);
+        $sql = "select * from comedor where id = '{$this->id}'";
+        $res = $this->Query($sql);
 
         $bExiste = false;
-        if (count($res1) > 0) {
-            $this->id_empleado = $res1[0]->id;
 
-            $sql = "SELECT * FROM comedor where fecha = '{$this->fecha_inicial}' and id_empleado = '{$this->id_empleado}' order by id desc limit 1";
-            $res = $this->Query($sql);
-            if ($res) {
-                $bExiste = true;
-            }
+        if (count($res) > 0) {
+            $bExiste = true;
         }
         return $bExiste;
     }
 
     public function Actualizar()
     {
-        
+        $sql = "update
+                    comedor
+                set
+                precio_platillo =  precio_platillo + '{$this->sumar}',
+                usuario_edicion = '{$this->user_id}',
+                fecha_modificacion = now()
+                where
+                  id='{$this->id}'";
+        return $this->NonQuery($sql);
     }
 
     public function Agregar()
@@ -104,7 +130,7 @@ class comedor_nominas extends AW
     public function Guardar()
     {
         if ($this->Existe()) {
-            $bRes = true;
+            $bRes = $this->Actualizar();
         } else {
             $bRes = $this->Agregar();
         }

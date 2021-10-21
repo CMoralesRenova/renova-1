@@ -78,5 +78,8 @@ class mvc_controller_default extends mvc_controller {
     public function permisos () {
         include_once("app/views/default/modules/modulos/permisos/m.permisos.buscar.php");
     }
+    public function nomina_comedor () {
+        include_once("app/views/default/modules/modulos/comedor/m.comedor.buscar.php");
+    }
 }
 ?>
