@@ -110,7 +110,7 @@ class asistencia extends AW
         $sql1 = "select * from empleados where checador = '{$this->usr}' order by id desc limit 1";
         $res1 = $this->Query($sql1); 
 
-        $bExiste = 0;
+        $bExiste = false;
         if (count($res1) > 0) {
             $this->id_empleado = $res1[0]->id;
 
@@ -118,16 +118,9 @@ class asistencia extends AW
             $res = $this->Query($sql);
 
             if (count($res) > 0) {
-                if (!empty($res[0]->hora_salida) && (!empty($res[0]->estatus_salida) and $res[0]->estatus_salida > 0)) {
-                    $bExiste = 2;
-                } else {
-                    $bExiste = 1;
-                }
+                    $bExiste = true;
             }
-        } else {
-            $bExiste = 3;
         }
-
         return $bExiste;
     }
 
@@ -283,13 +276,9 @@ class asistencia extends AW
     public function Guardar()
     {
         $bRes = 0;
-        $guardar = $this->Existe();
-        if ($guardar == 1) {
+        $existe = $this->Existe();
+        if ($existe) {
             $bRes = $this->Actualizar();
-        } else if ($guardar == 2) {
-            $bRes = 3;
-        } else if ($guardar == 3) {
-            $bRes = 4;
         } else {
             $bRes = $this->Agregar();
         }
