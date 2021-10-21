@@ -147,11 +147,13 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
                                     <div class="form-group" style="">
                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     </div>
-                                    <div class="text-right ">
-                                        <a id="comedor" class="btn btn-info"><label> Comedor</label></a>
-                                    </div>
-                                    <div class="text-right ">
-                                        <a id="checador" class="btn btn-info"><label> Checador</label></a>
+                                    <div class="row">
+                                        <div class="col">
+                                            <a id="comedor" class="btn btn-info text-left"><label> Comedor</label></a>
+                                        </div>
+                                        <div class="row">
+                                            <a id="checador" class="btn btn-info text-right "><label> Checador</label></a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
