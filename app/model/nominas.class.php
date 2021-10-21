@@ -39,7 +39,7 @@ class nominas extends AW
         'PAGADA' ELSE 'OTRO'END AS estatus, WEEK ( nominas.fecha ) AS semana FROM nominas LEFT JOIN nomina_detalle ON nominas.id = nomina_detalle.id_nomina 
         where fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' GROUP BY nominas.fecha, nominas.id 
         ORDER BY fecha ASC  ";
-        //echo nl2br($sql);
+
         return $this->Query($sql);
     }
     public function Listado_nomina()
@@ -61,15 +61,18 @@ class nominas extends AW
         date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) * (c.salario_diario / 8)) as horas_extras,
         ((select count(dia) + 1 from asistencia where id_empleado = c.id and estatus_entrada = 1 and fecha between date_add(a.fecha,
         INTERVAL -7 DAY) and a.fecha) * c.salario_diario) as esperado,
-        (select sum(monto_por_semana) from otros where id_empleado = c.id and estatus = 1 and fecha_pago between date_add(a.fecha,
+        (select sum(monto_por_semana) from otros where id_empleado = c.id and fecha_pago between date_add(a.fecha,
         INTERVAL -7 DAY) and a.fecha) as otros_descuentos,
-        (select monto_por_semana from prestamos where id_empleado = c.id and estatus = 1 and fecha_pago between
+        (select monto_por_semana from prestamos where id_empleado = c.id and fecha_pago between
         date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) as prestamos,
-        ((select sum(monto_por_semana) from otros where id_empleado = c.id and estatus = 1 and fecha_pago between date_add(a.fecha,
-        INTERVAL -7 DAY) and a.fecha) + if(j.estatus = 1, j.monto, '0') +
-        (select sum(monto_por_semana) from prestamos where id_empleado = c.id and estatus = 1 and fecha_pago between
-        date_add(a.fecha, INTERVAL -7 DAY) and a.fecha)) as retenciones,j.monto, j.frecuencia, j.estatus as estatusAhorro,
-        f.id as id_otros, g.id as id_prestamo, j.id as id_ahorros
+        j.monto, j.frecuencia, j.estatus as estatusAhorro,
+        f.id as id_otros, g.id as id_prestamo, j.id as id_ahorros,
+        ((SELECT 
+            SUM(precio_platillo)
+        FROM
+            comedor
+        WHERE
+            id_empleado = c.id AND fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) ) AS comedor
         FROM nominas a
         LEFT JOIN empleados c ON c.id
         LEFT JOIN horas_extras as d on c.id = d.id_empleado
@@ -80,6 +83,7 @@ class nominas extends AW
         left join (select * from departamentos) i on h.id_departamento = i.id
         left join (select * from ahorros) j on c.id = j.id_empleado 
         WHERE a.id ='{$this->id}' {$sqlEmpleado} group by c.nombres";
+
         if (!empty($this->id_empleado)) {
             $res = parent::Query($sql);
             if (!empty($res) && !($res === NULL)) {
@@ -109,15 +113,18 @@ class nominas extends AW
         date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) * (c.salario_diario / 8)) as horas_extras,
         ((select count(dia) + 1 from asistencia where id_empleado = c.id and estatus_entrada = 1 and fecha between date_add(a.fecha,
         INTERVAL -7 DAY) and a.fecha) * c.salario_diario) as esperado,
-        (select sum(monto_por_semana) from otros where id_empleado = c.id and estatus = 1 and fecha_pago between date_add(a.fecha,
+        (select sum(monto_por_semana) from otros where id_empleado = c.id and fecha_pago between date_add(a.fecha,
         INTERVAL -7 DAY) and a.fecha) as otros_descuentos,
-        (select monto_por_semana from prestamos where id_empleado = c.id and estatus = 1 and fecha_pago between
+        (select monto_por_semana from prestamos where id_empleado = c.id and fecha_pago between
         date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) as prestamos,
-        ((select sum(monto_por_semana) from otros where id_empleado = c.id and estatus = 1 and fecha_pago between date_add(a.fecha,
-        INTERVAL -7 DAY) and a.fecha) + if(j.estatus = 1, j.monto, '0') +
-        (select sum(monto_por_semana) from prestamos where id_empleado = c.id and estatus = 1 and fecha_pago between
-        date_add(a.fecha, INTERVAL -7 DAY) and a.fecha)) as retenciones,j.monto, j.frecuencia, j.estatus as estatusAhorro,
-        f.id as id_otros, g.id as id_prestamo, j.id as id_ahorros
+        j.monto, j.frecuencia, j.estatus as estatusAhorro,
+        f.id as id_otros, g.id as id_prestamo, j.id as id_ahorros,
+        ((SELECT 
+            SUM(precio_platillo)
+        FROM
+            comedor
+        WHERE
+            id_empleado = c.id AND fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) ) AS comedor
         FROM nominas a
         LEFT JOIN empleados c ON c.id
         LEFT JOIN horas_extras as d on c.id = d.id_empleado
@@ -151,14 +158,106 @@ class nominas extends AW
                 }
                 $retenciones = $retenciones + $valor->otros_descuentos;
                 $retenciones = $retenciones + $valor->prestamos;
-                $retenciones = $retenciones + $valor->retenciones;
+                $retenciones = $retenciones + $valor->comedor;
+                if ($valor->estatusAhorro == 1){
+                    $retenciones = $retenciones + $valor->monto;
+                }
+
+                $sqlOtros = "select * from otros where id_empleado='{$valor->id_empleado}' and fecha_pago between date_add('{$valor->fecha}', INTERVAL -7 DAY) and '{$valor->fecha}'";
+                $resOtros = $this->Query($sqlOtros);
+
+                if (!empty($resOtros) && !($resOtros === NULL)) {
+                    foreach ($resOtros as $idx => $otros) {
+                        if ($otros->numero_semanas == ($otros->semana_actual + 1) && $otros->estatus == 1) {
+                            $sqlUpdateOtros1 = "UPDATE `otros`
+                                        SET
+                                        `estatus` = 0,
+                                        `semana_actual` = ($otros->semana_actual + 1),
+                                        `restante` = '" . ($otros->restante - $otros->monto_por_semana) . "' 
+                                        WHERE `id` = '{$otros->id}'";
+                            $this->NonQuery($sqlUpdateOtros1);
+                        } else {
+                            $sqlUpdateOtros = "UPDATE `otros`
+                            SET
+                            `estatus` = '0',
+                            `restante` = '" . ($otros->restante - $otros->monto_por_semana) . "' 
+                            WHERE `id` = '{$otros->id}'";
+
+                            if ($this->NonQuery($sqlUpdateOtros)) {
+                                $sqlInsertOtros = "INSERT INTO `otros`
+                                (`id_empleado`,`numero_semanas`,`semana_actual`,`estatus`,`fecha_registro`,`fecha_pago`,
+                                `monto`,`monto_por_semana`,`monto_pagar`,`motivo`,`detalles`,`restante`)
+                                VALUES
+                                ('{$otros->id_empleado}','{$otros->numero_semanas}',
+                                '" . ($otros->semana_actual + 1). "',
+                                '1','{$otros->fecha_registro}',
+                                date_add('{$otros->fecha_pago}', INTERVAL +7 DAY),
+                                '{$otros->monto}','{$otros->monto_por_semana}','{$otros->monto_pagar}','{$otros->motivo}','{$otros->detalles}'
+                                ,'" . ($otros->restante - $otros->monto_por_semana) . "')";
+                                $this->NonQuery($sqlInsertOtros);
+                            }
+                        }
+                    }
+                }
+
+                $sqlPrestamos = "select * from prestamos where id_empleado='{$valor->id_empleado}' and fecha_pago between date_add('{$valor->fecha}', INTERVAL -7 DAY) and '{$valor->fecha}'";
+                $resPrestamos = $this->Query($sqlPrestamos);
+
+                if (!empty($resPrestamos) && !($resPrestamos === NULL)) {
+                    foreach ($resPrestamos as $idx => $prestamos) {
+                        if ($prestamos->numero_semanas == ($prestamos->semana_actual + 1) && $prestamos->estatus == 1) {
+                            $sqlUpdatePrestamos1 = "UPDATE `prestamos`
+                                SET
+                                `estatus` = 0,
+                                `semana_actual` = ($prestamos->semana_actual + 1),
+                                `restante` = '" . ($prestamos->restante - $prestamos->monto_por_semana) . "' 
+                                WHERE `id` = '{$prestamos->id}'";
+                                $this->NonQuery($sqlUpdatePrestamos1);
+                        } else {
+                            $sqlUpdatePrestamos = "UPDATE `prestamos`
+                            SET 
+                            `estatus` = 0,
+                            `restante` = '".($prestamos->restante - $prestamos->monto_por_semana)."'
+                            WHERE `id` = '{$prestamos->id}'";
+
+                            if ($this->NonQuery($sqlUpdatePrestamos)) {
+                                $sqlInsertOtros = "INSERT INTO `prestamos`
+                                (`id_empleado`,`numero_semanas`, `estatus`,`fecha_registro`, `fecha_pago`, `monto`,`interes`, `monto_por_semana`,
+                                `monto_pagar`, `restante`, `semana_actual`)
+                                VALUES
+                                ('{$prestamos->id_empleado}','{$prestamos->numero_semanas}','1','{$prestamos->fecha_registro}',
+                                date_add('{$prestamos->fecha_pago}', INTERVAL +7 DAY),
+                                 '{$prestamos->monto}','{$prestamos->interes}',
+                                '{$prestamos->monto_por_semana}','{$prestamos->monto_pagar}',
+                                '".($prestamos->restante - $prestamos->monto_por_semana)."', 
+                                '". ($prestamos->semana_actual + 1) ."')";
+                                $this->NonQuery($sqlInsertOtros);
+                            }
+                        }
+                    }
+                } 
+
+                $sqlAhorros = "select * from ahorros where id_empleado='{$valor->id_empleado}' and estatus = '1'";
+                $resAhorros = $this->Query($sqlAhorros);
+
+                if (!empty($resAhorros) && !($resAhorros === NULL)) {
+                    foreach ($resAhorros as $idx => $ahorros) {
+                        if ($ahorros->estatus == 1) {
+                            $sqlUpdateahorros = "UPDATE `ahorros`
+                            SET
+                            `frecuencia` = frecuencia + 1,
+                            `acumulado` = `acumulado` + `monto` 
+                            WHERE `id` = '{$ahorros->id}'";
+                            $this->NonQuery($sqlUpdateahorros);
+                        }
+                    }
+                }
 
                 $sql1 = "INSERT INTO `nomina_detalle`
                 (`id_nomina`,`id_empleado`,`percepciones`,`retenciones`, `total`)
                 VALUES
-                ('{$valor->id}','{$valor->id_empleado}','".($percepciones - $retenciones)."','{$retenciones}','{$percepciones}')";
-                print $sql1;
-                $this->NonQuery($sql1); 
+                ('{$valor->id}','{$valor->id_empleado}','" . ($percepciones - $retenciones) . "','{$retenciones}','{$percepciones}')";
+                $this->NonQuery($sql1);
             }
         } else {
             $res = NULL;

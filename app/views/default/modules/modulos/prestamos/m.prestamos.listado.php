@@ -65,15 +65,16 @@ $lstprestamos = $oPrestamos->Listado();
                         foreach ($lstprestamos as $idx => $campo) {
                     ?>
                             <tr>
-                                <td style="text-align: ;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
-                                <td style="text-align: ;"><?= $campo->fecha_registro ?></td>
-                                <td style="text-align: ;">$<?= $campo->monto ?></td>
-                                <td style="text-align: ;">$<?= $campo->monto_pagar ?></td>
-                                <td style="text-align: ;">$<?= $campo->monto_por_semana ?></td>
-                                <td style="text-align: ;"><?= $campo->numero_semanas ?></td>
-                                <td style="text-align: ;"><?= $campo->semana_actual ?></td>
-                                <td style="text-align: ;"><?= $campo->est ?></td>
-                                <td style="text-align: ;width: 20%;">
+                                <td ><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
+                                <td ><?= $campo->fecha_registro ?></td>
+                                <td ><?= $campo->fecha_pago ?></td>
+                                <td >$<?= $campo->monto ?></td>
+                                <td >$<?= $campo->monto_pagar ?></td>
+                                <td >$<?= $campo->monto_por_semana ?></td>
+                                <td ><?= $campo->numero_semanas ?></td>
+                                <td ><?= $campo->semana_actual ?></td>
+                                <td ><?= $campo->est ?></td>
+                                <td style="width: 20%;">
                                     <div class="row">
                                         <a class="btn btn-sm btn-danger" href="javascript:Editar('<?= $campo->id ?>','Detalles','<?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?>')">
                                             <span class="glyphicon glyphicon-ok">Ver Detalles</a><br>

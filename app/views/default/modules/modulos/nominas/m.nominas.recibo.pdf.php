@@ -14,7 +14,7 @@ try {
     //$pdf->pdf->SetDisplayMode('fullpage');
     $pdf->writeHTML($content);
     
-    $pdf->Output('Anexo3' . $oNominas->id . '.pdf');
+    $pdf->Output('Nomina' . $oNominas->id . '.pdf');
 } catch (HTML2PDF_exception $e) {
     echo $e;
     exit;

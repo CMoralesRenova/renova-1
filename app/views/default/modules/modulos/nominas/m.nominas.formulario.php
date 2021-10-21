@@ -12,6 +12,7 @@ $oNominas = new nominas();
 $oNominas->id = addslashes(filter_input(INPUT_POST, "id"));
 $nombre = addslashes(filter_input(INPUT_POST, "nombre"));
 $lstnominas = $oNominas->Listado_nomina();
+
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
@@ -24,7 +25,7 @@ $lstnominas = $oNominas->Listado_nomina();
                     title: 'Reporte Nomina Semana <?= $nombre ?>',
                     text: 'Exportar a pdf',
                     exportOptions: {
-                        columns: [0, 5,8,9,10,11,12,13,14]
+                        columns: [0, 5, 8, 9, 10, 11, 12, 13, 14]
                     }
                 }]
             });
@@ -49,6 +50,7 @@ $lstnominas = $oNominas->Listado_nomina();
                         <th>Dias Laborados</th>
                         <th>Horas Extras</th>
                         <th>Total Percepciones</th>
+                        <th>Comedor</th>
                         <th>Ahorro</th>
                         <th>Prestamos</th>
                         <th>Otros Cargos</th>
@@ -81,21 +83,29 @@ $lstnominas = $oNominas->Listado_nomina();
                                                                     $totalEsperado = bcdiv($campo->esperado + $campo->bono_doce + $campo->complemento_sueldo + $campo->salario_productividad + $campo->salario_puntualidad + $campo->salario_asistencia + $campo->horas_extras, '1', 2);
                                                                 }
                                                                 echo $totalEsperado; ?></td>
+                                <td style="text-align: center;"><?php if (!empty($campo->comedor)) {
+                                                                    echo "-" . $campo->comedor;
+                                                                    $totalRetenciones = $totalRetenciones + $campo->comedor;
+                                                                } else {
+                                                                    echo "-0.00";
+                                                                }?></td>
                                 <td style="text-align: center;"><?php if ($campo->estatusAhorro == 1) {
-                                                                    echo "-".$campo->monto;
+                                                                    echo "-" . $campo->monto;
                                                                     $totalRetenciones = $totalRetenciones + $campo->monto;
                                                                 } else {
                                                                     echo "-0.00";
                                                                 } ?></td>
 
-                                <td style="text-align: center;"><?php echo "-" . bcdiv($campo->prestamos, '1', 2); $totalRetenciones = $totalRetenciones + $campo->prestamos;?></td>
-                                <td style="text-align: center;"><?php echo "-" . bcdiv($campo->otros_descuentos, '1', 2); $totalRetenciones = $totalRetenciones + $campo->otros_descuentos; ?></td>
+                                <td style="text-align: center;"><?php echo "-" . bcdiv($campo->prestamos, '1', 2);
+                                                                $totalRetenciones = $totalRetenciones + $campo->prestamos; ?></td>
+                                <td style="text-align: center;"><?php echo "-" . bcdiv($campo->otros_descuentos, '1', 2);
+                                                                $totalRetenciones = $totalRetenciones + $campo->otros_descuentos; ?></td>
                                 <td style="text-align: center;"><?= "-" . bcdiv($totalRetenciones, '1', 2); ?></td>
                                 <td style="text-align: center;"><?php echo $totalEsperado - $totalRetenciones; ?></td>
                                 <td style="text-align: center;">
                                     <?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno . "<br>" ?>
-                                    <?php if ($campo->estatus == 1) { ?>
-                                    <a class="btn btn-sm btn-warning" href="javascript:Reporte('<?= $campo->id ?>','<?= $campo->id_empleado ?>')">Ver</a>
+                                    <?php if ($campo->estatus != 3) { ?>
+                                        <a class="btn btn-sm btn-warning" href="javascript:Reporte('<?= $campo->id ?>','<?= $campo->id_empleado ?>')">Ver</a>
                                     <?php } ?>
                                 </td>
                             </tr>

@@ -221,9 +221,16 @@ $totalaRetencion = 0;
             <?php } ?>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
-            <td>Servicio de comedor</td>
-            <td>&nbsp;</td>
-            <td>200</td>
+            <?php if (!empty($oNominas->comedor)) { ?>
+                <td>Servicio de comedor</td>
+                <td>&nbsp;</td>
+                <td><?php echo $oNominas->comedor;
+                    $totalaRetencion = $totalaRetencion + $oNominas->comedor; ?></td>
+            <?php } else { ?>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            <?php } ?>
         </tr>
         <tr>
             <?php if ($oNominas->dias_laborados == 7) {
@@ -341,7 +348,7 @@ $totalaRetencion = 0;
             <td>&nbsp;</td>
         </tr>
     </table>
-    <table style="margin-left:0px; position:relative; margin-top: 0px; border: #00 1px solid;" >
+    <table style="margin-left:0px; position:relative; margin-top: 0px; border: #00 1px solid;">
         <tr>
             <td style="width:529px;"><Label style=" font-size:12px;">Recibí de esta empresa la cantidad que señala este recibo de pago, estando conforme con las<br>
                     percepciones y las retenciones descritas, por lo que certifico que no se me adeuda cantidad alguna<br>
@@ -360,8 +367,8 @@ $totalaRetencion = 0;
             <td style="font-size:15px;">Total de <br>retenciones: </td>
             <td><u>-<?= bcdiv($totalaRetencion, '1', 2)  ?>&nbsp;</u></td>
         </tr>
-        <tr >
-            <td style="">Pago: </td> 
+        <tr>
+            <td >Pago: </td>
             <td><?= bcdiv($totalaPagar - $totalaRetencion, '1', 2) ?></td>
         </tr>
 

@@ -118,7 +118,7 @@ class comedor extends AW
 
         $this->id_empleado = $res1[0]->id;
 
-        $sql = "INSERT INTO `renova`.`comedor`
+        $sql = "INSERT INTO `comedor`
             (`id_empleado`,`precio_platillo`,`fecha`)
                 VALUES
             ('{$this->id_empleado}','38',now());";
