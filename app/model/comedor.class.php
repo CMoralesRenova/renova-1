@@ -6,7 +6,7 @@
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "/app/model/principal.class.php");
 
-class comedor_nominas extends AW
+class comedor extends AW
 {
 
     var $id;
@@ -41,6 +41,29 @@ class comedor_nominas extends AW
         $sql = "SELECT a.nombres, a.ape_paterno, a.ape_materno, count(dia) + 1  as dia, id_empleado  FROM empleados as a 
         left join comedor as b on a.id = b.id_empleado where 1=1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' group by nombres";
 
+        return $this->Query($sql);
+    }
+
+    public function Listado_comedor()
+    {
+        $sqlEmpleado = "";
+        if (!empty($this->id_empleado)) {
+            $sqlEmpleado = "and id_empleado = '{$this->id_empleado}' order by a.fecha asc";
+        } else {
+            $sqlEmpleado = "order by a.id desc limit 5";
+        }
+
+        $sql = "SELECT 
+            b.nombres,
+            b.ape_paterno,
+            b.ape_materno,
+            a.precio_platillo
+        FROM
+            comedor AS a
+                LEFT JOIN
+            empleados AS b ON b.id = a.id_empleado
+        WHERE
+            1 = 1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' {$sqlEmpleado} ";
         return $this->Query($sql);
     }
 

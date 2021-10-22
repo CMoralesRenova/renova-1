@@ -13,7 +13,9 @@ $lstcomedor = $oComedor->Listado();
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        $("#dataTable").DataTable();
+        $("#dataTable").DataTable({
+            "ordering": false
+        });
 
         $("#btnAgregar").button().click(function(e) {
             Editar("", "Agregar");

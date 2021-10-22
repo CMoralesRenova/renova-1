@@ -135,6 +135,17 @@ class empleados extends AW
         return $bExiste;
     }
 
+    public function Desactivar() {
+
+        $sql = "UPDATE `empleados`
+        SET
+        `estatus` = '{$this->estatus}'
+        WHERE `id` = '{$this->id}';
+        ";
+                 // echo nl2br($sql);
+        return $this->NonQuery($sql);
+    }
+
     public function Actualizar()
     {
         $sqlSalario = "";
