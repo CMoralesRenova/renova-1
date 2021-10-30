@@ -22,7 +22,7 @@ $aPermisos = empty($oUsuarios->perfiles_id) ? array() : explode("@", $oUsuarios-
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        $("#nameModal_").text("<?php echo $nombre ?> Nomina");
+        $("#nameModal_").text("<?php echo $nombre ?> Permiso");
         $("#entrada1").hide();
         $("#salida1").hide();
         $("#frmFormulario_").ajaxForm({

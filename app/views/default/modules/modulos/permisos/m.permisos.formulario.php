@@ -10,8 +10,10 @@ require_once($_SITE_PATH . "/app/model/permisos.class.php");
 
 $oPermisos = new permisos(true, $_POST);
 $oPermisos->id = addslashes(filter_input(INPUT_POST, "id"));
+
 $nombre = addslashes(filter_input(INPUT_POST, "nombre"));
 $empleado = addslashes(filter_input(INPUT_POST, "empleado"));
+
 $sesion = $_SESSION[$oPermisos->NombreSesion];
 $oPermisos->Informacion();
 
@@ -19,26 +21,7 @@ $oPermisos->Informacion();
 <script type="text/javascript">
     $(document).ready(function(e) {
         
-        $("#frmFormulario").ajaxForm({
-            beforeSubmit: function(formData, jqForm, options) {},
-            success: function(data) {
-                var str = data;
-                var datos0 = str.split("@")[0];
-                var datos1 = str.split("@")[1];
-                var datos2 = str.split("@")[2];
-                if ((datos3 = str.split("@")[3]) === undefined) {
-                    datos3 = "";
-                } else {
-                    datos3 = str.split("@")[3];
-                }
-                Alert(datos0, datos1 + "" + datos3, datos2);
-                Listado();
-                $("#myModal_1").modal("hide");
-            }
-        });
-        $('#id_empleado').select2({
-            width: '100%'
-        });
+        
     });
 </script>
 <div>
@@ -85,3 +68,5 @@ $oPermisos->Informacion();
         </div>
     </div>
 </div>
+<input type="hidden" id="id_" name="id_" value="<?= $oPermisos->id ?>" />
+<input type="hidden" id="id_empleado_" name="id_empleado_" value="<?= $oPermisos->id_empleado ?>">

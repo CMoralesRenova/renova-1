@@ -55,10 +55,19 @@ $oPermisos->ValidaNivelUsuario("permisos");
                 $("#frmFormulario_").submit();
             }
         });
+
         $("#btnBuscar").button().click(function(e) {
             Listado();
         });
 
+        $("#btnImprimir").button().click(function(e) {
+            var opc = "fullscreen=no, menubar=no, resizable=no, scrollbars=yes, status=yes, titlebar=yes, toolbar=no, width=750, height=580";
+            var pagina = "app/views/default/modules/modulos/permisos/m.permisos.recibo.pdf.php?";
+
+            pagina += "id="+ $("#id_").val()+"&id_empleado="+ $("#id_empleado_").val();
+
+            window.open(pagina, "reporte", opc);   
+        });
     });
 
     function Listado() {

@@ -86,7 +86,7 @@ class comedor extends AW
 
     public function Existe()
     {
-        $sql1 = "select * from empleados where checador = '{$this->usr}' order by id desc limit 1";
+        $sql1 = "select * from empleados where checador = '{$this->usr}' and estatus = '1' order by id desc limit 1";
         $res1 = $this->Query($sql1);
 
         $bExiste = false;
@@ -113,13 +113,15 @@ class comedor extends AW
         $sql1 = "select * from empleados where checador = '{$this->usr}' order by id desc limit 1";
         $res1 = $this->Query($sql1);
 
+        if (count($res1) > 0) {
         $this->id_empleado = $res1[0]->id;
-
+        
         $sql = "INSERT INTO `comedor`
             (`id_empleado`,`precio_platillo`,`fecha`)
                 VALUES
             ('{$this->id_empleado}','38',now());";
         $bResultado = $this->NonQuery($sql);
+        }
 
         return $bResultado;
     }

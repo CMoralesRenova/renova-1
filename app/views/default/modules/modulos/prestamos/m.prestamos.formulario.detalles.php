@@ -123,7 +123,7 @@ $aPermisos = empty($oPrestamos->perfiles_id) ? array() : explode("@", $oPrestamo
             </div>
         </div>
     </div>
-    <input type="hidden" id="id" name="id" value="<?= $oPrestamos->id ?>" />
-    <input type="hidden" id="user_id" name="user_id" value="<?= $sesion->id ?>">
-    <input type="hidden" id="accion" name="accion" value="GUARDAR" />
+    <input type="hidden" id="id_" name="id_" value="<?= $oPrestamos->id ?>" />
+    <input type="hidden" id="id_empleado_" name="id_empleado_" value="<?= $oPrestamos->id_empleado ?>">
+    <input type="hidden" id="fecha_registro_" name="fecha_registro_" value="<?= $oPrestamos->fecha_registro ?>">
 </div>

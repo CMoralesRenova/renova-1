@@ -55,6 +55,13 @@ class prestamos extends AW
             $sqlEstatus = "{$this->estatus1}";
         }
 
+        $sqlListado = "";
+        if ($this->fecha_registro != '') {
+            $sqlListado = "fecha_registro = '{$this->fecha_registro}' and id_empleado = '{$this->id_empleado}'";
+        } else {
+            $sqlListado = " a.estatus like '%{$sqlEstatus}%' and fecha_registro between '{$this->fecha_inicial}' and '{$this->fecha_final}'";
+        }
+
         $sql = "SELECT a.*, CASE WHEN a.estatus = 0 THEN
             'LIQUIDADO'
         WHEN a.estatus = 1 THEN
@@ -65,7 +72,7 @@ class prestamos extends AW
         b.nombres, b.ape_paterno, b.ape_materno
         FROM prestamos AS a
         LEFT JOIN empleados AS b ON a.id_empleado = b.id
-        where a.estatus like '%{$sqlEstatus}%' and fecha_registro between '{$this->fecha_inicial}' and '{$this->fecha_final}'
+        where  {$sqlEstatus} {$sqlListado}
         ORDER BY
             a.id ASC";
         return $this->Query($sql);

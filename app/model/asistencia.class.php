@@ -41,7 +41,7 @@ class asistencia extends AW
 
     public function Listado()
     {
-        $sql = "SELECT a.nombres, a.ape_paterno, a.ape_materno, count(dia) + 1  as dia, id_empleado  FROM empleados as a 
+        $sql = "SELECT a.nombres, a.ape_paterno, a.ape_materno, count(dia)   as dia, id_empleado  FROM empleados as a 
         left join asistencia as b on a.id = b.id_empleado where 1=1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' group by nombres";
 
         return $this->Query($sql);
@@ -108,7 +108,7 @@ class asistencia extends AW
     public function Existe()
     {
         $sql1 = "select * from empleados where checador = '{$this->usr}' order by id desc limit 1";
-        $res1 = $this->Query($sql1); 
+        $res1 = $this->Query($sql1);
 
         $bExiste = false;
         if (count($res1) > 0) {
@@ -118,7 +118,7 @@ class asistencia extends AW
             $res = $this->Query($sql);
 
             if (count($res) > 0) {
-                    $bExiste = true;
+                $bExiste = true;
             }
         }
         return $bExiste;
@@ -151,7 +151,7 @@ class asistencia extends AW
                 $minutosMas = strtotime('+10 minute', strtotime($res3[0]->salida));
                 $minutosMas = date('H:i:s', $minutosMas);
 
-                if (($this->hora >= $minutosMenos) && ($this->hora <= $minutosMas)) {
+                if (($this->hora >= $minutosMenos) && ($this->hora <= $minutosMas) && $res3[0]->sin_sueldo == 1) {
                     $sql = "UPDATE `asistencia`
                     SET
                     `hora_salida` = '{$this->hora}',
@@ -160,7 +160,6 @@ class asistencia extends AW
                     WHERE `id` = '{$this->id}'";
 
                     $this->NonQuery($sql);
-                    print_r("llega if permiso");
                     $bResultado = 2;
                 } else {
                     $sql = "UPDATE `asistencia`
@@ -170,7 +169,6 @@ class asistencia extends AW
                     `estatus_salida` = '3'
                     WHERE `id` = '{$this->id}'";
                     $this->NonQuery($sql);
-                    print_r($sql." else permiso tarde");
                     $bResultado = 2;
                 }
             }
@@ -232,12 +230,13 @@ class asistencia extends AW
                 $minutosMas = strtotime('+10 minute', strtotime($res3[0]->entrada));
                 $minutosMas = date('H:i:s', $minutosMas);
 
-                if (($this->hora >= $minutosMenos) && ($this->hora <= $minutosMas)) {
+                if (($this->hora >= $minutosMenos) && ($this->hora <= $minutosMas) ) {
                     $sql = "INSERT INTO 
                         `asistencia` (`id_empleado`,`fecha`,`hora_entrada`,`dia`,`order`,`permiso_entrada`)
                         VALUES
                         ('{$this->id_empleado}',now(),'{$this->hora}','{$this->diaActual}',now(),'1');";
                     $this->NonQuery($sql);
+
                     $bResultado = 1;
                 } else {
                     $sql = "INSERT INTO 
@@ -245,6 +244,7 @@ class asistencia extends AW
                         VALUES
                         ('{$this->id_empleado}',now(),'{$this->hora}','{$this->diaActual}',now(), '3');";
                     $this->NonQuery($sql);
+
                     $bResultado = 1;
                 }
             }
@@ -268,6 +268,7 @@ class asistencia extends AW
                 VALUES
                 ('{$this->id_empleado}',now(),'{$this->hora}','{$this->diaActual}',now(), '3');";
             $this->NonQuery($sql);
+
             $bResultado = 1;
         }
         return $bResultado;
@@ -275,12 +276,20 @@ class asistencia extends AW
 
     public function Guardar()
     {
+
+        $sql1 = "select * from empleados where checador = '{$this->usr}' and estatus = '1' order by id desc limit 1";
+        $res1 = $this->Query($sql1);
+
         $bRes = 0;
-        $existe = $this->Existe();
-        if ($existe) {
-            $bRes = $this->Actualizar();
+        if (count($res1) > 0) {
+            $existe = $this->Existe();
+            if ($existe) {
+                $bRes = $this->Actualizar();
+            } else {
+                $bRes = $this->Agregar();
+            }
         } else {
-            $bRes = $this->Agregar();
+            $bRes = 3;
         }
 
         return $bRes;

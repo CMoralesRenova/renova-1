@@ -39,6 +39,15 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
             Listado();
         });
         $("#id_empleado").change(PrestamoActivo);
+
+        $("#btnImprimir").button().click(function(e) {
+            var opc = "fullscreen=no, menubar=no, resizable=no, scrollbars=yes, status=yes, titlebar=yes, toolbar=no, width=750, height=580";
+            var pagina = "app/views/default/modules/modulos/prestamos/m.prestamos.recibo.pdf.php?";
+
+            pagina += "id="+ $("#id_").val()+"&id_empleado="+ $("#id_empleado_").val()+"&fecha_registro="+$("#fecha_registro_").val();
+
+            window.open(pagina, "reporte", opc);   
+        });
     });
 
     function Listado() {
@@ -207,20 +216,6 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
         });
     }
 
-    function imprSelec(nombre) {
-        var ficha = document.getElementById(nombre);
-        var ventimp = window.open(' ', '');
-        ventimp.document.write(ficha.innerHTML);
-        ventimp.document.close();
-        var css = ventimp.document.createElement("link");
-
-        css.setAttribute("href", "app/views/default/css/sb-admin-2.min.css");
-        css.setAttribute("rel", "stylesheet");
-        css.setAttribute("type", "text/css");
-        ventimp.document.head.appendChild(css);
-        ventimp.print();
-        ventimp.close();
-    }
 </script>
 
 <?php require_once('app/views/default/link.html'); ?>
@@ -298,7 +293,7 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
                         </div>
                         <div class="modal-footer">
                             <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Guardar">
-                            <a href="javascript:imprSelec('divFormulario')" class="btn btn-danger" id="imprimir">Imprimir recibo</a>
+                            <input type="button" id="btnImprimir" class="btn btn-danger" name="btnImprimir" value="Imprimir Prestamo">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>

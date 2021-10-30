@@ -81,5 +81,11 @@ class mvc_controller_default extends mvc_controller {
     public function nomina_comedor () {
         include_once("app/views/default/modules/modulos/comedor/m.comedor.buscar.php");
     }
+    public function fonacot () {
+        include_once("app/views/default/modules/modulos/fonacot/m.fonacot.buscar.php");
+    }
+    public function infonavit () {
+        include_once("app/views/default/modules/modulos/infonavit/m.infonavit.buscar.php");
+    }
 }
 ?>

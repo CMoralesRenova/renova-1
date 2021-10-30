@@ -112,6 +112,19 @@ class permisos extends AW
     public function Agregar()
     {
 
+        if ($this->fecha <= date("Y-m-d")) {
+            $sqlPermiso = "";
+            if ($this->llegada_tarde == 1) {
+                $sqlPermiso = "permiso_entrada = 1, estatus_entrada = ''";
+            } else if ($this->salida_temprano == 1) {
+                $sqlPermiso = "permiso_salida = 1, estatus_salida = ''";
+            }
+            $sqlUpdate = "UPDATE `asistencia`
+                SET
+                {$sqlPermiso}
+                WHERE id_empleado = '{$this->id_empleado}' and fecha = '{$this->fecha}'";
+            $this->NonQuery($sqlUpdate);
+        }
         $sql = "insert into permisos
                 (`id`,`id_empleado`,`entrada`,`salida`,`dia`,`fecha`,`llegada_tarde`,`salida_temprano`,`dia_completo`,`id_usuario`,`fecha_registro`,`estatus`,`sin_sueldo`)
                 values

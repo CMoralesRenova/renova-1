@@ -10,6 +10,7 @@ require_once($_SITE_PATH . "/app/model/comedor.nomina.class.php");
 
 $oComedor = new comedor_nominas(true, $_POST);
 $lstcomedor = $oComedor->Listado();
+
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
@@ -36,14 +37,14 @@ $lstcomedor = $oComedor->Listado();
                         <th>Empleado</th>
                         <th>Fecha de registro</th>
                         <th>Cantidad</th>
-                        <th>Acciones</th>
+                        <!--<th>Acciones</th>-->
                     </tr>
                 </thead>
                 <tfoot>
                     <th>Empleado</th>
                     <th>Fecha de registro</th>
                     <th>Cantidad</th>
-                    <th>Acciones</th>
+                    <!--<th>Acciones</th>-->
                 </tfoot>
                 <tbody>
                     <?php
@@ -54,9 +55,9 @@ $lstcomedor = $oComedor->Listado();
                                 <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
                                 <td style="text-align: center;"><?= $campo->fecha ?></td>
                                 <td style="text-align: center;"><?= $campo->precio_platillo ?></td>
-                                <td style="text-align: center;">
-                                        <a class="btn btn-sm btn-danger" href="javascript:Editar('<?= $campo->id ?>','Editar')"><span class="glyphicon glyphicon-ok">Editar</a>
-                                </td>
+                                <!--<td style="text-align: center;">
+                                        <a class="btn btn-sm btn-danger" href="javascript:Editar('$campo->id ?>','Editar')"><span class="glyphicon glyphicon-ok">Editar</a>
+                                </td>-->
                             </tr>
                     <?php
                         }

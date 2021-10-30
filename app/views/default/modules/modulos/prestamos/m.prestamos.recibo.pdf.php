@@ -4,8 +4,8 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
 ob_start();
 error_reporting(E_ALL & ~E_NOTICE);
 ini_set('display_errors', 0);
-//ini_set('log_errors', 1);
-include('m.nominas.items.php');
+ini_set('log_errors', 1);
+include('m.prestamos.items.php');
 $content = ob_get_clean();
 // convert in PDF
 require_once($_SITE_PATH . "app/model/html2pdf/html2pdf.class.php");
@@ -14,7 +14,7 @@ try {
     //$pdf->pdf->SetDisplayMode('fullpage');
     $pdf->writeHTML($content);
     
-    $pdf->Output('Nomina' . $oNominas->id . '.pdf');
+    $pdf->Output('Permiso.pdf');
 } catch (HTML2PDF_exception $e) {
     echo $e;
     exit;

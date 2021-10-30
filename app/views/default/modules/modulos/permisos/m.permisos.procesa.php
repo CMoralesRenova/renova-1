@@ -18,13 +18,5 @@ if ($accion == "GUARDAR") {
     } else {
         echo "Sistema@Ha ocurrido un error al guardar la información , vuelva a intentarlo o consulte con el administrador del sistema.@warning";
     }
-} else if ($accion == "Pagar"){
-    $oPermisos = new permisos(true, $_POST);
-
-    if ($oPermisos->Pagar() === true) {
-        echo "Sistema@Se ha registrado exitosamente la información. @success";
-    } else {
-        echo "Sistema@Ha ocurrido un error al guardar la información , vuelva a intentarlo o consulte con el administrador del sistema.@warning";
-    }
 }
 ?>

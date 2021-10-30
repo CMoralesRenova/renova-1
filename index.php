@@ -68,6 +68,10 @@ if ($action === "login") {
         $mvc_default->permisos();
     }else if ($action === "nomina_comedor") {
         $mvc_default->nomina_comedor();
+    }else if ($action === "fonacot") {
+        $mvc_default->fonacot();
+    }else if ($action === "infonavit") {
+        $mvc_default->infonavit();
     }else if ($action === "cerrar_sesion") {
         $mvc->CerrarSesion();
     }else if ($action === "acceso_denegado") {

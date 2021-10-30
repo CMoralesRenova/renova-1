@@ -172,7 +172,7 @@ $totalaRetencion = 0;
         </tr>
         <tr>
             <td><Label>Salario integrado:</Label></td>
-            <td><?= $oNominas->salario_diario ?> diario</td>
+            <td ><?= $oNominas->salario_diario ?> diario</td>
         </tr>
         <tr>
             <td><Label>Jornada:</Label></td>
@@ -197,15 +197,15 @@ $totalaRetencion = 0;
         <tr>
             <td><Label>Sueldo normal</Label></td>
             <?php $totalaPagar = $totalaPagar + $oNominas->dias_laborados * $oNominas->salario_diario; ?>
-            <td><?= $oNominas->dias_laborados * $oNominas->salario_diario ?></td>
-            <td><?= $oNominas->dias_laborados ?> dias</td>
+            <td style="text-align:right"><?= $oNominas->dias_laborados * $oNominas->salario_diario ?></td>
+            <td style="text-align:right"><?= $oNominas->dias_laborados ?> dias</td>
             <td>&nbsp;</td>
             <?php if ($oNominas->prestamos > 0) {
                 $totalaRetencion = $totalaRetencion + $oPrestamos->monto_por_semana ?>
                 <td>Prestamo</td>
-                <td><?= $oPrestamos->monto_pagar ?> </td>
-                <td><?= $oPrestamos->monto_por_semana ?></td>
-                <td><?= $oPrestamos->restante ?></td>
+                <td style="text-align:right"><?= $oPrestamos->monto_pagar ?> </td>
+                <td style="text-align:right"><?= $oPrestamos->monto_por_semana ?></td>
+                <td style="text-align:right"><?= $oPrestamos->restante ?></td>
             <?php } else { ?>
                 <td>&nbsp;</td>
             <?php } ?>
@@ -214,7 +214,7 @@ $totalaRetencion = 0;
             <?php if ($oNominas->dias_laborados == 7) {
                 $totalaPagar = $totalaPagar + $oNominas->salario_asistencia;  ?>
                 <td><Label>Premio de Asistencia</Label></td>
-                <td><?= $oNominas->salario_asistencia ?></td>
+                <td style="text-align:right"><?= $oNominas->salario_asistencia ?></td>
             <?php } else { ?>
                 <td><Label>&nbsp;</Label></td>
                 <td>&nbsp;</td>
@@ -224,7 +224,7 @@ $totalaRetencion = 0;
             <?php if (!empty($oNominas->comedor)) { ?>
                 <td>Servicio de comedor</td>
                 <td>&nbsp;</td>
-                <td><?php echo $oNominas->comedor;
+                <td style="text-align:right"><?php echo $oNominas->comedor;
                     $totalaRetencion = $totalaRetencion + $oNominas->comedor; ?></td>
             <?php } else { ?>
                 <td>&nbsp;</td>
@@ -236,7 +236,7 @@ $totalaRetencion = 0;
             <?php if ($oNominas->dias_laborados == 7) {
                 $totalaPagar = $totalaPagar + $oNominas->salario_puntualidad; ?>
                 <td><Label>Premio de Puntualidad</Label></td>
-                <td><?= $oNominas->salario_puntualidad ?> </td>
+                <td style="text-align:right"><?= $oNominas->salario_puntualidad ?> </td>
             <?php } else { ?>
                 <td><Label>&nbsp;</Label></td>
                 <td>&nbsp;</td>
@@ -257,9 +257,9 @@ $totalaRetencion = 0;
                     }
                     $totalaRetencion = $totalaRetencion + $totalSemana;
                     echo "<td>Otros Cargos</td>";
-                    echo "<td>$totalDescuentos</td>";
-                    echo "<td>$totalSemana</td>";
-                    echo "<td>$totalRestante</td>";
+                    echo "<td style='text-align:right'>$totalDescuentos</td>";
+                    echo "<td style='text-align:right'>$totalSemana</td>";
+                    echo "<td style='text-align:right'>$totalRestante</td>";
                 } ?>
             <?php } ?>
         </tr>
@@ -267,7 +267,7 @@ $totalaRetencion = 0;
             <?php if ($oNominas->salario_productividad > 0) {
                 $totalaPagar = $totalaPagar +  $oNominas->salario_productividad; ?>
                 <td><Label>Bono de productividad</Label></td>
-                <td><?= $oNominas->salario_productividad ?> </td>
+                <td style="text-align:right"><?= $oNominas->salario_productividad ?> </td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <?php if ($oNominas->monto > 0) { ?>
@@ -275,11 +275,11 @@ $totalaRetencion = 0;
                     <td></td>
                     <?php if ($oNominas->estatusAhorro == 1) {
                         $totalaRetencion = $totalaRetencion + $oNominas->monto;
-                        echo "<td>$oNominas->monto</td>";
+                        echo "<td style='text-align:right'>$oNominas->monto</td>";
                     } else {
                         echo "<td>A/D</td>";
                     } ?>
-                    <td><?= $oNominas->monto * $oNominas->frecuencia ?></td>
+                    <td style="text-align:right"><?= $oNominas->monto * $oNominas->frecuencia ?></td>
                 <?php } else { ?>
                     <td><Label>&nbsp;</Label></td>
                     <td>&nbsp;</td>
@@ -290,7 +290,7 @@ $totalaRetencion = 0;
             <?php if ($oNominas->horas_extras > 0) {
                 $totalaPagar = $totalaPagar + $oNominas->horas_extras; ?>
                 <td><Label>Horas extras</Label></td>
-                <td><?= bcdiv($oNominas->horas_extras, '1', 2) ?> </td>
+                <td style="text-align:right"><?= bcdiv($oNominas->horas_extras, '1', 2) ?> </td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
             <?php } ?>
@@ -361,15 +361,15 @@ $totalaRetencion = 0;
     <table style="margin-left:538px; position:relative; margin-top: -93px; border: #00 1px solid; heig">
         <tr>
             <td style="font-size:14px;">Total de<br> percepciones: </td>
-            <td style="width=101px;"><?= bcdiv($totalaPagar, '1', 2) ?></td>
+            <td style="width=101px; text-align:right;"><?= bcdiv($totalaPagar, '1', 2) ?></td>
         </tr>
         <tr>
             <td style="font-size:15px;">Total de <br>retenciones: </td>
-            <td><u>-<?= bcdiv($totalaRetencion, '1', 2)  ?>&nbsp;</u></td>
+            <td style="text-align:right"><u>-<?= bcdiv($totalaRetencion, '1', 2)  ?>&nbsp;</u></td>
         </tr>
         <tr>
             <td >Pago: </td>
-            <td><?= bcdiv($totalaPagar - $totalaRetencion, '1', 2) ?></td>
+            <td style="text-align: right;"><?= bcdiv($totalaPagar - $totalaRetencion, '1', 2) ?></td>
         </tr>
 
     </table>

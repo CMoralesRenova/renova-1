@@ -14,6 +14,8 @@ if ($accion === "CHECAR") {
         echo "Bienvenido@Se ha registrado la entrada. @success";
     } else if ($Guardar == 2) {
         echo "@Se ha registrado la salida.@success";
+    } else if ($Guardar == 3) {
+        echo "@El empleado esta dado de baja.@warning";
     } else {
         echo "@El empleado no existe.@error";
     }

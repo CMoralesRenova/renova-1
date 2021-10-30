@@ -109,6 +109,12 @@ $aPermisos = empty($oUsuario->perfiles_id) ? array() : explode("@", $oUsuario->p
                 <?php if ($oUsuario->ExistePermiso("otros", $aPermisos) === true) { ?>
                     <a class='collapse-item' href='index.php?action=otros'>Otros Cargos</a>
                 <?php } ?>
+                <?php if ($oUsuario->ExistePermiso("fonacot", $aPermisos) === true) { ?>
+                    <a class='collapse-item' href='index.php?action=fonacot'>Fonacot</a>
+                <?php } ?>
+                <?php if ($oUsuario->ExistePermiso("infonavit", $aPermisos) === true) { ?>
+                    <a class='collapse-item' href='index.php?action=infonavit'>Infonavit</a>
+                <?php } ?>
                 <?php if ($oUsuario->ExistePermiso("recoleccion", $aPermisos) === true) { ?>
                     <a class='collapse-item' href='index.php?action=recoleccion'>Recolección</a>
                 <?php } ?>
