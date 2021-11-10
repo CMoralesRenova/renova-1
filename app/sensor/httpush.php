@@ -3,6 +3,7 @@
 require_once './bd.php';
 set_time_limit(0);
 date_default_timezone_set("America/Mexico_City");
+clearstatcache();
 
 $datosJson = "";
 $fecha_actual = 0;

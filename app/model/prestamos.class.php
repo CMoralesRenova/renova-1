@@ -59,7 +59,7 @@ class prestamos extends AW
         if ($this->fecha_registro != '') {
             $sqlListado = "fecha_registro = '{$this->fecha_registro}' and id_empleado = '{$this->id_empleado}'";
         } else {
-            $sqlListado = " a.estatus like '%{$sqlEstatus}%' and fecha_registro between '{$this->fecha_inicial}' and '{$this->fecha_final}'";
+            $sqlListado = " a.estatus like '%{$sqlEstatus}%' and fecha_pago between '{$this->fecha_inicial}' and '{$this->fecha_final}'";
         }
 
         $sql = "SELECT a.*, CASE WHEN a.estatus = 0 THEN
@@ -72,7 +72,7 @@ class prestamos extends AW
         b.nombres, b.ape_paterno, b.ape_materno
         FROM prestamos AS a
         LEFT JOIN empleados AS b ON a.id_empleado = b.id
-        where  {$sqlEstatus} {$sqlListado}
+        where {$sqlListado}
         ORDER BY
             a.id ASC";
         return $this->Query($sql);
@@ -171,9 +171,9 @@ class prestamos extends AW
         $monto_por_semana = $monto_pagar / $this->numero_semanas;
 
         $sql = "insert into prestamos
-                (`id`,`id_empleado`,`monto`,`interes`,`monto_por_semana`,`numero_semanas`,`fecha_registro`,`fecha_pago`,`monto_pagar`,`estatus`,`restante`)
+                (`id`,`id_empleado`,`monto`,`interes`,`monto_por_semana`,`numero_semanas`,`semana_actual`,`fecha_registro`,`fecha_pago`,`monto_pagar`,`estatus`,`restante`)
                 values
-                ('0','{$this->id_empleado}','".$restanteCantidad."','$interes_pagar','$monto_por_semana','{$this->numero_semanas}',now(),'{$this->fecha_pago}','$monto_pagar','1','{$monto_pagar}')";
+                ('0','{$this->id_empleado}','".$restanteCantidad."','$interes_pagar','$monto_por_semana','{$this->numero_semanas}','1',now(),'{$this->fecha_pago}','$monto_pagar','1','{$monto_pagar}')";
         $bResultado = $this->NonQuery($sql);
 
         $sql1 = "select id from prestamos order by id desc limit 1";

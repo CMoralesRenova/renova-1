@@ -57,7 +57,11 @@ $lstEmpleados = $oEmpleados->Listado();
                     if (count($lstEmpleados) > 0) {
                         echo "<option value='0' >-- SELECCIONE --</option>\n";
                         foreach ($lstEmpleados as $idx => $campo) {
-                            echo "<option value='{$campo->id}' >" . $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno . "</option>\n";
+                            if ($oFonacot->id_empleado == $campo->id){
+                                echo "<option value='{$campo->id}' selected>" . $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno . "</option>\n";
+                            } else {
+                                echo "<option value='{$campo->id}' >" . $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno . "</option>\n";
+                            }
                         }
                     }
                     ?>
@@ -67,19 +71,13 @@ $lstEmpleados = $oEmpleados->Listado();
         <div class="form-group">
             <strong class="">Monto a Pagar:</strong>
             <div class="form-group">
-                <input type="number" description="Ingrese el monto a prestar" aria-describedby="" id="monto" required name="monto" class="form-control obligado" />
+                <input type="number" description="Ingrese el monto a prestar" value="<?= $oFonacot->monto_por_semana ?>"aria-describedby="" id="monto_por_semana" required name="monto_por_semana" class="form-control obligado" />
             </div>
         </div>
         <div class="form-group">
             <strong class="">Fecha pago:</strong>
             <div class="form-group">
-                <input type="date" description="Seleccione la fecha del pago" aria-describedby="" id="fecha_pago" required name="fecha_pago" class="form-control obligado" />
-            </div>
-        </div>
-        <div class="form-group">
-            <strong class="">Numero de Semanas:</strong>
-            <div class="form-group">
-                <input type="number" description="Ingrese el numero de semanas" aria-describedby="" id="numero_semanas" required name="numero_semanas" class="form-control obligado" />
+                <input type="date" description="Seleccione la fecha del pago" value="<?= $oFonacot->fecha_pago?>" aria-describedby="" id="fecha_pago" required name="fecha_pago" class="form-control obligado" />
             </div>
         </div>
     </div>

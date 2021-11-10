@@ -117,23 +117,26 @@ class infonavit extends AW
 
     public function Actualizar()
     {
-        return true;
+        $sql = "UPDATE `infonavit`
+        SET
+        `fecha_pago` = '{$this->fecha_pago}',
+        `monto_por_semana` = '{$this->monto_por_semana}'
+        WHERE `id` = '{$this->id}';
+         ";
+         return $this->NonQuery($sql);
     }
 
     public function Agregar()
     {
 
-        $monto_pagar = $this->monto;
-        $monto_por_semana = $monto_pagar / $this->numero_semanas;
-
         $sql = "insert into infonavit
-                (`id`,`id_empleado`,`monto`,`monto_por_semana`,`numero_semanas`,`fecha_registro`,`fecha_pago`,`monto_pagar`,`motivo`,`detalles`,`estatus`,`restante`)
+                (`id`,`id_empleado`,`monto_por_semana`,`fecha_registro`,`fecha_pago`,`estatus`)
                 values
-                ('0','{$this->id_empleado}','{$this->monto}','$monto_por_semana','{$this->numero_semanas}',now(),'{$this->fecha_pago}','$monto_pagar','{$this->motivo}','{$this->detalles}','1','$monto_pagar')";
+                ('0','{$this->id_empleado}','{$this->monto_por_semana}',now(),'{$this->fecha_pago}','1')";
         //echo nl2br($sql);
         $bResultado = $this->NonQuery($sql);
 
-        $sql1 = "select id from infonavit order by id desc limit 1";
+        $sql1 = "select id from fonacot order by id desc limit 1";
         $res = $this->Query($sql1);
 
         $this->id = $res[0]->id;

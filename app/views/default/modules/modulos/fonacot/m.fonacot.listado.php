@@ -37,10 +37,7 @@ $lstfonacot = $oFonacot->Listado();
                         <th>Empleado</th>
                         <th>Fecha de registro</th>
                         <th>Fecha pago</th>
-                        <th>Monto A Pagar</th>
                         <th>Cantidad A Pagar Por Semana</th>
-                        <th>Semanas</th>
-                        <th>Semana actual</th>
                         <th>Estatus</th>
                         <th>Acciones</th>
                     </tr>
@@ -49,10 +46,7 @@ $lstfonacot = $oFonacot->Listado();
                     <th>Empleado</th>
                     <th>Fecha de registro</th>
                     <th>Fecha pago</th>
-                    <th>Monto A Pagar</th>
                     <th>Cantidad A Pagar Por Semana</th>
-                    <th>Semanas</th>
-                    <th>Semana actual</th>
                     <th>Estatus</th>
                     <th>Acciones</th>
                 </tfoot>
@@ -65,13 +59,11 @@ $lstfonacot = $oFonacot->Listado();
                                 <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
                                 <td style="text-align: center;"><?= $campo->fecha_registro ?></td>
                                 <td style="text-align: center;"><?= $campo->fecha_pago ?></td>
-                                <td style="text-align: center;">$<?= $campo->monto_pagar ?></td>
                                 <td style="text-align: center;">$<?= $campo->monto_por_semana ?></td>
-                                <td style="text-align: center;"><?= $campo->numero_semanas ?></td>
-                                <td style="text-align: center;"><?= $campo->semana_actual ?></td>
                                 <td style="text-align: center;"><?= $campo->est ?></td>
                                 <td style="text-align: center;">
                                     <?php if ($campo->estatus == "1") { ?>
+                                        <a class="btn btn-sm btn-danger" href="javascript:Editar('<?= $campo->id ?>','Editar')"><span class="glyphicon glyphicon-ok">Editar</a>
                                         <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','Liquidar')"><span class="glyphicon glyphicon-ok">Liquidar</a>
                                     <?php } ?>
                                 </td>

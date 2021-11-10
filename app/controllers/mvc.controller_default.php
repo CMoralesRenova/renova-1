@@ -87,5 +87,11 @@ class mvc_controller_default extends mvc_controller {
     public function infonavit () {
         include_once("app/views/default/modules/modulos/infonavit/m.infonavit.buscar.php");
     }
+    public function vacaciones () {
+        include_once("app/views/default/modules/modulos/vacaciones/m.vacaciones.buscar.php");
+    }
+    public function ubicacion_checador () {
+        include_once("app/views/default/modules/catalogos/ubicacion_checador/m.ubicacion.buscar.php");
+    }
 }
 ?>

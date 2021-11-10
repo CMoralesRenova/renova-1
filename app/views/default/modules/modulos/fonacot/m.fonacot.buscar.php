@@ -117,6 +117,24 @@ $oFonacot->ValidaNivelUsuario("fonacot");
                     backdrop: "true"
                 });
                 break;
+            case 'Editar':
+                $.ajax({
+                    data: "id="+id+"&nombre=" + nombre,
+                    type: "POST",
+                    url: "app/views/default/modules/modulos/fonacot/m.fonacot.formulario.php",
+                    beforeSend: function() {
+                        $("#divFormulario").html(
+                            '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
+                        );
+                    },
+                    success: function(datos) {
+                        $("#divFormulario").html(datos);
+                    }
+                });
+                $("#myModal").modal({
+                    backdrop: "true"
+                });
+                break;
         }
     }
 </script>

@@ -14,7 +14,7 @@ $action = addslashes(filter_input(INPUT_GET, "action"));
 session_start();
 if ($action === "login") {
     $mvc->login();
-} else if (strpos($action, "checador") !== false) {
+} else if (strpos($action, "checador") !== false && $action != "ubicacion_checador") {
     $mvc->checador();
 } else if (strpos($action, "comedor") !== false && $action != "nomina_comedor") {
     $mvc->comedor();
@@ -72,6 +72,10 @@ if ($action === "login") {
         $mvc_default->fonacot();
     }else if ($action === "infonavit") {
         $mvc_default->infonavit();
+    }else if ($action === "vacaciones") {
+        $mvc_default->vacaciones();
+    }else if ($action === "ubicacion_checador") {
+        $mvc_default->ubicacion_checador();
     }else if ($action === "cerrar_sesion") {
         $mvc->CerrarSesion();
     }else if ($action === "acceso_denegado") {

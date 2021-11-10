@@ -4,11 +4,11 @@
  * felipeangelcerdacontreras@gmail.com
  */
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
-require_once($_SITE_PATH . "app/model/infonavit.class.php");
+require_once($_SITE_PATH . "app/model/vacaciones.class.php");
 
-$oInfonavit = new infonavit();
-$sesion = $_SESSION[$oInfonavit->NombreSesion];
-$oInfonavit->ValidaNivelUsuario("infonavit");
+$oVacaciones = new vacaciones();
+$sesion = $_SESSION[$oVacaciones->NombreSesion];
+$oVacaciones->ValidaNivelUsuario("vacaciones");
 
 ?>
 <?php require_once('app/views/default/script_h.html'); ?>
@@ -17,28 +17,57 @@ $oInfonavit->ValidaNivelUsuario("infonavit");
         Listado();
         $('#fecha_inicial').change(Listado);
         $('#fecha_final').change(Listado);
+
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
             var frmTrue = true;
-
-            $("#frmFormulario").find('select, input, textarea').each(function() {
+            var check = 0;
+            var check1 = 0;
+            $("#frmFormulario_").find('select, input').each(function() {
                 var elemento = this;
                 if ($(elemento).hasClass("obligado")) {
                     if (elemento.value == "" || elemento.value == 0) {
+                        if ($(elemento).hasClass("select2")) {
+                        }
                         Alert("", $(elemento).attr("description"), "warning", 900, false);
                         Empty(elemento.id);
                         frmTrue = false;
                     }
                 }
+                if ($(elemento).hasClass("check")) {
+                    if ($(elemento).is(':not(:checked)')) {
+                        check++;
+                    }
+                }
+                if ($(elemento).hasClass("check1")) {
+                    if ($(elemento).is(':not(:checked)')) {
+                        check1++;
+                    }
+                }
             });
-            if (frmTrue == true) {
-                $("#frmFormulario").submit();
+            if (check1 != 1){
+                Alert("", 'Seleccione el goce de sueldo', "warning", 900, false);
+            }
+            if (check != 2){
+                Alert("", 'Seleccione un tipo de permiso', "warning", 900, false);
+            }
+            if (frmTrue == true && check == 2 && check1 == 1 ) {
+                $("#frmFormulario_").submit();
             }
         });
+
         $("#btnBuscar").button().click(function(e) {
             Listado();
         });
 
+        $("#btnImprimir").button().click(function(e) {
+            var opc = "fullscreen=no, menubar=no, resizable=no, scrollbars=yes, status=yes, titlebar=yes, toolbar=no, width=750, height=580";
+            var pagina = "app/views/default/modules/modulos/vacaciones/m.vacaciones.recibo.pdf.php?";
+
+            pagina += "id="+ $("#id_").val()+"&id_empleado="+ $("#id_empleado_").val();
+
+            window.open(pagina, "reporte", opc);   
+        });
     });
 
     function Listado() {
@@ -50,7 +79,7 @@ $oInfonavit->ValidaNivelUsuario("infonavit");
         $.ajax({
             data: jsonDatos,
             type: "POST",
-            url: "app/views/default/modules/modulos/infonavit/m.infonavit.listado.php",
+            url: "app/views/default/modules/modulos/vacaciones/m.vacaciones.listado.php",
             beforeSend: function() {
                 $("#divListado").html(
                     '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Leyendo información de la Base de Datos, espere un momento por favor...</center></div>'
@@ -62,76 +91,45 @@ $oInfonavit->ValidaNivelUsuario("infonavit");
         });
     }
 
-    function Editar(id, nombre) {
+    function Editar(id, nombre, empleado) {
         switch (nombre) {
-            case 'Liquidar':
-                swal({
-                    title: "¿Desea liquidar el cargo?",
-                    text: "",
-                    icon: "warning",
-                    buttons: [
-                        'No',
-                        'Si'
-                    ],
-                    dangerMode: true,
-                }).then(function(isConfirm) {
-                    if (isConfirm) {
-                        swal({
-                            title: 'Liquidado!',
-                            text: 'Cargo Liquidado',
-                            icon: 'success'
-                        }).then(function() {
-                            $.ajax({
-                                data: "accion=Liquidado&id=" + id+"&estatus=0",
-                                type: "POST",
-                                url: "app/views/default/modules/modulos/infonavit/m.infonavit.procesa.php",
-                                beforeSend: function() {
-
-                                },
-                                success: function(datos) {
-                                    console.log(datos);
-                                    Listado();
-                                }
-                            });
-                        });
-                    } else {
-                        swal("Cancelado", "Cargo no liquidado", "error");
-                    }
-                });
-                break;
             case 'Agregar':
                 $.ajax({
                     data: "nombre=" + nombre,
                     type: "POST",
-                    url: "app/views/default/modules/modulos/infonavit/m.infonavit.formulario.php",
+                    url: "app/views/default/modules/modulos/vacaciones/m.vacaciones.formulario.nominas.php",
                     beforeSend: function() {
-                        $("#divFormulario").html(
+                        $("#divFormulario_").html(
                             '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
                         );
                     },
                     success: function(datos) {
-                        $("#divFormulario").html(datos);
+                        $("#divFormulario_").html(datos);
                     }
                 });
-                $("#myModal").modal({
+                $("#btnGuardar").show();
+                $("#btnImprimir").hide();
+                $("#myModal_vacaciones").modal({
                     backdrop: "true"
                 });
                 break;
-            case 'Editar':
+            case 'Detalles':
                 $.ajax({
-                    data: "id="+id+"&nombre=" + nombre,
+                    data: "id="+id+"&nombre=" + nombre+"&empleado=" + empleado,
                     type: "POST",
-                    url: "app/views/default/modules/modulos/infonavit/m.infonavit.formulario.php",
+                    url: "app/views/default/modules/modulos/vacaciones/m.vacaciones.formulario.php",
                     beforeSend: function() {
-                        $("#divFormulario").html(
+                        $("#divFormulario_").html(
                             '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
                         );
                     },
                     success: function(datos) {
-                        $("#divFormulario").html(datos);
+                        $("#divFormulario_").html(datos);
                     }
                 });
-                $("#myModal").modal({
+                $("#btnGuardar").hide();
+                $("#btnImprimir").show();
+                $("#myModal_vacaciones").modal({
                     backdrop: "true"
                 });
                 break;
@@ -143,9 +141,7 @@ $oInfonavit->ValidaNivelUsuario("infonavit");
 
 <head>
     <?php require_once('app/views/default/head.html'); ?>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <title>infonavit</title>
+    <title>vacaciones</title>
 </head>
 
 <body id="page-top">
@@ -161,6 +157,8 @@ $oInfonavit->ValidaNivelUsuario("infonavit");
             <div id="content">
                 <!--archivo header-->
                 <?php require_once('app/views/default/header.php'); ?>
+                <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+                <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
                 <div class="container-fluid">
                     <!-- contenido de la pagina -->
                     <div class="card shadow mb-4">
@@ -187,10 +185,9 @@ $oInfonavit->ValidaNivelUsuario("infonavit");
                     <div id="divListado"></div>
                 </div>
             </div>
-
             <!-- Logout Modal-->
-            <div class="modal fade" id="myModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
+            <div class="modal fade bd-example-modal-lg" id="myModal_1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel"><strong id="nameModal"></strong>
@@ -205,13 +202,39 @@ $oInfonavit->ValidaNivelUsuario("infonavit");
                             </div>
                         </div>
                         <div class="modal-footer">
-                        <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Guardar">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- Modal -->
+
+            <!-- Logout Modal-->
+            <div class="modal fade " id="myModal_vacaciones" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel"><strong id="nameModal_"></strong>
+                            </h5>
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- contenido del modal-->
+                            <div style="width:100%;" class="modal-body" id="divFormulario_">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Generar permiso">
+                            <input type="button" id="btnImprimir" class="btn btn-danger" name="btnImprimir" value="Imprimir Permiso">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal -->
+
             <!-- archivo Footer -->
             <?php require_once('app/views/default/footer.php'); ?>
             <!-- End of Footer -->

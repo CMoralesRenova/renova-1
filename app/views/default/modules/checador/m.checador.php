@@ -12,7 +12,100 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
 
     <?php require_once('app/views/default/head.html'); ?>
     <?php require_once('app/views/default/script_h.html'); ?>
+    <script>
+
+        var Geolocalizacion = navigator.geolocation || (window.google && google.gears && google.gears.factory.create('beta.geolocation'));
+        if (Geolocalizacion) Geolocalizacion.getCurrentPosition(MuestraLocalizacion, Excepciones);
+
+        function MuestraLocalizacion(posicion) {
+            console.log(posicion.coords.latitude);
+            $("#lat").text(posicion.coords.latitude);
+            console.log(posicion.coords.longitude);
+            $("#lon").text(posicion.coords.longitude);
+            console.log(posicion.coords.accuracy);
+        }
+
+        function Excepciones(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert('Activa permisos de geolocalizacion');
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert('Activa localizacion por GPS o Redes .');
+                    break;
+                default:
+                    alert('ERROR: ' + error.code);
+            }
+        }
+    </script>
     <script type="text/javascript">
+        if (navigator.geolocation) {
+            var lat1 = "";
+            var lon1 = "";
+            var unit = "K";
+
+            if ('<?php echo $_GET["token"]; ?>' == "vLvEvk1634059456218") {
+                console.log("checador renova");
+                var lon1 = "25.597914";
+                var lat1 = "-103.3842344";
+
+                //var lat1 = "-103.3841886";,
+                //var lon1 = "25.5978008";
+            } else if ('<?php echo $_GET["token"]; ?>' == "Aasda451a55sw2as2") {
+                var lon1 = "25.5979906";
+                var lat1 = "-103.3843008";
+            }
+
+            var success = function(position) {
+                distance(lat1, lon1, position.coords.longitude, position.coords.latitude, unit);
+                console.log((lat1 + ", " + lon1 + ", " + position.coords.longitude + ", " + position.coords.latitude + ", " + unit));
+            }
+            navigator.geolocation.getCurrentPosition(success, function(msg) {
+                console.error(msg);
+            });
+
+            function distance(lat1, lon1, lat2, lon2, unit) {
+                if ((lat1 == lat2) && (lon1 == lon2)) {
+                    console.log("ubicacion exac")
+                    return 0;
+                } else {
+                    var radlat1 = Math.PI * lat1 / 180;
+                    var radlat2 = Math.PI * lat2 / 180;
+                    var theta = lon1 - lon2;
+                    var radtheta = Math.PI * theta / 180;
+                    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+                    if (dist > 1) {
+                        dist = 1;
+                    }
+                    dist = Math.acos(dist);
+                    dist = dist * 180 / Math.PI;
+                    dist = dist * 60 * 1.1515;
+                    if (unit == "K") {
+                        dist = dist * 1.609344
+                    }
+                    if (unit == "N") {
+                        dist = dist * 0.8684
+                    }
+                    $("#distancia").text(" distancia = " + dist);
+                    console.log(dist + " distancia");
+
+                    var str = dist.toString();
+                    var antesDecimal = str.split(".")[0];
+                    var despuesDecimal = str.split(".")[1];
+                    console.log(antesDecimal + " " + despuesDecimal + " dista");
+                    despues = despuesDecimal[0];
+                    if (antesDecimal <= '2' && despues <= '6') {
+                        $("#inputChecador").show();
+                        console.log('estas dentro');
+                    } else {
+                        $("#inputChecador").hide();
+                        Alert("Error", "Para checar debes estar dentro de la ubicacion", "warning", 1400, false);
+                    }
+                }
+            }
+        } else {
+            Alert("Error", "noooo", "warning", 1100, false);
+        }
         $(document).ready(function(e) {
             $("#token").val('<?php echo $_GET["token"]; ?>');
             $("#id").val('');
@@ -56,14 +149,6 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
                         $("#usr").focus();
                     }
                 });
-                if ($(this).valid()) {
-                    $(this).submit(function() {
-                        return false;
-                    });
-                    return true;
-                } else {
-                    return false;
-                }
             });
         }
 
@@ -192,18 +277,18 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
     <div class="container">
         <!-- Outer Row -->
         <div class="row justify-content-center">
-
             <div class="col-xl-10 col-lg-5 col-md-9">
-
+                <label class="control-label" id="lat"></label>
+                <label class="control-label" id="lon"></label>
+                <label class="control-label" id="distancia"></label>
                 <div class="card o-hidden border-0 shadow-lg my-5">
                     <div class="card-body p-0">
                         <!-- Nested Row within Card Body -->
                         <div class="row">
-
                             <div class="col-lg-12">
                                 <div class="p-5">
                                     <form class="user" id="frmFormulario" name="frmFormulario" action="app\views\default\modules\checador\m.checador_procesa.php" enctype="multipart/form-data" method="post" target="_self" class="">
-                                        <div class="form-group">
+                                        <div class="form-group" id="inputChecador">
                                             <h1 id="horalocal" class="text-center"></h1>
                                             <input type="text" class="form-control form-control-user" aria-describedby="emailHelp" autocomplete="off" id="usr" placeholder="" required="required">
                                         </div>

@@ -49,39 +49,68 @@ class nominas extends AW
             $sqlEmpleado = " and c.id='{$this->id_empleado}'";
         }
 
-        $sql = "SELECT a.*, c.id as id_empleado,nombres, c.ape_paterno, c.ape_materno,h.nombre as puesto,
-        i.nombre as departamento,
-        c.rfc,c.curp,c.fecha_ingreso,
-        WEEK ( a.fecha ) AS semana,
-        c.salario_semanal,c.salario_diario,c.salario_asistencia,
-        c.salario_puntualidad,c.salario_productividad,c.complemento_sueldo,c.bono_doce,
-        (select count(dia) + 1 from asistencia where id_empleado = c.id and estatus_entrada = 1 and fecha between date_add(a.fecha,
-        INTERVAL -7 DAY) and a.fecha) as dias_laborados,
-        ((select sum(horas_extras) from horas_extras where id_empleado = c.id and estatus = 2 and fecha_registro between
-        date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) * (c.salario_diario / 8)) as horas_extras,
-        ((select count(dia) + 1 from asistencia where id_empleado = c.id and estatus_entrada = 1 and fecha between date_add(a.fecha,
-        INTERVAL -7 DAY) and a.fecha) * c.salario_diario) as esperado,
-        (select sum(monto_por_semana) from otros where id_empleado = c.id and fecha_pago between date_add(a.fecha,
-        INTERVAL -7 DAY) and a.fecha) as otros_descuentos,
-        (select monto_por_semana from prestamos where id_empleado = c.id and fecha_pago between
-        date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) as prestamos,
-        j.monto, j.frecuencia, j.estatus as estatusAhorro,
-        f.id as id_otros, g.id as id_prestamo, j.id as id_ahorros,
-        ((SELECT 
-            SUM(precio_platillo)
-        FROM
-            comedor
-        WHERE
-            id_empleado = c.id AND fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) ) AS comedor
-        FROM nominas a
+        $sql = "SELECT 
+        a.*,
+        c.id AS id_empleado,
+        nombres,
+        c.ape_paterno,
+        c.ape_materno,
+        h.nombre AS puesto,
+        i.nombre AS departamento,
+        c.rfc,
+        c.curp,
+        c.fecha_ingreso,
+        WEEK(a.fecha) AS semana,
+        c.salario_semanal,
+        c.salario_diario,
+        c.salario_asistencia,
+        c.salario_puntualidad,
+        c.salario_productividad,
+        c.complemento_sueldo,
+        c.bono_doce,
+        (SELECT  COUNT(dia) + 1 FROM asistencia  WHERE id_empleado = c.id AND estatus_entrada = 1 AND 
+        fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS dias_laborados,
+        
+        ((SELECT SUM(horas_extras) FROM horas_extras WHERE id_empleado = c.id AND estatus = 2
+        AND fecha_registro BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) * (c.salario_diario / 8)) AS horas_extras,
+        
+        ((SELECT COUNT(dia) + 1 FROM asistencia WHERE id_empleado = c.id AND estatus_entrada = 1 AND
+        fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) * c.salario_diario) AS esperado,
+        
+        (SELECT  SUM(monto_por_semana) FROM  otros WHERE id_empleado = c.id
+        AND fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS otros_descuentos,
+        
+        (SELECT monto_por_semana FROM prestamos WHERE id_empleado = c.id AND 
+        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS prestamos,
+        
+        (SELECT monto_por_semana FROM fonacot WHERE id_empleado = c.id AND 
+        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS fonacot,
+        
+        (SELECT id FROM fonacot WHERE id_empleado = c.id AND 
+        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS id_fonacot,
+        
+        (SELECT monto_por_semana FROM infonavit WHERE id_empleado = c.id AND 
+        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS infonavit,
+        
+        (SELECT id FROM infonavit WHERE id_empleado = c.id AND 
+        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS id_infonavit,
+        j.monto,
+        j.frecuencia,
+        j.estatus AS estatusAhorro,
+        f.id AS id_otros,
+        g.id AS id_prestamo,
+        j.id AS id_ahorros,
+        ((SELECT SUM(precio_platillo) FROM comedor WHERE id_empleado = c.id AND 
+        fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha)) AS comedor
+        FROM nominas a 
         LEFT JOIN empleados c ON c.id
-        LEFT JOIN horas_extras as d on c.id = d.id_empleado
-        inner JOIN ( SELECT dia, id_empleado, fecha FROM asistencia) e ON c.id = e.id_empleado
-        left JOIN ( SELECT * FROM otros) f ON c.id = f.id_empleado
-        left JOIN ( SELECT * FROM prestamos) g ON c.id = g.id_empleado
-        left join (select * from puestos) h ON c.id_puesto = h.id
-        left join (select * from departamentos) i on h.id_departamento = i.id
-        left join (select * from ahorros) j on c.id = j.id_empleado 
+        LEFT JOIN horas_extras AS d ON c.id = d.id_empleado
+        INNER JOIN (SELECT dia, id_empleado, fecha FROM asistencia) e ON c.id = e.id_empleado
+        LEFT JOIN (SELECT * FROM otros) f ON c.id = f.id_empleado
+        LEFT JOIN (SELECT * FROM prestamos) g ON c.id = g.id_empleado
+        LEFT JOIN (SELECT * FROM puestos) h ON c.id_puesto = h.id
+        LEFT JOIN (SELECT * FROM departamentos) i ON h.id_departamento = i.id
+        LEFT JOIN (SELECT * FROM ahorros) j ON c.id = j.id_empleado
         WHERE a.id ='{$this->id}' {$sqlEmpleado} group by c.nombres";
 
         if (!empty($this->id_empleado)) {
@@ -101,39 +130,68 @@ class nominas extends AW
     }
     public function Pagar()
     {
-        $sql = "SELECT a.*, c.id as id_empleado,nombres, c.ape_paterno, c.ape_materno,h.nombre as puesto,
-        i.nombre as departamento,
-        c.rfc,c.curp,c.fecha_ingreso,
-        WEEK ( a.fecha ) AS semana,
-        c.salario_semanal,c.salario_diario,c.salario_asistencia,
-        c.salario_puntualidad,c.salario_productividad,c.complemento_sueldo,c.bono_doce,
-        (select count(dia) + 1 from asistencia where id_empleado = c.id and estatus_entrada = 1 and fecha between date_add(a.fecha,
-        INTERVAL -7 DAY) and a.fecha) as dias_laborados,
-        ((select sum(horas_extras) from horas_extras where id_empleado = c.id and estatus = 2 and fecha_registro between
-        date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) * (c.salario_diario / 8)) as horas_extras,
-        ((select count(dia) + 1 from asistencia where id_empleado = c.id and estatus_entrada = 1 and fecha between date_add(a.fecha,
-        INTERVAL -7 DAY) and a.fecha) * c.salario_diario) as esperado,
-        (select sum(monto_por_semana) from otros where id_empleado = c.id and fecha_pago between date_add(a.fecha,
-        INTERVAL -7 DAY) and a.fecha) as otros_descuentos,
-        (select monto_por_semana from prestamos where id_empleado = c.id and fecha_pago between
-        date_add(a.fecha, INTERVAL -7 DAY) and a.fecha) as prestamos,
-        j.monto, j.frecuencia, j.estatus as estatusAhorro,
-        f.id as id_otros, g.id as id_prestamo, j.id as id_ahorros,
-        ((SELECT 
-            SUM(precio_platillo)
-        FROM
-            comedor
-        WHERE
-            id_empleado = c.id AND fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) ) AS comedor
-        FROM nominas a
+        $sql = "SELECT 
+        a.*,
+        c.id AS id_empleado,
+        nombres,
+        c.ape_paterno,
+        c.ape_materno,
+        h.nombre AS puesto,
+        i.nombre AS departamento,
+        c.rfc,
+        c.curp,
+        c.fecha_ingreso,
+        WEEK(a.fecha) AS semana,
+        c.salario_semanal,
+        c.salario_diario,
+        c.salario_asistencia,
+        c.salario_puntualidad,
+        c.salario_productividad,
+        c.complemento_sueldo,
+        c.bono_doce,
+        (SELECT  COUNT(dia) + 1 FROM asistencia  WHERE id_empleado = c.id AND estatus_entrada = 1 AND 
+        fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS dias_laborados,
+        
+        ((SELECT SUM(horas_extras) FROM horas_extras WHERE id_empleado = c.id AND estatus = 2
+        AND fecha_registro BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) * (c.salario_diario / 8)) AS horas_extras,
+        
+        ((SELECT COUNT(dia) + 1 FROM asistencia WHERE id_empleado = c.id AND estatus_entrada = 1 AND
+        fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) * c.salario_diario) AS esperado,
+        
+        (SELECT  SUM(monto_por_semana) FROM  otros WHERE id_empleado = c.id
+        AND fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS otros_descuentos,
+        
+        (SELECT monto_por_semana FROM prestamos WHERE id_empleado = c.id AND 
+        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS prestamos,
+        
+        (SELECT monto_por_semana FROM fonacot WHERE id_empleado = c.id AND 
+        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS fonacot,
+        
+        (SELECT id FROM fonacot WHERE id_empleado = c.id AND 
+        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS id_fonacot,
+        
+        (SELECT monto_por_semana FROM infonavit WHERE id_empleado = c.id AND 
+        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS infonavit,
+        
+        (SELECT id FROM infonavit WHERE id_empleado = c.id AND 
+        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS id_infonavit,
+        j.monto,
+        j.frecuencia,
+        j.estatus AS estatusAhorro,
+        f.id AS id_otros,
+        g.id AS id_prestamo,
+        j.id AS id_ahorros,
+        ((SELECT SUM(precio_platillo) FROM comedor WHERE id_empleado = c.id AND 
+        fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha)) AS comedor
+        FROM nominas a 
         LEFT JOIN empleados c ON c.id
-        LEFT JOIN horas_extras as d on c.id = d.id_empleado
-        inner JOIN ( SELECT dia, id_empleado, fecha FROM asistencia) e ON c.id = e.id_empleado
-        left JOIN ( SELECT * FROM otros) f ON c.id = f.id_empleado
-        left JOIN ( SELECT * FROM prestamos) g ON c.id = g.id_empleado
-        left join (select * from puestos) h ON c.id_puesto = h.id
-        left join (select * from departamentos) i on h.id_departamento = i.id
-        left join (select * from ahorros) j on c.id = j.id_empleado 
+        LEFT JOIN horas_extras AS d ON c.id = d.id_empleado
+        INNER JOIN (SELECT dia, id_empleado, fecha FROM asistencia) e ON c.id = e.id_empleado
+        LEFT JOIN (SELECT * FROM otros) f ON c.id = f.id_empleado
+        LEFT JOIN (SELECT * FROM prestamos) g ON c.id = g.id_empleado
+        LEFT JOIN (SELECT * FROM puestos) h ON c.id_puesto = h.id
+        LEFT JOIN (SELECT * FROM departamentos) i ON h.id_departamento = i.id
+        LEFT JOIN (SELECT * FROM ahorros) j ON c.id = j.id_empleado
         WHERE a.id ='{$this->id}' group by c.nombres";
 
         $res = parent::Query($sql);
@@ -159,7 +217,7 @@ class nominas extends AW
                 $retenciones = $retenciones + $valor->otros_descuentos;
                 $retenciones = $retenciones + $valor->prestamos;
                 $retenciones = $retenciones + $valor->comedor;
-                if ($valor->estatusAhorro == 1){
+                if ($valor->estatusAhorro == 1) {
                     $retenciones = $retenciones + $valor->monto;
                 }
 
@@ -182,14 +240,14 @@ class nominas extends AW
                             `estatus` = '0',
                             `restante` = '" . ($otros->restante - $otros->monto_por_semana) . "' 
                             WHERE `id` = '{$otros->id}'";
-
-                            if ($this->NonQuery($sqlUpdateOtros)) {
+                            $ressqlUpdateOtros = $this->NonQuery($sqlUpdateOtros); 
+                            if ($ressqlUpdateOtros) {
                                 $sqlInsertOtros = "INSERT INTO `otros`
                                 (`id_empleado`,`numero_semanas`,`semana_actual`,`estatus`,`fecha_registro`,`fecha_pago`,
                                 `monto`,`monto_por_semana`,`monto_pagar`,`motivo`,`detalles`,`restante`)
                                 VALUES
                                 ('{$otros->id_empleado}','{$otros->numero_semanas}',
-                                '" . ($otros->semana_actual + 1). "',
+                                '" . ($otros->semana_actual + 1) . "',
                                 '1','{$otros->fecha_registro}',
                                 date_add('{$otros->fecha_pago}', INTERVAL +7 DAY),
                                 '{$otros->monto}','{$otros->monto_por_semana}','{$otros->monto_pagar}','{$otros->motivo}','{$otros->detalles}'
@@ -209,15 +267,14 @@ class nominas extends AW
                             $sqlUpdatePrestamos1 = "UPDATE `prestamos`
                                 SET
                                 `estatus` = 0,
-                                `semana_actual` = ($prestamos->semana_actual + 1),
                                 `restante` = '" . ($prestamos->restante - $prestamos->monto_por_semana) . "' 
                                 WHERE `id` = '{$prestamos->id}'";
-                                $this->NonQuery($sqlUpdatePrestamos1);
+                            $this->NonQuery($sqlUpdatePrestamos1);
                         } else {
                             $sqlUpdatePrestamos = "UPDATE `prestamos`
                             SET 
                             `estatus` = 0,
-                            `restante` = '".($prestamos->restante - $prestamos->monto_por_semana)."'
+                            `restante` = '" . ($prestamos->restante - $prestamos->monto_por_semana) . "'
                             WHERE `id` = '{$prestamos->id}'";
 
                             if ($this->NonQuery($sqlUpdatePrestamos)) {
@@ -229,13 +286,14 @@ class nominas extends AW
                                 date_add('{$prestamos->fecha_pago}', INTERVAL +7 DAY),
                                  '{$prestamos->monto}','{$prestamos->interes}',
                                 '{$prestamos->monto_por_semana}','{$prestamos->monto_pagar}',
-                                '".($prestamos->restante - $prestamos->monto_por_semana)."', 
-                                '". ($prestamos->semana_actual + 1) ."')";
+                                '" . ($prestamos->restante - $prestamos->monto_por_semana) . "', 
+                                '" . ($prestamos->semana_actual + 1) . "')";
+                                print_r($sqlInsertOtros);
                                 $this->NonQuery($sqlInsertOtros);
                             }
                         }
                     }
-                } 
+                }
 
                 $sqlAhorros = "select * from ahorros where id_empleado='{$valor->id_empleado}' and estatus = '1'";
                 $resAhorros = $this->Query($sqlAhorros);
@@ -249,6 +307,49 @@ class nominas extends AW
                             `acumulado` = `acumulado` + `monto` 
                             WHERE `id` = '{$ahorros->id}'";
                             $this->NonQuery($sqlUpdateahorros);
+                        }
+                    }
+                }
+
+                $sqlfonacot = "select * from fonacot where id_empleado='{$valor->id_empleado}' and fecha_pago between date_add('{$valor->fecha}', INTERVAL -7 DAY) and '{$valor->fecha}'";
+                $resfonacot = $this->Query($sqlfonacot);
+
+                if (!empty($resfonacot) && !($resfonacot === NULL)) {
+                    foreach ($resfonacot as $idx => $fonacot) {
+                        $sqlUpdatefonacot = "UPDATE `fonacot`
+                            SET 
+                            `estatus` = 0
+                            WHERE `id` = '{$fonacot->id}'";
+
+                        if ($this->NonQuery($sqlUpdatefonacot)) {
+                            $sqlInsertOtros = "INSERT INTO `fonacot`
+                                (`id_empleado`, `estatus`,`fecha_registro`, `fecha_pago`, `monto_por_semana`)
+                                VALUES
+                                ('{$fonacot->id_empleado}','1','{$fonacot->fecha_registro}',
+                                date_add('{$fonacot->fecha_pago}', INTERVAL +7 DAY), '{$fonacot->monto_por_semana}')";
+                            $this->NonQuery($sqlInsertOtros);
+                        }
+                    }
+                }
+
+                $sqlinfonavit = "select * from infonavit where id_empleado='{$valor->id_empleado}' and fecha_pago between date_add('{$valor->fecha}', INTERVAL -7 DAY) and '{$valor->fecha}'";
+                $resinfonavit = $this->Query($sqlinfonavit);
+
+                if (!empty($resinfonavit) && !($resinfonavit === NULL)) {
+                    foreach ($resinfonavit as $idx => $infonavit) {
+                        $sqlUpdateinfonavit = "UPDATE `infonavit`
+                            SET 
+                            `estatus` = 0
+                            WHERE `id` = '{$infonavit->id}'";
+
+                        if ($this->NonQuery($sqlUpdateinfonavit)) {
+                            $sqlInsertOtros = "INSERT INTO `infonavit`
+                                (`id_empleado`, `estatus`,`fecha_registro`, `fecha_pago`,  `monto_por_semana`)
+                                VALUES
+                                ('{$infonavit->id_empleado}','1','{$infonavit->fecha_registro}',
+                                date_add('{$infonavit->fecha_pago}', INTERVAL +7 DAY),
+                                '{$infonavit->monto_por_semana}')";
+                            $this->NonQuery($sqlInsertOtros);
                         }
                     }
                 }

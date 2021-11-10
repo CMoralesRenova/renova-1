@@ -77,6 +77,9 @@ $aPermisos = empty($oUsuario->perfiles_id) ? array() : explode("@", $oUsuario->p
                 <?php if ($oUsuario->ExistePermiso("materiales", $aPermisos) === true) { ?>
                     <a class='collapse-item' href='index.php?action=materiales'>Materiales</a>
                 <?php } ?>
+                <?php if ($oUsuario->ExistePermiso("ubicacion_checador", $aPermisos) === true) { ?>
+                    <a class='collapse-item' href='index.php?action=ubicacion_checador'>Ubicación Checador</a>
+                <?php } ?>
             </div>
         </div>
     </li>
@@ -114,6 +117,9 @@ $aPermisos = empty($oUsuario->perfiles_id) ? array() : explode("@", $oUsuario->p
                 <?php } ?>
                 <?php if ($oUsuario->ExistePermiso("infonavit", $aPermisos) === true) { ?>
                     <a class='collapse-item' href='index.php?action=infonavit'>Infonavit</a>
+                <?php } ?>
+                <?php if ($oUsuario->ExistePermiso("vacaciones", $aPermisos) === true) { ?>
+                    <a class='collapse-item' href='index.php?action=vacaciones'>Vacaciones</a>
                 <?php } ?>
                 <?php if ($oUsuario->ExistePermiso("recoleccion", $aPermisos) === true) { ?>
                     <a class='collapse-item' href='index.php?action=recoleccion'>Recolección</a>

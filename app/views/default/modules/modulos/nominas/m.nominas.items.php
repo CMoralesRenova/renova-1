@@ -4,6 +4,8 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
 require_once($_SITE_PATH . "app/model/nominas.class.php");
 require_once($_SITE_PATH . "app/model/prestamos.class.php");
 require_once($_SITE_PATH . "app/model/otros.class.php");
+require_once($_SITE_PATH . "app/model/fonacot.class.php");
+require_once($_SITE_PATH . "app/model/infonavit.class.php");
 
 $oNominas = new nominas(true, $_POST);
 $oNominas->id = empty($_GET['id']) ? "" : $_GET['id'];
@@ -13,6 +15,14 @@ $oNominas->Listado_nomina();
 $oPrestamos = new prestamos(true, $_POST);
 $oPrestamos->id = $oNominas->id_prestamo;
 $oPrestamos->Informacion();
+
+$oFonacot = new fonacot(true, $_POST);
+$oFonacot->id = $oNominas->id_fonacot;
+$oFonacot->Informacion();
+
+$oInfonavit = new infonavit(true, $_POST);
+$oInfonavit->id = $oNominas->id_infonavit;
+$oInfonavit->Informacion();
 
 $oOtros = new otros(true, $_POST);
 $oOtros->id_empleado = empty($_GET['id_empleado']) ? "" : $_GET['id_empleado'];
@@ -270,6 +280,12 @@ $totalaRetencion = 0;
                 <td style="text-align:right"><?= $oNominas->salario_productividad ?> </td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
+                <?php } else {?>
+                    <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <?php } ?>
                 <?php if ($oNominas->monto > 0) { ?>
                     <td><Label>Caja de ahorro</Label></td>
                     <td></td>
@@ -284,15 +300,49 @@ $totalaRetencion = 0;
                     <td><Label>&nbsp;</Label></td>
                     <td>&nbsp;</td>
                 <?php } ?>
+        </tr>
+        <tr>
+        <?php if ($oNominas->horas_extras > 0) {
+                $totalaPagar = $totalaPagar +  $oNominas->horas_extras; ?>
+                <td><Label>Horas extras</Label></td>
+                <td style="text-align:right"><?=  bcdiv($oNominas->horas_extras, '1', 2); ?> </td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <?php } else {?>
+                    <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <?php } ?>
+        <?php if ($oNominas->fonacot > 0) {
+            $totalaRetencion = $totalaRetencion + $oFonacot->monto_por_semana; ?>
+            <td><Label>Fonacot</Label></td>
+            <td style="text-align:right"></td>
+            <td style="text-align:right"><?= $oFonacot->monto_por_semana ?></td>
+            <td style="text-align:right"></td>
+        <?php } else { ?>
+            <td></td>
+            <td style="text-align:right"> </td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
             <?php } ?>
         </tr>
         <tr>
-            <?php if ($oNominas->horas_extras > 0) {
-                $totalaPagar = $totalaPagar + $oNominas->horas_extras; ?>
-                <td><Label>Horas extras</Label></td>
-                <td style="text-align:right"><?= bcdiv($oNominas->horas_extras, '1', 2) ?> </td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        <?php if ($oNominas->infonavit > 0) {
+            $totalaRetencion = $totalaRetencion + $oInfonavit->monto_por_semana; ?>
+            <td><Label>Infonavit</Label></td>
+            <td style="text-align:right"> </td>
+            <td style="text-align:right"><?= $oInfonavit->monto_por_semana ?></td>
+            <td style="text-align:right"></td>
+        <?php } else { ?>
+            <td></td>
+            <td style="text-align:right"> </td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
             <?php } ?>
         </tr>
         <tr>

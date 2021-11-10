@@ -72,7 +72,7 @@ class asistencia extends AW
             FROM asistencia as a 
             left join empleados as b on b.id = a.id_empleado
             left join horarios as c on c.id = b.id_horario
-            where 1=1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' {$sqlEmpleado} ";
+            where 1=1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' and b.nombres != 'MARIA DE LA LUZ' and b.ape_paterno != 'ROSALES'  and b.ape_materno  != 'MARTINEZ' {$sqlEmpleado} ";
         return $this->Query($sql);
     }
 
@@ -224,13 +224,22 @@ class asistencia extends AW
         if (count($res3) > 0) {
             if ($res3[0]->llegada_tarde == 1) {
 
+
                 $minutosMenos = strtotime('-15 minute', strtotime($res3[0]->entrada));
                 $minutosMenos = date('H:i:s', $minutosMenos);
 
                 $minutosMas = strtotime('+10 minute', strtotime($res3[0]->entrada));
                 $minutosMas = date('H:i:s', $minutosMas);
 
-                if (($this->hora >= $minutosMenos) && ($this->hora <= $minutosMas) ) {
+                if (($this->hora >= $minutosMenos) && ($this->hora <= $minutosMas) && $this->sin_sueldo  == 'NULL') {
+                    $sql = "INSERT INTO 
+                        `asistencia` (`id_empleado`,`fecha`,`hora_entrada`,`dia`,`order`,`permiso_entrada`,`quitar_bonos`)
+                        VALUES
+                        ('{$this->id_empleado}',now(),'{$this->hora}','{$this->diaActual}',now(),'1','1');";
+                    $this->NonQuery($sql);
+
+                    $bResultado = 1;
+                } else if (($this->hora >= $minutosMenos) && ($this->hora <= $minutosMas) && $this->sin_sueldo  == 1) {
                     $sql = "INSERT INTO 
                         `asistencia` (`id_empleado`,`fecha`,`hora_entrada`,`dia`,`order`,`permiso_entrada`)
                         VALUES
@@ -240,9 +249,9 @@ class asistencia extends AW
                     $bResultado = 1;
                 } else {
                     $sql = "INSERT INTO 
-                        `asistencia` (`id_empleado`,`fecha`,`hora_entrada`,`dia`,`order`, `estatus_entrada`)
+                        `asistencia` (`id_empleado`,`fecha`,`hora_entrada`,`dia`,`order`, `estatus_entrada`,`quitar_bonos`)
                         VALUES
-                        ('{$this->id_empleado}',now(),'{$this->hora}','{$this->diaActual}',now(), '3');";
+                        ('{$this->id_empleado}',now(),'{$this->hora}','{$this->diaActual}',now(), '3','1')";
                     $this->NonQuery($sql);
 
                     $bResultado = 1;
@@ -257,16 +266,16 @@ class asistencia extends AW
             $bResultado = 1;
         } else if (($this->hora > $res2[0]->tiempo_tolerancia) && ($this->hora < $minutosMas)) {
             $sql = "INSERT INTO 
-                `asistencia` (`id_empleado`,`fecha`,`hora_entrada`,`dia`,`order`, `estatus_entrada`)
+                `asistencia` (`id_empleado`,`fecha`,`hora_entrada`,`dia`,`order`, `estatus_entrada`,`quitar_bonos`)
                 VALUES
-                ('{$this->id_empleado}',now(),'{$this->hora}','{$this->diaActual}',now(), '2');";
+                ('{$this->id_empleado}',now(),'{$this->hora}','{$this->diaActual}',now(), '2','1')";
             $this->NonQuery($sql);
             $bResultado = 1;
         } else {
             $sql = "INSERT INTO 
-                `asistencia` (`id_empleado`,`fecha`,`hora_entrada`,`dia`,`order`, `estatus_entrada`)
+                `asistencia` (`id_empleado`,`fecha`,`hora_entrada`,`dia`,`order`, `estatus_entrada`,`quitar_bonos`)
                 VALUES
-                ('{$this->id_empleado}',now(),'{$this->hora}','{$this->diaActual}',now(), '3');";
+                ('{$this->id_empleado}',now(),'{$this->hora}','{$this->diaActual}',now(), '3','1')";
             $this->NonQuery($sql);
 
             $bResultado = 1;

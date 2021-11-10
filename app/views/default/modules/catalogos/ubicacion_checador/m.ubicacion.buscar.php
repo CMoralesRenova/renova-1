@@ -4,19 +4,16 @@
  * felipeangelcerdacontreras@gmail.com
  */
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
-require_once($_SITE_PATH . "app/model/infonavit.class.php");
+require_once($_SITE_PATH . "app/model/ubicacion.class.php");
 
-$oInfonavit = new infonavit();
-$sesion = $_SESSION[$oInfonavit->NombreSesion];
-$oInfonavit->ValidaNivelUsuario("infonavit");
-
+$oUbicacion = new ubicacion();
+$sesion = $_SESSION[$oUbicacion->NombreSesion];
+$oUbicacion->ValidaNivelUsuario("ubicacion_checador");
 ?>
 <?php require_once('app/views/default/script_h.html'); ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
         Listado();
-        $('#fecha_inicial').change(Listado);
-        $('#fecha_final').change(Listado);
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
             var frmTrue = true;
@@ -38,19 +35,16 @@ $oInfonavit->ValidaNivelUsuario("infonavit");
         $("#btnBuscar").button().click(function(e) {
             Listado();
         });
-
     });
 
     function Listado() {
         var jsonDatos = {
-            "fecha_inicial": $("#fecha_inicial").val(),
-            "fecha_final": $("#fecha_final").val(),
             "accion": "BUSCAR"
         };
         $.ajax({
             data: jsonDatos,
             type: "POST",
-            url: "app/views/default/modules/modulos/infonavit/m.infonavit.listado.php",
+            url: "app/views/default/modules/catalogos/ubicacion_checador/m.ubicacion.listado.php",
             beforeSend: function() {
                 $("#divListado").html(
                     '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Leyendo información de la Base de Datos, espere un momento por favor...</center></div>'
@@ -64,46 +58,11 @@ $oInfonavit->ValidaNivelUsuario("infonavit");
 
     function Editar(id, nombre) {
         switch (nombre) {
-            case 'Liquidar':
-                swal({
-                    title: "¿Desea liquidar el cargo?",
-                    text: "",
-                    icon: "warning",
-                    buttons: [
-                        'No',
-                        'Si'
-                    ],
-                    dangerMode: true,
-                }).then(function(isConfirm) {
-                    if (isConfirm) {
-                        swal({
-                            title: 'Liquidado!',
-                            text: 'Cargo Liquidado',
-                            icon: 'success'
-                        }).then(function() {
-                            $.ajax({
-                                data: "accion=Liquidado&id=" + id+"&estatus=0",
-                                type: "POST",
-                                url: "app/views/default/modules/modulos/infonavit/m.infonavit.procesa.php",
-                                beforeSend: function() {
-
-                                },
-                                success: function(datos) {
-                                    console.log(datos);
-                                    Listado();
-                                }
-                            });
-                        });
-                    } else {
-                        swal("Cancelado", "Cargo no liquidado", "error");
-                    }
-                });
-                break;
-            case 'Agregar':
+            default:
                 $.ajax({
-                    data: "nombre=" + nombre,
+                    data: "id=" + id + "&nombre=" + nombre,
                     type: "POST",
-                    url: "app/views/default/modules/modulos/infonavit/m.infonavit.formulario.php",
+                    url: "app/views/default/modules/catalogos/ubicacion_checador/m.ubicacion.formulario.php",
                     beforeSend: function() {
                         $("#divFormulario").html(
                             '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
@@ -113,30 +72,13 @@ $oInfonavit->ValidaNivelUsuario("infonavit");
                         $("#divFormulario").html(datos);
                     }
                 });
-                $("#myModal").modal({
+                $("#myModal_1").modal({
                     backdrop: "true"
                 });
-                break;
-            case 'Editar':
-                $.ajax({
-                    data: "id="+id+"&nombre=" + nombre,
-                    type: "POST",
-                    url: "app/views/default/modules/modulos/infonavit/m.infonavit.formulario.php",
-                    beforeSend: function() {
-                        $("#divFormulario").html(
-                            '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
-                        );
-                    },
-                    success: function(datos) {
-                        $("#divFormulario").html(datos);
-                    }
-                });
-                $("#myModal").modal({
-                    backdrop: "true"
-                });
-                break;
         }
+
     }
+    
 </script>
 
 <?php require_once('app/views/default/link.html'); ?>
@@ -144,8 +86,9 @@ $oInfonavit->ValidaNivelUsuario("infonavit");
 <head>
     <?php require_once('app/views/default/head.html'); ?>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <title>infonavit</title>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyDNuQjcMaL880tNTT_rY6X3G6DhiMqSDFw&libraries=places"></script>
+    <title>Ubicacion checador</title>
 </head>
 
 <body id="page-top">
@@ -163,33 +106,13 @@ $oInfonavit->ValidaNivelUsuario("infonavit");
                 <?php require_once('app/views/default/header.php'); ?>
                 <div class="container-fluid">
                     <!-- contenido de la pagina -->
-                    <div class="card shadow mb-4">
-                        <center>
-                            <div class="card-header py-3" style="text-align:left">
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="form-group">
-                                            <strong class="">Desde:</strong>
-                                            <input type="date" aria-describedby="" id="fecha_inicial" value="<?php echo date('Y-m-d'); ?>" required name="fecha_inicial" class="form-control" />
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <strong class="">Hasta:</strong>
-                                        <div class="form-group">
-                                            <input type="date" aria-describedby="" id="fecha_final" value="<?php echo date('Y-m-d'); ?>" required name="fecha_final" class="form-control" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </center>
-                    </div>
+
                     <!-- cerrar contenido pagina-->
                     <div id="divListado"></div>
                 </div>
             </div>
-
             <!-- Logout Modal-->
-            <div class="modal fade" id="myModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="myModal_1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -205,13 +128,15 @@ $oInfonavit->ValidaNivelUsuario("infonavit");
                             </div>
                         </div>
                         <div class="modal-footer">
-                        <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Guardar">
+
+                            <input type="submit" class="btn btn-danger" id="btnGuardar" value="Guardar">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- Modal -->
+
             <!-- archivo Footer -->
             <?php require_once('app/views/default/footer.php'); ?>
             <!-- End of Footer -->
