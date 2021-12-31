@@ -23,19 +23,9 @@ if ($accion == "GUARDAR") {
         echo "Sistema@Ha ocurrido un error al guardar la información , vuelva a intentarlo o consulte con el administrador del sistema.@warning";
     }
 } else if ($accion == "Empleado") {
-    //$oVacaciones = new vacaciones(true, $_POST);
     $oEmpleados = new empleados();
     $oEmpleados->id = addslashes(filter_input(INPUT_POST, "id"));
     $resultado = $oEmpleados->Informacion();
-
-    //$separateAños = explode("-", $resultado[0]->fecha_ingreso);
-    //$mes = $separateAños[1]; // mes 
-    //$dia = $separateAños[2]; // dia
-
-    //echo Carbon::parse($resultado[0]->fecha_ingreso)->format('Y-m-d')."@";//fecha ingreso
-    //$year = Carbon::now(); 
-    //echo $year->format('Y')."-".$mes."-".$dia." periodo fin";//periodo fin
-    //echo $year->format('Y-m-d', $year->format('Y')."-".$mes."-".$dia)->addMonths(1)." periodo ini";//periodo ini
     
     if (count($resultado) > 0){
         echo "{$resultado[0]->fecha_ingreso}"."@";

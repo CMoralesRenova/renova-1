@@ -33,13 +33,13 @@ $fecha_actual = date("d-m-Y");
                         Empty(elemento.id);
                         frmTrue = false;
                     } else {
-                        /*if (ValidarFechas($("#fecha").val())) {
+                        if (ValidarFechas($("#fecha").val())) {
                         frmTrue = true;
                         } else {
                             Alert("", "La fecha seleccionada debe ser mayor o igual a la actual", "warning", 900, false);
                             Empty(elemento.id);
                             frmTrue = false;
-                        }*/
+                        }
                     }
                 }
             });

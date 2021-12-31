@@ -22,7 +22,7 @@ if ($accion == "GUARDAR") {
     } else {
         echo "Sistema@Ha ocurrido un error al guardar la información , vuelva a intentarlo o consulte con el administrador del sistema.@warning";
     }
-    /*if ($resultado2) {
+    if ($resultado2) {
         $oPrestamos = new prestamos(true, $_POST);
         if (!empty($oPrestamos->id_prestamo) && !empty($oPrestamos->restante)) {
             if ($oPrestamos->Actualizar($oPrestamos->id_prestamo, $oPrestamos->Semanas) === true) {
@@ -41,7 +41,7 @@ if ($accion == "GUARDAR") {
         }
     } else {
         echo "Sistema@El empleado no cuenta con un ahorro.@warning";
-    }*/
+    }
 } else if ($accion == "ACTUALIZAR") {
     $oPrestamos = new prestamos(true, $_POST);
 

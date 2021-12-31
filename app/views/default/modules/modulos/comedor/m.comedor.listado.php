@@ -28,6 +28,9 @@ $lstcomedor = $oComedor->Listado();
 <div class="card shadow mb-4">
     <div class="card-header py-3" style="text-align:left">
         <h5 class="m-0 font-weight-bold text-danger">Comedor</h5>
+        <div class="form-group" style="text-align:right">
+            <input type="button" id="btnAgregar" class="btn btn-danger" name="btnAgregar" value="Agregar Fonacot" />
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -37,14 +40,14 @@ $lstcomedor = $oComedor->Listado();
                         <th>Empleado</th>
                         <th>Fecha de registro</th>
                         <th>Cantidad</th>
-                        <!--<th>Acciones</th>-->
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tfoot>
                     <th>Empleado</th>
                     <th>Fecha de registro</th>
                     <th>Cantidad</th>
-                    <!--<th>Acciones</th>-->
+                    <th>Acciones</th>
                 </tfoot>
                 <tbody>
                     <?php
@@ -55,9 +58,9 @@ $lstcomedor = $oComedor->Listado();
                                 <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
                                 <td style="text-align: center;"><?= $campo->fecha ?></td>
                                 <td style="text-align: center;"><?= $campo->precio_platillo ?></td>
-                                <!--<td style="text-align: center;">
+                                <td style="text-align: center;">
                                         <a class="btn btn-sm btn-danger" href="javascript:Editar('$campo->id ?>','Editar')"><span class="glyphicon glyphicon-ok">Editar</a>
-                                </td>-->
+                                </td>
                             </tr>
                     <?php
                         }
