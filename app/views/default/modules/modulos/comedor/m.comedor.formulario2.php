@@ -6,20 +6,22 @@
 session_start();
 
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
-require_once($_SITE_PATH . "/app/model/usuarios.class.php");
+require_once($_SITE_PATH . "/app/model/comedor.nomina.class.php");
+require_once($_SITE_PATH . "/app/model/empleados.class.php");
 
-$oUsuarios = new Usuarios();
-$oUsuarios->id = addslashes(filter_input(INPUT_POST, "id"));
+$oComedor = new comedor_nominas();
+$oComedor->id = addslashes(filter_input(INPUT_POST, "id"));
 $nombre = addslashes(filter_input(INPUT_POST, "nombre"));
-$sesion = $_SESSION[$oUsuarios->NombreSesion];
-$oUsuarios->Informacion();
+$sesion = $_SESSION[$oComedor->NombreSesion];
+$oComedor->Informacion();
 
-$aPermisos = empty($oUsuarios->perfiles_id) ? array() : explode("@", $oUsuarios->perfiles_id);
+$oEmpleados = new empleados();
+$lstEmpleados = $oEmpleados->Listado();
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        $("#nameModal_").text("<?php echo $nombre ?> Nomina");
-        $("#frmFormulario_").ajaxForm({
+        $("#nameModal").text("<?php echo $nombre ?> Otro cargo");
+        $("#frmFormulario").ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {},
             success: function(data) {
                 var str = data;
@@ -33,26 +35,54 @@ $aPermisos = empty($oUsuarios->perfiles_id) ? array() : explode("@", $oUsuarios-
                 }
                 Alert(datos0, datos1 + "" + datos3, datos2);
                 Listado();
-                $("#myModal_nominas").modal("hide");
+                $("#myModal").modal("hide");
             }
+        });
+        $('#id_empleado').select2({
+            width: '100%'
+        });
+        $('#motivo').select2({
+            width: '100%'
         });
     });
 </script>
-<form id="frmFormulario_" name="frmFormulario_" action="app/views/default/modules/modulos/nominas/m.nominas.procesa.php" enctype="multipart/form-data" method="post" target="_self" class="form-horizontal">
+<!-- DataTales Example -->
+<form id="frmFormulario" name="frmFormulario" action="app/views/default/modules/modulos/comedor/m.comedor.procesa.php" enctype="multipart/form-data" method="post" target="_self" class="form-horizontal">
     <div>
-        <div class="row">
-            <div class="col">
-                <div class="form-group">
-                    <strong class="">Nombre:</strong>
-                    <div class="form-group">
-                        <input type="date" class="form-control form-control-user" aria-describedby="" id="fecha" required name="fecha" class="form-control" />
-                    </div>
-                </div>
+        <div class="form-group">
+            <strong class="">Empleado:</strong>
+            <div class="form-group">
+                <select id="id_empleado" description="Seleccione el empleado" class="form-control obligado" name="id_empleado">
+                    <?php
+                    if (count($lstEmpleados) > 0) {
+                        echo "<option value='0' >-- SELECCIONE --</option>\n";
+                        foreach ($lstEmpleados as $idx => $campo) {
+                            if ($campo->id == $oComedor->id_empleado) {
+                                echo "<option value='{$campo->id}' selected >" . $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno . "</option>\n";
+                            } else {
+                                echo "<option value='{$campo->id}' >" . $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno . "</option>\n";
+                            }
+                        }
+                    }
+                    ?>
+                </select>
             </div>
-           
         </div>
-        <input type="hidden" id="id" name="id" value="<?= $oUsuarios->id ?>" />
-        <input type="hidden" id="user_id" name="user_id" value="<?= $sesion->id ?>">
-        <input type="hidden" id="accion" name="accion" value="GUARDAR" />
+        <div class="form-group">
+            <strong class="">Cantidad:</strong>
+            <div class="form-group">
+                <input type="number" description="" id="" disabled value="<?= $oComedor->precio_platillo?>" name="" class="form-control obligado" />
+            </div>
+        </div>
+        <div class="form-group">
+            <strong class="">Cantidad a sumar:</strong>
+            <div class="form-group">
+                <input type="number" description="Ingrese la cantidad a sumar" aria-describedby="" name="sumar" class="form-control obligado" />
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="id" name="id" value="<?= $oComedor->id ?>" />
+    <input type="hidden" id="user_id" name="user_id" value="<?= $sesion->id ?>">
+    <input type="hidden" id="accion" name="accion" value="GUARDAR" />
     </div>
 </form>

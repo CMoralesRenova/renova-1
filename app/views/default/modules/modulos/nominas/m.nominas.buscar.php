@@ -9,8 +9,7 @@ require_once($_SITE_PATH . "app/model/nominas.class.php");
 $oNominas = new nominas();
 $sesion = $_SESSION[$oNominas->NombreSesion];
 $oNominas->ValidaNivelUsuario("nominas");
-$dias = $oNominas->DiasVacacion(10, '2021-12-30', '2021-12-22', '2021-12-31');
-print_r($dias);
+
 $fecha_actual = date("d-m-Y");
 ?>
 <?php require_once('app/views/default/script_h.html'); ?>
@@ -33,13 +32,13 @@ $fecha_actual = date("d-m-Y");
                         Empty(elemento.id);
                         frmTrue = false;
                     } else {
-                        if (ValidarFechas($("#fecha").val())) {
+                       /* if (ValidarFechas($("#fecha").val())) {
                         frmTrue = true;
                         } else {
                             Alert("", "La fecha seleccionada debe ser mayor o igual a la actual", "warning", 900, false);
                             Empty(elemento.id);
                             frmTrue = false;
-                        }
+                        }*/
                     }
                 }
             });

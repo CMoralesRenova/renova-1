@@ -29,7 +29,7 @@ $lstcomedor = $oComedor->Listado();
     <div class="card-header py-3" style="text-align:left">
         <h5 class="m-0 font-weight-bold text-danger">Comedor</h5>
         <div class="form-group" style="text-align:right">
-            <input type="button" id="btnAgregar" class="btn btn-danger" name="btnAgregar" value="Agregar Fonacot" />
+            <input type="button" id="btnAgregar" class="btn btn-danger" name="btnAgregar" value="Agregar" />
         </div>
     </div>
     <div class="card-body">
@@ -59,7 +59,7 @@ $lstcomedor = $oComedor->Listado();
                                 <td style="text-align: center;"><?= $campo->fecha ?></td>
                                 <td style="text-align: center;"><?= $campo->precio_platillo ?></td>
                                 <td style="text-align: center;">
-                                        <a class="btn btn-sm btn-danger" href="javascript:Editar('$campo->id ?>','Editar')"><span class="glyphicon glyphicon-ok">Editar</a>
+                                        <a class="btn btn-sm btn-danger" href="javascript:Editar('<?= $campo->id ?>','Editar')"><span class="glyphicon glyphicon-ok">Editar</a>
                                 </td>
                             </tr>
                     <?php

@@ -13,6 +13,7 @@ class comedor_nominas extends AW
     var $id_empleado;
     var $fecha;
     var $sumar;
+    var $precio_platillo;
     var $user_id;
 
     //busqueda 
@@ -116,16 +117,10 @@ class comedor_nominas extends AW
 
     public function Agregar()
     {
-        $bResultado = false;
-        $sql1 = "select * from empleados where checador = '{$this->usr}' order by id desc limit 1";
-        $res1 = $this->Query($sql1);
-
-        $this->id_empleado = $res1[0]->id;
-
         $sql = "INSERT INTO `comedor`
             (`id_empleado`,`precio_platillo`,`fecha`)
                 VALUES
-            ('{$this->id_empleado}','38',now());";
+            ('{$this->id_empleado}','{$this->sumar}','{$this->fecha}')";
         $bResultado = $this->NonQuery($sql);
 
         return $bResultado;

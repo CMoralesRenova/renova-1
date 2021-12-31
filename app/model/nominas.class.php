@@ -522,7 +522,9 @@ class nominas extends AW
             ((SELECT DATEDIFF(fin_vacaci, inicio_vacaci) AS days
             FROM vacaciones where id_empleado = c.id and 
             (inicio_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha or 
-            fin_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha) )) as daysVaca
+            fin_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha) )) as daysVaca,
+            ((SELECT count(id) FROM festivos where fecha 
+            between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha))as festivos
             FROM nominas a 
             LEFT JOIN empleados c ON c.id
             LEFT JOIN horas_extras AS d ON c.id = d.id_empleado
@@ -609,7 +611,9 @@ class nominas extends AW
             ((SELECT DATEDIFF(fin_vacaci, inicio_vacaci) AS days
             FROM vacaciones where id_empleado = c.id and 
             (inicio_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha or 
-            fin_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha) )) as daysVaca
+            fin_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha) )) as daysVaca,
+            ((SELECT count(id) FROM festivos where fecha 
+            between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha))as festivos
             FROM nominas a 
             LEFT JOIN empleados c ON c.id
             LEFT JOIN horas_extras AS d ON c.id = d.id_empleado
@@ -765,14 +769,18 @@ class nominas extends AW
 
         if ($bResultado && !empty($this->id)) {
             $resNomina = $this->Nomina($this->id);
-
+            print_r($resNomina);
+            print"<br>";
             if (count($resNomina) > 0) {
                 foreach ($resNomina as $idx => $campo) {
                     $totalEsperado = 0;
                     $totalRetenciones = 0;
                     $dias_vacaciones = 0;
+
                     if ($campo->daysVaca != "" && $campo->inicio_vacaci != "" && $campo->fin_vacaci != "") {
                         $dias_vacaciones = $this->DiasVacacion($campo->daysVaca, $campo->fecha, $campo->inicio_vacaci, $campo->fin_vacaci);
+                        print_r($dias_vacaciones." numero de dias de vacaciones");
+                        print"<br>";
                     }
 
                     if ($campo->id_horario == "16"){
@@ -788,7 +796,15 @@ class nominas extends AW
                         $campo->dias_laborados = $campo->dias_laborados + $dias_vacaciones;
                         if ($dias_vacaciones > 5) {
                             $campo->dias_laborados = $campo->dias_laborados + 1;
+                            print_r($campo->dias_laborados." dias mas el domingo");
+                            print"<br>";
+                        } else {
+                            $campo->dias_laborados = $campo->dias_laborados + $campo->festivos;
+                            print_r($campo->dias_laborados." dias festivos sumados");
+                            print"<br>";
                         }
+                    } else {
+                        $campo->dias_laborados = $campo->dias_laborados + $campo->festivos;
                     }
                     //vareables para insert
                     $nombre = ucwords($campo->ape_paterno . " " . $campo->ape_materno . " " . $campo->nombres);

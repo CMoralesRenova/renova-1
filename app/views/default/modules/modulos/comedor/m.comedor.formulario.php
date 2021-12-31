@@ -20,7 +20,7 @@ $lstEmpleados = $oEmpleados->Listado();
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        $("#nameModal").text("<?php echo $nombre ?> Otro cargo");
+        $("#nameModal").text("<?php echo $nombre ?> Comedor");
         $("#frmFormulario").ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {},
             success: function(data) {
@@ -44,6 +44,10 @@ $lstEmpleados = $oEmpleados->Listado();
         $('#motivo').select2({
             width: '100%'
         });
+        if ($("#id").val() != ""){
+            $("#fecha").attr('readonly', 'true');
+            console.log("hola");
+        }
     });
 </script>
 <!-- DataTales Example -->
@@ -69,9 +73,15 @@ $lstEmpleados = $oEmpleados->Listado();
             </div>
         </div>
         <div class="form-group">
+            <strong class="">Fecha pago:</strong>
+            <div class="form-group">
+                <input type="date" description="Seleccione la fecha del pago" value="<?= $oComedor->fecha?>" aria-describedby="" id="fecha" required name="fecha" class="form-control obligado" />
+            </div>
+        </div>
+        <div class="form-group">
             <strong class="">Cantidad:</strong>
             <div class="form-group">
-                <input type="number" description="" id="" disabled value="<?= $oComedor->precio_platillo?>" name="" class="form-control obligado" />
+                <input type="number" description="" id="" disabled value="<?= $oComedor->precio_platillo?>" name="" class="form-control" />
             </div>
         </div>
         <div class="form-group">

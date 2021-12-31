@@ -20,7 +20,7 @@ $lstEmpleados = $oEmpleados->Listado();
         Listado();
         $('#fecha_inicial').change(Listado);
         $('#fecha_final').change(Listado);
-        $('#id_empleado').change(Listado);
+        $('#id_empleado_').change(Listado);
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
             var frmTrue = true;
@@ -43,7 +43,7 @@ $lstEmpleados = $oEmpleados->Listado();
             Listado();
         });
 
-        $('#id_empleado').select2({
+        $('#id_empleado_').select2({
             width: '100%'
         });
 
@@ -53,7 +53,7 @@ $lstEmpleados = $oEmpleados->Listado();
         var jsonDatos = {
             "fecha_inicial": $("#fecha_inicial").val(),
             "fecha_final": $("#fecha_final").val(),
-            "id_empleado": $("#id_empleado").val(),
+            "id_empleado": $("#id_empleado_").val(),
             "accion": "BUSCAR"
         };
         $.ajax({
@@ -74,6 +74,24 @@ $lstEmpleados = $oEmpleados->Listado();
     function Editar(id, nombre) {
         switch (nombre) {
             case 'Editar':
+                $.ajax({
+                    data: "id=" + id + "&nombre=" + nombre,
+                    type: "POST",
+                    url: "app/views/default/modules/modulos/comedor/m.comedor.formulario.php",
+                    beforeSend: function() {
+                        $("#divFormulario").html(
+                            '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
+                        );
+                    },
+                    success: function(datos) {
+                        $("#divFormulario").html(datos);
+                    }
+                });
+                $("#myModal").modal({
+                    backdrop: "true"
+                });
+                break;
+            case 'Agregar':
                 $.ajax({
                     data: "id=" + id + "&nombre=" + nombre,
                     type: "POST",
@@ -139,7 +157,7 @@ $lstEmpleados = $oEmpleados->Listado();
                                 <div class="form-group">
                                     <strong class="">Empleado:</strong>
                                     <div class="form-group">
-                                        <select id="id_empleado" class="form-control" name="id_empleado">
+                                        <select id="id_empleado_" class="form-control" name="id_empleado_">
                                             <?php
                                             if (count($lstEmpleados) > 0) {
                                                 echo "<option value='0' >-- SELECCIONE --</option>\n";
