@@ -769,8 +769,7 @@ class nominas extends AW
 
         if ($bResultado && !empty($this->id)) {
             $resNomina = $this->Nomina($this->id);
-            print_r($resNomina);
-            print"<br>";
+
             if (count($resNomina) > 0) {
                 foreach ($resNomina as $idx => $campo) {
                     $totalEsperado = 0;
@@ -779,19 +778,22 @@ class nominas extends AW
 
                     if ($campo->daysVaca != "" && $campo->inicio_vacaci != "" && $campo->fin_vacaci != "") {
                         $dias_vacaciones = $this->DiasVacacion($campo->daysVaca, $campo->fecha, $campo->inicio_vacaci, $campo->fin_vacaci);
-                        print_r($dias_vacaciones." numero de dias de vacaciones");
+                        print_r($dias_vacaciones." numero de dias de vacaciones ");
                         print"<br>";
                     }
 
-                    if ($campo->id_horario == "16"){
+                    if ($campo->id_horario == "16" ){
                         $campo->dias_laborados = $campo->dias_laborados + 1;    
                     }
 
-                    $campo->dias_laborados = $campo->dias_laborados + $campo->dias_laborados1;
-                    if ($campo->dias_laborados > 0 && $campo->dias_laborados1 > 0 ) {
+                    print_r($campo->dias_laborados." dIAS LABORADOS ");
+                    print"<br>";
+                    if ($campo->dias_laborados > 0 || $campo->dias_laborados1 > 0 ) {
+                        $campo->dias_laborados = $campo->dias_laborados + $campo->dias_laborados1;
                         $campo->dias_laborados = $campo->dias_laborados + 1;
                     }
-
+                    print_r($campo->dias_laborados." dIAS LABORADOS mas 1");
+                    print"<br>";
                     if ($dias_vacaciones > 0) {
                         $campo->dias_laborados = $campo->dias_laborados + $dias_vacaciones;
                         if ($dias_vacaciones > 5) {
@@ -800,12 +802,20 @@ class nominas extends AW
                             print"<br>";
                         } else {
                             $campo->dias_laborados = $campo->dias_laborados + $campo->festivos;
-                            print_r($campo->dias_laborados." dias festivos sumados");
+                            print_r($campo->dias_laborados." dias festivos sumados ".$campo->festivos);
                             print"<br>";
                         }
                     } else {
-                        $campo->dias_laborados = $campo->dias_laborados + $campo->festivos;
+                        if ($campo->id_horario == "16" && $campo->dias_laborados >= 7){ 
+
+                        } else {
+                            $campo->dias_laborados = $campo->dias_laborados + $campo->festivos;
+                            print_r($campo->dias_laborados." 
+                            SOLO dias festivos ".$campo->ape_paterno . " " . $campo->ape_materno . " " . $campo->nombres." ".$campo->festivos);
+                            print"<br>";
+                        }
                     }
+                    print"siguiente /////////////////////////////////// <br>";
                     //vareables para insert
                     $nombre = ucwords($campo->ape_paterno . " " . $campo->ape_materno . " " . $campo->nombres);
 
