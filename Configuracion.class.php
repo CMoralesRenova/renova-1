@@ -15,11 +15,12 @@ class Configuracion {
 
 	public function __construct() {
         $this->mysql_database = "renova";
-        $this->mysql_host = "187.190.56.120";
-        $this->mysql_user = "renova_db";
+        $this->mysql_host = "localhost";
+        $this->mysql_user = "root";
         $this->mysql_pass = "";
         $this->NombreSesion = "RENOVAMX";
         $this->MasterKey = "GustavoRenovaMx";
+        $this->API_KEY = "AIzaSyDNuQjcMaL880tNTT_rY6X3G6DhiMqSDFw";
         $this->RutaAbsoluta = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 	}
 }

@@ -43,7 +43,7 @@ $aPermisos = empty($oUsuarios->perfiles_id) ? array() : explode("@", $oUsuarios-
         <div class="row">
             <div class="col">
                 <div class="form-group">
-                    <strong class="">Nombre:</strong>
+                    <strong class="">Fecha:</strong>
                     <div class="form-group">
                         <input type="date" description="Seleccione la fecha" aria-describedby="" id="fecha" name="fecha" class="form-control obligado" />
                     </div>

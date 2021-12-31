@@ -13,6 +13,7 @@ class usuarios extends AW {
     var $usuario;
     var $correo;
     var $numero_economico;
+    var $nvl_usuario;
     var $clave_usuario;
     var $user_id;
     var $estado;
@@ -90,7 +91,8 @@ class usuarios extends AW {
                     perfiles_id = '{$sPermisos}',
                     nombre_usuario = '{$this->nombre_usuario}',
                     correo = '{$this->correo}',
-                    numero_economico = '{$this->numero_economico}'
+                    numero_economico = '{$this->numero_economico}',
+                    nvl_usuario = '{$this->nvl_usuario}'
                     {$sqlPass}
                 where
                   id='{$this->id}'";
@@ -118,9 +120,9 @@ class usuarios extends AW {
         }
 
         $sql = "insert into usuarios
-                (`id`,`perfiles_id`,`nombre_usuario`,`correo`,`usuario`,`clave`,`numero_economico`,`estado`,`usuario_creacion`,`fecha_creacion`)
+                (`id`,`perfiles_id`,`nombre_usuario`,`correo`,`usuario`,`nvl_usuario`,`clave`,`numero_economico`,`estado`,`usuario_creacion`,`fecha_creacion`)
                 values
-                ('0','{$this->sPermisos}','{$this->nombre_usuario}','{$this->correo}','{$this->usuario}','{$this->Encripta($this->clave_usuario)}','{$this->numero_economico}', '1', '{$this->user_id}', now())";
+                ('0','{$sPermisos}','{$this->nombre_usuario}','{$this->correo}','{$this->usuario}','{$this->nvl_usuario}','{$this->Encripta($this->clave_usuario)}','{$this->numero_economico}', '1', '{$this->user_id}', now())";
         $bResultado = $this->NonQuery($sql);
         
         $sql1 = "select id from usuarios order by id desc limit 1";

@@ -56,10 +56,10 @@ $lstempleados = $oEmpleados->Listado();
                         foreach ($lstempleados as $idx => $campo) {
                     ?>
                             <tr>
-                                <td style="text-align: center;"><?= $campo->nombres." ".$campo->ape_paterno." ".$campo->ape_materno ?></td>
+                                <td style="text-align: center;"><?= ucwords(strtolower($campo->ape_paterno . " " . $campo->ape_materno . " " . $campo->nombres)) ?></td>
                                 <td style="text-align: center;"><?= $campo->fecha_ingreso ?></td>
-                                <td style="text-align: center;"><?= $campo->puesto ?></td>
-                                <td style="text-align: center;"><?= $campo->departamento ?></td>
+                                <td style="text-align: center;"><?= ucwords(strtolower($campo->puesto)) ?></td>
+                                <td style="text-align: center;"><?= ucwords(strtolower($campo->departamento)) ?></td>
                                 <td style="text-align: center;"><?= $campo->estatus ?></td>
                                 <td style="text-align: center;">
                                     <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','Editar')">Editar</a>

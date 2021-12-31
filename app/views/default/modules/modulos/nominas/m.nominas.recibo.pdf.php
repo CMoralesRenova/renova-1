@@ -4,7 +4,7 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
 ob_start();
 error_reporting(E_ALL & ~E_NOTICE);
 ini_set('display_errors', 0);
-//ini_set('log_errors', 1);
+ini_set('log_errors', 1);
 include('m.nominas.items.php');
 $content = ob_get_clean();
 // convert in PDF

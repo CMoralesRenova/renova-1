@@ -74,8 +74,14 @@ class infonavit extends AW
 
     public function Informacion()
     {
+        $sqlFecha = "";
+        if (!empty($this->fecha)){
+            $sqlFecha = "id_empleado = '{$this->id_empleado}' and fecha_pago = '{$this->fecha}'";
+        } else {
+            $sqlFecha = "id='{$this->id}'";
+        }
 
-        $sql = "select * from infonavit where  id='{$this->id}'";
+        $sql = "select * from infonavit where  {$sqlFecha}";
         $res = parent::Query($sql);
 
         if (!empty($res) && !($res === NULL)) {

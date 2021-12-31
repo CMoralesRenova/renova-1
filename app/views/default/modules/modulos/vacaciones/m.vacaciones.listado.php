@@ -17,7 +17,7 @@ $lstvacaciones = $oVacaciones->Listado();
         $("#dataTable").DataTable();
 
         $("#btnAgregar").button().click(function(e) {
-            Editar("", "Agregar");
+            Editar("", "Editar");
         });
 
     });
@@ -27,7 +27,7 @@ $lstvacaciones = $oVacaciones->Listado();
     <div class="card-header py-3" style="text-align:left">
         <h5 class="m-0 font-weight-bold text-danger">vacaciones</h5>
         <div class="form-group" style="text-align:right">
-            <input type="button" id="btnAgregar" class="btn btn-danger" name="btnAgregar" value="Agregar Permiso" />
+            <input type="button" id="btnAgregar" class="btn btn-danger" name="btnAgregar" value="Agregar vacaciones" />
         </div>
     </div>
     <div class="card-body">
@@ -37,35 +37,51 @@ $lstvacaciones = $oVacaciones->Listado();
                     <tr>
                         <th>Fecha</th>
                         <th>Empleado</th>
-                        <th>Tipo permiso</th>
+                        <th>Dias restantes</th>
+                        <th>Pago</th>
+                        <th>Fecha de pago prima</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tfoot>
-                    <th>Fecha</th>
-                    <th>Empleado</th>
-                    <th>Tipo permiso</th>
-                    <th>Acciones</th>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Empleado</th>
+                        <th>Dias restantes</th>
+                        <th>Pago</th>
+                        <th>Fecha de pago prima</th>
+                        <th>Acciones</th>
+                    </tr>
                 </tfoot>
                 <tbody>
                     <?php
                     if (count($lstvacaciones) > 0) {
                         foreach ($lstvacaciones as $idx => $campo) {
+
                     ?>
                             <tr>
                                 <td style="text-align: center;"><?= $campo->fecha ?></td>
                                 <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
                                 <td style="text-align: center;"><?php
-                                                                if ($campo->llegada_tarde == 1) {
-                                                                    echo"Llegada tarde";
-                                                                } else if ($campo->salida_temprano == 1){
-                                                                    echo "Salida tamprano";
-                                                                } else if ($campo->dia_completo == 1){
+                                                                if ($campo->inicio_vacaci == "" || $campo->fin_vacaci == "") {
+                                                                    echo "Dias disponibles " . $campo->dias_restantes;
+                                                                } else if ($campo->inicio_vacaci != "" || $campo->fin_vacaci != "") {
+                                                                    echo "Dias de vacaciones asignados";
+                                                                } else if ($campo->dia_completo == 1) {
                                                                     echo "Dia completo";
                                                                 }
                                                                 ?></td>
+                                <td style="text-align: center;"><?= $campo->pago_prima ?></td>
+                                <td style="text-align: center;"><?= $campo->fecha_pago ?></td>
                                 <td style="text-align: center;">
-                                    <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','Detalles','<?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?>')">Ver</a>
+                                    <?php
+                                    $fechaActual = date('Y-m-d');
+                                    if ($fechaActual <= $campo->fecha_final) { ?>
+                                        <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','Editar')">Ver</a>
+                                    <?php } else { ?>
+                                        <a class="btn btn-sm btn-danger" href="javascript:Editar('<?= $campo->id ?>','')">Vacaciones no disponibles</a>
+                                    <?php } ?>
+
                                 </td>
                             </tr>
                     <?php

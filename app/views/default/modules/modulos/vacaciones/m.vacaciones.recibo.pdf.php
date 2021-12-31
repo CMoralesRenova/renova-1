@@ -2,10 +2,10 @@
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 // get the HTML
 ob_start();
-error_reporting(E_ALL & ~E_NOTICE);
-ini_set('display_errors', 0);
+//error_reporting(E_ALL & ~E_NOTICE);
+//ini_set('display_errors', 0);
 //ini_set('log_errors', 1);
-include('m.vaciones.items.php');
+include('m.vacaciones.items.php');
 $content = ob_get_clean();
 // convert in PDF
 require_once($_SITE_PATH . "app/model/html2pdf/html2pdf.class.php");

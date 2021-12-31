@@ -11,7 +11,7 @@ require_once($_SITE_PATH . "/app/model/nominas.class.php");
 $oNominas = new nominas();
 $oNominas->id = addslashes(filter_input(INPUT_POST, "id"));
 $nombre = addslashes(filter_input(INPUT_POST, "nombre"));
-$lstnominas = $oNominas->Listado_nomina();
+$lstnominas = $oNominas->Listado_prenomina();
 
 ?>
 <script type="text/javascript">
@@ -24,12 +24,53 @@ $lstnominas = $oNominas->Listado_nomina();
                     extend: 'pdfHtml5',
                     title: 'Reporte Nomina Semana <?= $nombre ?>',
                     text: 'Exportar a pdf',
+                    orientation: 'landscape',
                     exportOptions: {
-                        columns: [0, 5, 8, 9, 10, 11, 12, 13, 14]
+                        columns: [0, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17]
                     }
-                }]
+                }],
+                "footerCallback": function(row, data, start, end, display) {
+                    var api = this.api(),
+                        data;
+
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function(i) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '') * 1 :
+                            typeof i === 'number' ?
+                            i : 0;
+                    };
+
+                    // Total over all pages
+                    total = api
+                        .column(16)
+                        .data()
+                        .reduce(function(a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Total over this page
+                    pageTotal = api
+                        .column(16, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce(function(a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Update footer
+                    $(api.column(1).footer()).html(
+                        '$' + total + ' total'
+                    );
+                }
             });
             $(".buttons-html5 ").addClass("btn btn-danger");
+            var total = 0;
+            $('#dataTable2').DataTable().rows().data().each(function(el, index) {
+                //Asumiendo que es la columna 5 de cada fila la que quieres agregar a la sumatoria
+                total += el[8];
+            });
         });
     });
 </script>
@@ -44,10 +85,14 @@ $lstnominas = $oNominas->Listado_nomina();
                         <th>Premio de asistencia</th>
                         <th>Premio de puntualidad</th>
                         <th>Bono de productividad</th>
-                        <th>Sueldo Semanal</th>
+                        <th>Bono de 12hrs</th>
+                        <th>Bono de viaje</th>
+                        <th>Complemento de sueldo</th>
+                        <th>Sueldo Diario</th>
                         <th>Faltas</th>
                         <th>Dias Laborados</th>
                         <th>Horas Extras</th>
+                        <th>Vacaciones</th>
                         <th>Total Percepciones</th>
                         <th>Comedor</th>
                         <th>Ahorro</th>
@@ -64,52 +109,52 @@ $lstnominas = $oNominas->Listado_nomina();
                     <?php
                     if (count($lstnominas) > 0) {
                         foreach ($lstnominas as $idx => $campo) {
-                            $totalEsperado = 0;
-                            $totalRetenciones = 0;
                     ?>
                             <tr>
-                                <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
-                                <td style="text-align: center;"><?= "$".bcdiv($campo->salario_asistencia, '1', 2) ?></td>
-                                <td style="text-align: center;"><?= "$".bcdiv($campo->salario_puntualidad, '1', 2) ?></td>
-                                <td style="text-align: center;"><?= "$".bcdiv($campo->salario_productividad, '1', 2) ?></td>
-                                <td style="text-align: center;"><?= "$".bcdiv($campo->salario_semanal, '1', 2) ?></td>
-                                <td style="text-align: center;"><?= (7 - $campo->dias_laborados) ?></td>
-                                <td style="text-align: center;"><?= $campo->dias_laborados ?></td>
-                                <td style="text-align: center;"><?= "$".bcdiv($campo->horas_extras, '1', 2) ?></td>
-                                <td style="text-align: center;"><?php
-                                                                if ($campo->dias_laborados < 7) {
-                                                                    $totalEsperado = bcdiv($campo->esperado + $campo->bono_doce + $campo->complemento_sueldo + $campo->salario_productividad + $campo->horas_extras, '1', 2);
-                                                                } else {
-                                                                    $totalEsperado = bcdiv($campo->esperado + $campo->bono_doce + $campo->complemento_sueldo + $campo->salario_productividad + $campo->salario_puntualidad + $campo->salario_asistencia + $campo->horas_extras, '1', 2);
-                                                                }
-                                                                echo "$".$totalEsperado; ?></td>
-                                <td style="text-align: center;"><?php if (!empty($campo->comedor)) {
-                                                                    echo "-$" . $campo->comedor;
-                                                                    $totalRetenciones = $totalRetenciones + $campo->comedor;
-                                                                } else {
-                                                                    echo "-0.00";
-                                                                }?></td>
-                                <td style="text-align: center;"><?php if ($campo->estatusAhorro == 1) {
-                                                                    echo "-$" . $campo->monto;
-                                                                    $totalRetenciones = $totalRetenciones + $campo->monto;
-                                                                } else {
-                                                                    echo "-0.00";
-                                                                } ?></td>
-
-                                <td style="text-align: center;"><?php echo "-$" . bcdiv($campo->prestamos, '1', 2);
-                                                                $totalRetenciones = $totalRetenciones + $campo->prestamos; ?></td>
-                                <td style="text-align: center;"><?php echo "-$" . bcdiv($campo->fonacot, '1', 2);
-                                                                $totalRetenciones = $totalRetenciones + $campo->fonacot; ?></td>
-                                <td style="text-align: center;"><?php echo "-$" . bcdiv($campo->infonavit, '1', 2);
-                                                                $totalRetenciones = $totalRetenciones + $campo->infonavit; ?></td>
-                                <td style="text-align: center;"><?php echo "-$" . bcdiv($campo->otros_descuentos, '1', 2);
-                                                                $totalRetenciones = $totalRetenciones + $campo->otros_descuentos; ?></td>
-                                <td style="text-align: center;"><?= "-$" . bcdiv($totalRetenciones, '1', 2); ?></td>
-                                <td style="text-align: center;"><?php echo "$".($totalEsperado - $totalRetenciones); ?></td>
+                                <td style="text-align: center;"><?= $campo->nombre ?></td>
                                 <td style="text-align: center;">
-                                    <?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno . "<br>" ?>
-                                    <?php if ($campo->estatus != 3) { ?>
-                                        <a class="btn btn-sm btn-warning" href="javascript:Reporte('<?= $campo->id ?>','<?= $campo->id_empleado ?>')">Ver</a>
+                                    <?= $campo->asistencia ?><br>
+                                        <input class="" type="checkbox" id="asistencia_<?= $campo->id_empleado?>" name="asistencia_<?= $campo->id_empleado?>" value="1"><br>
+                                        <label class="form-check-label" for="A">Agregar Premio</label>
+                                </td>
+                                <td style="text-align: center;">
+                                    <?= "$" . $campo->puntualidad;?><br>
+                                    <input class="" type="checkbox" id="puntualidad_<?= $campo->id_empleado?>" name="puntualidad_<?= $campo->id_empleado?>" value="1"><br>
+                                    <label class="form-check-label" for="A">Agregar Premio</label>
+                                </td>
+                                <td style="text-align: center;"><?= "$" . $campo->productividad ?></td>
+                                <td style="text-align: center;"><?= "$" . $campo->doce ?></td>
+                                <td style="text-align: center;"><?= "$" . $campo->bono_viaje ?></td>
+                                <td style="text-align: center;">
+                                    <?= "$" . $campo->complemento ?>
+                                    <input type="input" id="complemento_<?= $campo->id_empleado?>"  name="complemento_<?= $campo->id_empleado?>" value="<?= $campo->complemento ?>" style="text-align:center" class="form-control remove_<?= $campo->id_empleado?>" />
+                                </td>
+                                <td style="text-align: center;"><?= "$" . $campo->diario ?></td>
+                                <td style="text-align: center;"><?= $campo->faltas ?></td>
+                                <td style="text-align: center;">
+                                    <?= $campo->asistencias ?>
+                                    <input type="input" id="laborados_<?= $campo->id_empleado?>"  name="laborados_<?= $campo->id_empleado?>" value="<?= $campo->asistencias ?>" style="text-align:center" class="form-control remove_<?= $campo->id_empleado?>" />
+                                </td>
+                                <td style="text-align: center;"><?= "$" . $campo->extras ?></td>
+                                <td style="text-align: center;"><?= "$" . $campo->vacaciones ?></td>
+                                <td style="text-align: center;"><?= "$" . $campo->total ?></td>
+                                <td style="text-align: center;">
+                                <?= $campo->comedor ?>
+                                    <input type="input" id="comedor_<?= $campo->id_empleado?>"  name="comedor_<?= $campo->id_empleado?>" value="<?= $campo->comedor ?>" style="text-align:center" class="form-control remove_<?= $campo->id_empleado?>" />
+                                </td>
+                                <td style="text-align: center;"><?= "-$" . $campo->ahorro ?></td>
+                                <td style="text-align: center;"><?= "-$" . $campo->prestamos ?></td>
+                                <td style="text-align: center;"><?= "-$" . $campo->fonacot ?></td>
+                                <td style="text-align: center;"><?= "-$" . $campo->infonavit ?></td>
+                                <td style="text-align: center;"><?= "-$" . $campo->otros ?></td>
+                                <td style="text-align: center;"><?= "-$" . $campo->total_r ?></td>
+                                <td style="text-align: center;"><?= "$" . $campo->total_p ?></td>
+                                <td style="text-align: center;">
+                                    <?= $campo->nombre . "<br>" ?>
+                                    <?php if ($campo->estatus == '1') { ?>
+                                        <a class="btn btn-sm btn-warning" href="javascript:Reporte('<?= $campo->id_nomina ?>','<?= $campo->id_empleado ?>')">Ver</a>
+                                    <?php } else { ?>
+                                        <a class="btn btn-sm btn-danger" href="javascript:Editar('<?= $campo->id_nomina ?>','Solicitud','<?= $campo->id_empleado ?>','<?= $campo->nombre ?>')">Editar</a>
                                     <?php } ?>
                                 </td>
                             </tr>
@@ -118,7 +163,20 @@ $lstnominas = $oNominas->Listado_nomina();
                     }
                     ?>
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="18" style="text-align:right">Total:</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
             </table>
+            <a href="javascript:Editar(<?= $lstnominas[0]->id_nomina ?>, 'AddNomina','<?= $lstnominas[0]->fecha ?>')" class="scroll-to-top" style="display: inline;width: 15%;background-color: #4fe141;">
+                <span class="icon text-white-50">
+                    <i class="fas fa-check"></i>
+                </span>
+                <span class="text">Agregar nomina</span>
+            </a>
         </div>
     </div>
 </div>

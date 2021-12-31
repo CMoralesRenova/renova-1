@@ -8,21 +8,46 @@ session_start();
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "/app/model/usuarios.class.php");
 require_once($_SITE_PATH . "/app/model/empleados.class.php");
+require_once($_SITE_PATH . "/app/model/vacaciones.class.php");
+require_once($_SITE_PATH . "vendor/autoload.php");
 
-$oUsuarios = new Usuarios();
-$oUsuarios->id = addslashes(filter_input(INPUT_POST, "id"));
+use Carbon\Carbon;
+
+date_default_timezone_set('America/Mexico_City');
+
+$oVacaciones = new Vacaciones();
+$oVacaciones->id = addslashes(filter_input(INPUT_POST, "id"));
 $nombre = addslashes(filter_input(INPUT_POST, "nombre"));
-$sesion = $_SESSION[$oUsuarios->NombreSesion];
-$oUsuarios->Informacion();
+$sesion = $_SESSION[$oVacaciones->NombreSesion];
+$oVacaciones->Informacion();
 
 $oEmpleados = new empleados();
 $lstEmpleados = $oEmpleados->Listado();
 
-$aPermisos = empty($oUsuarios->perfiles_id) ? array() : explode("@", $oUsuarios->perfiles_id);
+$ley = "LFT: Artículo 81.- Las vacaciones deberán concederse a los trabajadores dentro de los seis meses siguientes al
+cumplimiento del año de servicios. Los patrones entregarán anualmente a sus trabajadores una constancia que 
+contenga su antigüedad y de acuerdo con ella el período de vacaciones que les corresponda y la fecha en que 
+deberán disfrutarlo.";
+
+$avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacaciones->perfiles_id);
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        $("#nameModal_").text("<?php echo $nombre ?> Permiso");
+        var btnGuardar = <?php echo empty($oVacaciones->inicio_vacaci); ?>+"";
+        console.log(btnGuardar+" estetete");
+        if (btnGuardar <= 0){
+            console.log("boton");
+            $("#btnGuardar").hide();
+        }
+        $('#id_empleado').change(Empleado);
+        if ($("#id").val() != '') {
+            Empleado();
+        }
+        $('#dias_disfrutar').change(Restante);
+        fecha_inicio = <?php $oVacaciones->inicio_vacaci ?> + "";
+        fecha_fin = <?php $oVacaciones->fin_vacaci . "" ?> + "";
+
+        $("#nameModal_").text("<?php echo $nombre ?> Vacaciones");
         $("#entrada1").hide();
         $("#salida1").hide();
         $("#frmFormulario_").ajaxForm({
@@ -39,40 +64,225 @@ $aPermisos = empty($oUsuarios->perfiles_id) ? array() : explode("@", $oUsuarios-
                 }
                 Alert(datos0, datos1 + "" + datos3, datos2);
                 Listado();
-                $("#myModal_permisos").modal("hide");
+                $("#myModal_vacaciones").modal("hide");
             }
         });
+
+        $("#btnImprimir").button().click(function(e) {
+            var opc = "fullscreen=no, menubar=no, resizable=no, scrollbars=yes, status=yes, titlebar=yes, toolbar=no, width=750, height=580";
+            var pagina = "app/views/default/modules/modulos/vacaciones/m.vacaciones.recibo.pdf.php?";
+
+            pagina += "id="+ $("#id").val();
+
+            window.open(pagina, "reporte", opc);   
+        });
+
         $('#id_empleado').select2({
             width: '100%'
         });
+        $('[data-toggle="tooltip"]').tooltip();
     });
+
+    $('#dias_pagados').on('change', function() {
+        dias = $('#dias_pagados').val();
+        salario = $('#salario_diario').val();
+        prima = 0.25;
+
+        pago_prima = (dias * salario * prima);
+        $("#pago_prima").val(pago_prima);
+    });
+
     $('input[type="checkbox"]').on('change', function() {
-        $("#entrada1").hide();
-        $("#salida1").hide();
-        $("#entrada").removeClass("obligado");
-        $("#salida").removeClass("obligado");
-        var elemento= this;
-        var id = $(elemento).attr("description");
-        var idImput = $(elemento).attr("description1");
-        $("#"+idImput).addClass("obligado");
-        $("#"+id).show();
-        $('input[type="checkbox"]').not(this).prop('checked', false);
+        if (this.checked) {
+            $("#pagar_dias").val($("#dias_disfrutar").val());
+            $("#pagar_dias").attr("name", "pagar_dias");
+
+            $("#salario_diario").attr("name", "salario_diario");
+            $("#salario_diario").val(function(index, value) {
+                return value.replace(/\D/g, "")
+                    .replace(/([0-9])([0-9]{2})$/, '$1.$2')
+                    .replace(/\B(?=(\d{3})+(?!\d)\.?)/g, ",");
+            });
+
+            $("#pagar_total").attr("name", "pagar_total");
+
+            var total = $("#pagar_dias").val() * $("#salario_diario").val();
+
+            $("#pagar_total").val(total);
+            $("#pagar_total").val(function(index, value) {
+                return value.replace(/\D/g, "")
+                    .replace(/([0-9])([0-9]{2})$/, '$1.$2')
+                    .replace(/\B(?=(\d{3})+(?!\d)\.?)/g, ",");
+            });
+
+            $("#pagar_concepto").removeAttr("readonly");
+            $("#pagar_concepto").attr("name", "pagar_concepto");
+
+
+        } else {
+            $("#pagar_dias").val('');
+            $("#pagar_dias").removeAttr("name");
+
+            $("#salario_diario").removeAttr("name");
+
+            $("#pagar_total").removeAttr("name");
+            $("#pagar_total").val('');
+
+            $("#pagar_concepto").attr("readonly", "true");
+            $("#pagar_concepto").removeAttr("name");
+        }
     });
-    
+
+    function Empleado() {
+        var jsonDatos = {
+            "id": $("#id_empleado").val(),
+            "accion": "Empleado"
+        };
+
+        $(".obligado").val("");
+
+        $("#id_empleado").val(jsonDatos['id']);
+        $.ajax({
+            data: jsonDatos,
+            type: "POST",
+            url: "app/views/default/modules/modulos/vacaciones/m.vacaciones.procesa.php",
+            success: function(datos) {
+                if (datos != "") {
+                    console.log(datos + "aaaaa");
+                    var str = datos;
+                    var salario_diario = str.split("@")[1];
+                    var datos = str.split("@")[0];
+                    $("#fecha_ingreso").val(datos);
+                    $("#salario_diario").val(salario_diario);
+
+                    var jsonDatos = {
+                        "fecha_ingreso": datos,
+                        "accion": "ANOS"
+                    };
+
+                    $.ajax({
+                        data: jsonDatos,
+                        type: "POST",
+                        url: "app/views/default/modules/modulos/vacaciones/m.vacaciones.procesa.php",
+                        success: function(dato) {
+
+                            $("#ano").val(dato);
+                            console.log(dato);
+                            if (dato < 1) {
+                                Alert("", 'El empleado no tiene vacaciones disponibles', "warning", 1000, false);
+                            } else {
+                                var str = datos;
+                                var año = str.split("-")[0];
+                                var mes = str.split("-")[1];
+                                var dia = str.split("-")[2];
+
+                                var today = new Date();
+                                var curYear = today.getFullYear();
+                                var curYear1 = today.getFullYear() - 1;
+                                $("#periodo_inicio").val(curYear1 + "-" + mes + "-" + dia);
+                                $("#periodo_fin").val(curYear + "-" + mes + "-" + dia);
+
+                                var d = new Date(curYear, mes, dia);
+                                var r = new Date(d.setMonth(d.getMonth() + 5));
+
+                                var months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                                var days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+                                var curWeekDay = days[r.getDay()];
+                                var curDay = r.getDate();
+                                var curMonth = months[r.getMonth()];
+                                var curYear = r.getFullYear();
+                                var date = curWeekDay + ", " + curDay + " " + curMonth + " " + curYear;
+                                mont = '';
+
+                                if (r.getMonth() + 1 <= 10){
+                                    mont = "0"+(r.getMonth() + 1);
+                                } else {
+                                    mont = (r.getMonth() + 1);
+                                }
+                                
+                                $("#validarFehca").val(curYear+"-"+mont+"-"+curDay);
+                                $("#vacacionesInput").val(date);
+                                $("#vacionesDisponibles").html("  "+date+"  ");
+
+                                console.log(date);
+                                var jsonDatos = {
+                                    "anos": dato,
+                                    "id_empleado": $("#id_empleado").val(),
+                                    "accion": "DIAS"
+                                };
+
+                                $.ajax({
+                                    data: jsonDatos,
+                                    type: "POST",
+                                    url: "app/views/default/modules/modulos/vacaciones/m.vacaciones.procesa.php",
+                                    success: function(dat) {
+                                        var str = dat;
+                                        var dias_correspondientes = str.split("@")[0];
+                                        var dias_restantes = str.split("@")[1];
+                                        var dias_pagados = <?= $oVacaciones->dias_pagados; ?> + 0;
+                                        $("#dias_correspondientes").val(dias_correspondientes);
+
+                                        $("#dias_restantes").val(dias_correspondientes - dias_restantes);
+                                        $("#dias_restantes_1").val(dias_restantes);
+
+                                        diasOption = (dias_correspondientes - dias_restantes);
+                                        if (diasOption > 1) {
+                                            var options = '';
+                                            options += "<option value=''>--SELECCIONE--</option>";
+                                            for (var i = 1; i <= diasOption; i++) {
+                                                options += '<option value="' + i + '">' + i + '</option>';
+                                            }
+                                            $("#dias_disfrutar").html(options);
+                                        }
+
+                                        if (dias_correspondientes > 1) {
+                                            var options2 = '';
+                                            options2 += "<option value=''>--SELECCIONE--</option>";
+                                            for (var i = 1; i <= dias_correspondientes; i++) {
+                                                if (dias_pagados == i) {
+                                                    options2 += '<option value="' + i + '" selected>' + i + '</option>';
+                                                }
+                                                options2 += '<option value="' + i + '">' + i + '</option>';
+                                            }
+                                            $("#dias_pagados").html(options2);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                } else {
+                    Alert("", 'El empleado no tiene fecha de ingreso', "warning", 900, false);
+                }
+            }
+        });
+    }
+
+    function Restante() {
+        restante = $("#dias_correspondientes").val() - $("#dias_disfrutar").val() - $("#dias_restantes_1").val();
+        $("#dias_restantes").val(restante);
+    }
 </script>
-<form id="frmFormulario_" name="frmFormulario_" action="app/views/default/modules/modulos/permisos/m.permisos.procesa.php" enctype="multipart/form-data" method="post" target="_self" class="form-horizontal">
+
+<form id="frmFormulario_" name="frmFormulario_" action="app/views/default/modules/modulos/vacaciones/m.vacaciones.procesa.php" enctype="multipart/form-data" method="post" target="_self" class="form-horizontal">
     <div>
         <div class="row">
             <div class="col">
                 <div class="form-group">
                     <strong class="">Empleado:</strong>
                     <div class="form-group">
-                        <select id="id_empleado" description="Seleccione el empleado" class="form-control obligado" name="id_empleado">
+                        <select id="id_empleado" description="Seleccione el empleado" <?php if ($oVacaciones->id_empleado != "") {
+                                                                                            echo "disabled";
+                                                                                        } ?> class="form-control obligado" onchange="" name="id_empleado">
                             <?php
                             if (count($lstEmpleados) > 0) {
                                 echo "<option value='0' >-- SELECCIONE --</option>\n";
                                 foreach ($lstEmpleados as $idx => $campo) {
-                                    echo "<option value='{$campo->id}' >" . $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno . "</option>\n";
+                                    if ($campo->id == $oVacaciones->id_empleado) {
+                                        echo "<option value='{$campo->id}' selected>" . $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno . "</option>\n";
+                                    } else {
+                                        echo "<option value='{$campo->id}'>" . $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno . "</option>\n";
+                                    }
                                 }
                             }
                             ?>
@@ -84,54 +294,242 @@ $aPermisos = empty($oUsuarios->perfiles_id) ? array() : explode("@", $oUsuarios-
         <div class="row">
             <div class="col">
                 <div class="form-group">
-                    <strong class="">Fecha del permiso:</strong>
+                    <strong class="">Fecha de ingreso:</strong>
                     <div class="form-group">
-                        <input type="date" description="Seleccione la fecha" aria-describedby="" id="fecha" required name="fecha" class="form-control obligado" />
+                        <input type="date" description="Seleccione la fecha" aria-describedby="" id="fecha_ingreso" required name="fecha_ingreso" value="<?= $oVacaciones->fecha_ingreso; ?>" autocomplete="off" class="form-control obligado" readonly="readonly" />
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Años:</strong>
+                    <div class="form-group">
+                        <input type="int" description="Seleccione la fecha" aria-describedby="" id="ano" readonly="true" name="ano" value="<?= $oVacaciones->ano ?>" class="form-control obligado" />
                     </div>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="form-group">
-                <strong>&nbsp; Con goce de sueldo:</strong>
-                <label> Si</label> <input type="radio" name="sin_sueldo" class="check1" value="1">
-                <label> No</label> <input type="radio" name="sin_sueldo" class="check1" value="0">
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Dias totales de vacaciones:</strong>
+                    <div class="form-group">
+                        <input type="int" description="" aria-describedby="" id="dias_correspondientes" required name="dias_correspondientes" value="<?= $oVacaciones->dias_correspondientes ?>" class="form-control obligado" readonly="readonly" />
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Seleccionar dias:</strong>
+                    <?php if ($oVacaciones->inicio_vacaci != "") {
+                        echo "<br>" . $oVacaciones->dias_pagados;
+                    } else { ?>
+                        <div class="form-group">
+                            <select id="dias_disfrutar" description="Seleccione los dias a disfrutar" class="form-control obligado" onchange="" name="dias_disfrutar">
+
+                            </select>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Dias restantes:</strong>
+                    <div class="form-group">
+                        <input type="int" description="Seleccione la fecha" aria-describedby="" id="dias_restantes" value="<?= $oVacaciones->dias_restantes ?>" readonly="true" name="dias_restantes" class="form-control obligado" />
+                        <input type="hidden" id="dias_restantes_1" class="" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="form">
+                    <strong>Periodo a Disfrutar :</strong>
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <div class="form">
+                    <strong>del año :</strong>
+                    <label id="periodo_inicio_label"></label>
+                    <input type="date" id="periodo_inicio" readonly="true" value="<?= $oVacaciones->periodo_inicio ?>" name="periodo_inicio" class="form" />
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <div class="form">
+                    <strong>al año :</strong>
+                    <input type="date" id="periodo_fin" readonly="true" name="periodo_fin" value="<?= $oVacaciones->periodo_fin; ?>" class="form" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-5">
+                <div class="form">
+                    <strong>Vacaciones disponibles hasta el dia:</strong>
+                </div>
+            </div>
+            <div class="col-sm-6 float-left">
+                <div class="form-group ">
+                    <label id="vacionesDisponibles" class="btn-danger" data-toggle="tooltip" title="" data-original-title="<?= $ley ?>" ></label>
+                    <input type="hidden" id="vacacionesInput" name="vacacionesInput" value="<?= $oVacaciones->vacacionesInput ?>">
+                    <input type="hidden" id="validarFehca"  >
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form">
+                    <strong>Dia que inicia sus vacaciones:</strong>
+                </div>
+            </div>
+            <div class="col-sm-6 float-left">
+                <div class="form-group ">
+                    <input type="date" id="inicio_vacaci" name="inicio_vacaci" <?php if ($oVacaciones->inicio_vacaci != "") {
+                                                                                    echo "readonly='true'";
+                                                                                } ?> value="<?= $oVacaciones->inicio_vacaci; ?>" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form">
+                    <strong>Dia que terminan sus vacaciones:</strong>
+                </div>
+            </div>
+            <div class="col-sm-6 float-left">
+                <div class="form-group ">
+                    <input type="date" id="fin_vacaci" name="fin_vacaci" <?php if (!empty($oVacaciones->fin_vacaci)) {
+                                                                                echo "readonly='true'";
+                                                                            } ?> value="<?= $oVacaciones->fin_vacaci; ?>" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form">
+                    <strong>Dia que regresa a trabajar:</strong>
+                </div>
+            </div>
+            <div class="col-sm-6 float-left">
+                <div class="form-group ">
+                    <input type="date" id="reingreso" name="reingreso" <?php if (!empty($oVacaciones->reingreso)) {
+                                                                            echo "readonly='true'";
+                                                                        } ?> value="<?= $oVacaciones->reingreso; ?>" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Pago de primas vacaionales:</strong>
+                    <?php if ($oVacaciones->pago_prima != "") {
+                        echo "$" . $oVacaciones->pago_prima;
+                    } else { ?>
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">$</div>
+                            </div>
+                            <input type="number" min="1" step="any" description="Ingrese el pago de prima vacacional" id="pago_prima" value="<?= $oVacaciones->pago_prima ?>" readonly="readonly" required name="pago_prima" class="form-control obligado" />
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Dias de prima que se pagaron:</strong>
+                    <?php if ($oVacaciones->dias_pagados != "") {
+                        echo $oVacaciones->dias_pagados;
+                    } else { ?>
+                        <div class="form-group">
+                            <select id="dias_pagados" description="Seleccione los dias a disfrutar" class="form-control obligado" value="<?= $oVacaciones->dias_pagados; ?>" name="dias_pagados">
+                            </select>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Fecha de pago de prima:</strong>
+                    <?php if ($oVacaciones->fecha_pago != "") {
+                        echo $oVacaciones->fecha_pago;
+                    } else { ?>
+                        <div class="form-group">
+                            <input type="date" description="Seleccione la fecha" aria-describedby="" id="fecha_pago" name="fecha_pago" value="<?= $oVacaciones->fecha_pago; ?>" class="form-control obligado" />
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+            <?php if ($oVacaciones->inicio_vacaci != "") {
+                echo "Dias Pagados";
+            } else { ?>
+                <input type="checkbox" name="pagar" id="pagar" value="recoleccion"><strong> Pagar dias</strong><br>
+                <?php } ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Dias a pagar:</strong>
+                    <div class="form-group">
+                        <input type="text" description="Ingrese el nombre" class="form-control" readonly id="pagar_dias" value="<?= $oVacaciones->pagar_dias ?>" />
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Salario diario:</strong>
+                    <div class="form-group">
+                        <input type="text" description="" id="salario_diario" value="" class="form-control" readonly />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Total a págar:</strong>
+                    <div class="form-group">
+                        <input type="text" id="pagar_total" value="<?= $oVacaciones->pagar_total ?>" class="form-control" readonly />
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Asignar un concepto:</strong>
+                    <div class="form-group">
+                        <input type="text" id="pagar_concepto" value="<?= $oVacaciones->pagar_concepto ?>" class="form-control " readonly />
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <strong class="">Fecha a pagar dias:</strong>
+                    <div class="form-group">
+                        <input type="text" id="pagar_concepto" value="<?= $oVacaciones->pagar_concepto ?>" class="form-control " readonly />
+                    </div>
+                </div>
             </div>
         </div>
         <div class="form-group">
-                <strong class="">Tipo de permiso:</strong>
+            <div class="form-group">
+                <strong>Observaciones:</strong>
             </div>
-        <div class="row">
-            <div class="col">
-                <input type="checkbox" name="llegada_tarde" description="entrada1" description1="entrada" value="1" class="check"><strong> Entrada Tarde</strong><br />
-            </div>
-            <div class="col">
-                <input type="checkbox" name="salida_temprano" description="salida1" description1="salida" value="1" class="check"><strong> Salida Temprano</strong><br />
-            </div>
-            <div class="col">
-                <input type="checkbox" name="dia_completo" value="1" class="check"><strong> Día completo</strong><br />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <div class="form-group" id="entrada1">
-                    <strong class="">Hora de entrada:</strong>
-                    <div class="form-group">
-                        <input type="time" description="Seleccione la hora de entrada" aria-describedby="" id="entrada" required name="entrada" class="form-control" />
-                    </div>
+            <?php if ($oVacaciones->inicio_vacaci != "") {
+                echo "<br>" . $oVacaciones->observaciones;
+            } else { ?>
+                <div class="form-group" style="width: 100%;">
+                    <textarea id="observaciones" name="observaciones" class="form-group" rows="3" style="width: 100%;"><?= $oVacaciones->observaciones ?></textarea>
                 </div>
-            </div>
-            <div class="col">
-                <div class="form-group" id="salida1">
-                    <strong class="">Hora de salida:</strong>
-                    <div class="form-group">
-                        <input type="time" description="Seleccione la hora de salida" aria-describedby="" id="salida" required name="salida" class="form-control" />
-                    </div>
-                </div>
-            </div>
+            <?php } ?>
         </div>
+        <?php if ($oVacaciones->inicio_vacaci != "") {?>
+            <input type="button" id="btnImprimir" class="btn btn-danger btn-block" name="btnImprimir" value="Imprimir Vacaciones">
+        <?php } ?>
     </div>
-    <input type="hidden" id="id" name="id" value="<?= $oUsuarios->id ?>" />
+    <input type="hidden" id="id" name="id" value="<?= $oVacaciones->id ?>" />
     <input type="hidden" id="user_id" name="user_id" value="<?= $sesion->id ?>">
     <input type="hidden" id="accion" name="accion" value="GUARDAR" />
     </div>

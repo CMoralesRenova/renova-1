@@ -80,8 +80,14 @@ class prestamos extends AW
 
     public function Informacion()
     {
+        $sqlFecha = "";
+        if (!empty($this->fecha)){
+            $sqlFecha = "id_empleado = '{$this->id_empleado}' and fecha_pago = '{$this->fecha}'";
+        } else {
+            $sqlFecha = "id='{$this->id}'";
+        }
 
-        $sql = "select * from prestamos where  id='{$this->id}'";
+        $sql = "select * from prestamos where {$sqlFecha}";
         $res = parent::Query($sql);
 
         if (!empty($res) && !($res === NULL)) {
@@ -102,6 +108,22 @@ class prestamos extends AW
         }
 
         $sql = "select * from prestamos where {$sqlPrestamo}";
+        $res = parent::Query($sql);
+
+        if (!empty($res) && !($res === NULL)) {
+            foreach ($res[0] as $idx => $valor) {
+                $this->{$idx} = $valor;
+            }
+        } else {
+            $res = NULL;
+        }
+
+        return $res;
+    }
+
+    public function PrestamoActivo()
+    {
+        $sql = "SELECT * FROM renova.prestamos where id_empleado = '{$this->id_empleado}' and fecha_pago = '{$this->fecha_pago}' and estatus = '1'";
         $res = parent::Query($sql);
 
         if (!empty($res) && !($res === NULL)) {

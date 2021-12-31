@@ -55,7 +55,7 @@ $lstasistencia = $oAsistencia->Listado();
                         foreach ($lstasistencia as $idx => $campo) {
                     ?>
                             <tr>
-                                <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
+                                <td style="text-align: center;"><?= $campo->ape_paterno  . " " . $campo->ape_materno . " " . $campo->nombres ?></td>
                                 <td style="text-align: center;"><?= $campo->dia ?></td>
                                 <td style="text-align: center;">
                                     <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id_empleado ?>','Reporte')">Ver</a>

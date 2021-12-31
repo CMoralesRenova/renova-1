@@ -10,6 +10,7 @@ $oPrestamos = new prestamos();
 $sesion = $_SESSION[$oPrestamos->NombreSesion];
 $oPrestamos->ValidaNivelUsuario("prestamos");
 
+$fecha_actual = date("d-m-Y");
 ?>
 <?php require_once('app/views/default/script_h.html'); ?>
 <script type="text/javascript">
@@ -249,7 +250,7 @@ $oPrestamos->ValidaNivelUsuario("prestamos");
                                     <div class="col">
                                         <div class="form-group">
                                             <strong class="">Desde:</strong>
-                                            <input type="date" aria-describedby="" id="fecha_inicial" value="<?php echo date('Y-m-d'); ?>" required name="fecha_inicial" class="form-control" />
+                                            <input type="date" aria-describedby="" id="fecha_inicial" value="<?php echo date("Y-m-d",strtotime($fecha_actual."- 1 week")); ?>" required name="fecha_inicial" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col">

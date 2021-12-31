@@ -163,3 +163,26 @@ function showMessageBox(mensaje, type) {
     }, 3000);
 
 }
+
+function ValidarFechas(dato) {   
+    var ret = true
+    let date = new Date();
+
+    let day = date.getDate()-1;
+    let month = date.getMonth()+1;
+    let year = date.getFullYear();
+
+    if(month < 10){
+        actual = `${year}-0${month}-${day}`;
+    }else{
+        actual = `${year}-${month}-${day}`;
+    }
+    
+    var fechainicial = dato;
+    console.log(actual+" >= "+fechainicial);
+
+    if(actual >= fechainicial) {
+        ret = false;
+    }
+    return ret;
+}

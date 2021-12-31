@@ -5,23 +5,29 @@ require_once($_SITE_PATH . "app/model/vacaciones.class.php");
 require_once($_SITE_PATH . "app/model/empleados.class.php");
 require_once($_SITE_PATH . "app/model/puestos.class.php");
 require_once($_SITE_PATH . "app/model/departamentos.class.php");
+require_once($_SITE_PATH . "vendor/autoload.php");
+
+use Carbon\Carbon;
 
 $oVacaciones = new vacaciones(true, $_POST);
 $oVacaciones->id = empty($_GET['id']) ? "" : $_GET['id'];
-$oVacaciones->id_empleado = empty($_GET['id_empleado']) ? "" : $_GET['id_empleado'];
 $oVacaciones->Informacion();
 
 $oEmpleados = new empleados();
 $oEmpleados->id = $oVacaciones->id_empleado;
 $oEmpleados->Informacion();
 
+$años = $oVacaciones->ObtenerAños($oEmpleados->fecha_ingreso);
+
+$dias = $oVacaciones->ObtenerDias($años[0]->años_transcurridos, $oVacaciones->id_empleado);
+
 $oPuestos = new puestos();
 $oPuestos->id = $oEmpleados->id_puesto;
-$oPuestos->Informacion();//id_departamento
+$oPuestos->Informacion(); //id_departamento
 
 $oDepartamentos = new departamentos();
 $oDepartamentos->id = $oPuestos->id_departamento;
-$oDepartamentos->Informacion();//id_departamento
+$oDepartamentos->Informacion(); //id_departamento
 ?>
 <style>
     #encabezado .fila #col_1 {
@@ -93,104 +99,391 @@ $oDepartamentos->Informacion();//id_departamento
     }
 </style>
 <page backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm" style="border: #00 1px solid;">
-    <table style="margin-top: -10px;">
+    <table style="margin-top: -10px;border: #00 1px solid;">
+        <tr>
+            <th style="color: #f3eded; background-color: #000;width:700px;  text-align:center;" COLSPAN=2>FORMATO DE AUTORIZACIÓN PARA VACACIONES</th>
+        </tr>
         <tr>
             <td>
-                <label style="margin-left:150px; font-size:18px;">RENOVA CHATARRAS INDUSTRIALES S.A. DE C.V</label>
+                <Label style="font-size:11">Nombre de la empresa : 
+                    <u style="font-size:11">RENOVA CHATARRAS INDUSTRIALES S.A. DE C.V</u> &nbsp;&nbsp;
+                </Label>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <Label style="font-size:11">Departamento: <u><?= $oDepartamentos->nombre ?></u></Label>
             </td>
         </tr>
-        <br />
+        <tr>
+            <td>
+                <Label style="font-size:11">No. De Empleado: 
+                    <u style="font-size:11"><?= $oEmpleados->checador ?></u> &nbsp;&nbsp;&nbsp; 
+                </Label>
+                &nbsp;&nbsp;
+                <Label style="font-size:11">&nbsp;&nbsp;Nombre:</Label> 
+                <U style="font-size:11"><?= $oEmpleados->nombres . " " . $oEmpleados->ape_paterno . " " . $oEmpleados->ape_materno ?></U>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <Label style="font-size:11">Fecha de ingreso: <u><?= $oEmpleados->fecha_ingreso ?></u></Label>&nbsp;&nbsp;
+                &nbsp;&nbsp;
+                <Label style="font-size:11">Años de Servicio: <U style="font-size:11"><?= $años[0]->años_transcurridos ?></U></Label>&nbsp;&nbsp;
+                &nbsp;&nbsp;
+                <Label style="font-size:11">Dias que corresponde: <u style="font-size:11"><?= $dias[0]->dias ?></u></Label>&nbsp;&nbsp;
+                &nbsp;&nbsp;
+                <label style="font-size:11">Dias a Disfrutar: <u style="font-size:11"><?= $oVacaciones->dias_disfrutar ?></u></label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <Label style="font-size:11">Dias restantes: &nbsp;&nbsp;<u style="font-size:11"><?= $oVacaciones->dias_restantes ?></u></Label>&nbsp;&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <Label style="font-size:11">Periodo a Disfrutar: del año: <u style="font-size:11"> <?= $oVacaciones->periodo_inicio ?> </u></Label>&nbsp;
+                <label> al año: <u style="font-size:11"> <?= $oVacaciones->periodo_fin ?> </u> </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <?php
+                $fecha_inicio = Carbon::parse($oVacaciones->inicio_vacaci);
+                $mfecha = $fecha_inicio->month;
+                $dfecha = $fecha_inicio->day;
+                $afecha = $fecha_inicio->year;
+                ?>
+                <Label style="font-size:11">Días en que inicia sus vacaciones:&nbsp; del: &nbsp;<u style="font-size:11"> <?= $dfecha ?> </u></Label>
+                <label style="font-size:11"><u> <?= $oVacaciones->MESES[$mfecha] ?> </u>&nbsp; del </label>&nbsp;
+                <u style="font-size:11"> <?= $afecha ?> </u>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <?php
+                $fecha_fin = Carbon::parse($oVacaciones->fin_vacaci);
+                $mfecha = $fecha_fin->month;
+                $dfecha = $fecha_fin->day;
+                $afecha = $fecha_fin->year;
+                ?>
+                <Label style="font-size:11">Días en que inicia sus vacaciones: &nbsp;del:&nbsp;  <u style="font-size:11"> <?= $dfecha ?> </u></Label>
+                <label style="font-size:11"><u> <?= $oVacaciones->MESES[$mfecha] ?> </u>&nbsp; del </label>&nbsp;
+                <u style="font-size:11"> <?= $afecha ?> </u>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <?php
+                $fecha_fin = Carbon::parse($oVacaciones->reingreso);
+                $mfecha = $fecha_fin->month;
+                $dfecha = $fecha_fin->day;
+                $afecha = $fecha_fin->year;
+                ?>
+                <Label style="font-size:11">Fecha en que se debera presentar a trabajar: del: <u> <?= $dfecha ?> </u></Label>
+                <label style="font-size:11"><u> <?= $oVacaciones->MESES[$mfecha] ?> </u>&nbsp; del </label>&nbsp;
+                <u style="font-size:11"><?= $afecha ?></u>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <Label style="font-size:11">Pago de primas vacaionales: <u style="font-size:11"> <?= $oVacaciones->pago_prima ?> </u></Label>&nbsp;&nbsp;
+                <Label style="font-size:11">días de prima que se pagaron: <U> <?= $oVacaciones->dias_pagados ?> </U></Label>&nbsp;&nbsp;
+                <Label style="font-size:11">Fecha de pago de prima: <u> <?= $oVacaciones->fecha_pago ?> </u></Label>&nbsp;&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>
+                <Label style="font-size:11">Observaciones: </Label>&nbsp;&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td><u style="font-size:11"><?= $oVacaciones->observaciones ?></u></td>
+        </tr>
     </table>
-    <table border="1" style="margin-left:10px; position:relative;">
-        <thead>
-            <tr>
-                <label style="font-size:18px; margin-left:210px;"><strong>PERMISO DE ENTRADA y/o SALIDA</strong></label>
-            </tr>
-        </thead>
-    </table>
-    <table style="margin-left:270px; position:relative; margin-top: -4px;">
-        <thead>
-            <tr>
-                <td>&nbsp;&nbsp;&nbsp;</td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-            </tr>
-        </tbody>
-    </table>
-    <table style="margin-left:460px; position:relative; margin-top: -30px; border-collapse: collapse; width: 310px;">
-        <thead>
-            <tr>
-                <th >&nbsp;</th>
-                <th>&nbsp;&nbsp;</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>&nbsp;</td>
-                <td></td>
-            </tr>
-        </tbody>
-    </table>
-    <table style="margin-left:0px; position:relative; margin-top: 10px; border: #00 1px solid;">
-        <tr>
-            <th style="color: #f3eded; background-color: #000;width:704px;  text-align:center;" COLSPAN=2>Empleado</th>
+    <table style="margin-left:0px; width:719px; position:relative; margin-top: -0px; border: #00 1px solid;">
+        <tr >
+            <td COLSPAN=2 style="font-size:12;  text-align:center;">
+                Por el presente expreso mi conformidad de solicitar y gozar mis vacaciones de acuerdo a lo que establece el									
+                articulo <br />76 de la Ley Federal del Trabajo considerando los datos que se mencionan en esta autorización									
+            </td>
+        </tr>
+        <tr >
+            <td COLSPAN=2>
+            </td>
         </tr>
         <tr>
-            <td><Label>Nombre:</Label></td>
-            <td><?= $oEmpleados->nombres . " " . $oEmpleados->ape_paterno . " " . $oEmpleados->ape_materno?></td>
+            <?php
+            $fecha_fin = Carbon::parse();
+            $mfecha = $fecha_fin->month;
+            $dfecha = $fecha_fin->day;
+            $afecha = $fecha_fin->year;
+            ?>
+            <td >
+                <label style="font-size:11"><u style="font-size:11"> TORREON COAH&nbsp;</u></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label style="font-size:11"><u style="font-size:11">&nbsp;<?= $dfecha ?> de <?= $oVacaciones->MESES[$mfecha] ?> de <?= $afecha ?> &nbsp;</u></label>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label ><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </u></label>
+            </td>
         </tr>
         <tr>
-            <td><Label>Puesto:</Label></td>
-            <td><?= $oPuestos->nombre ?></td>
+            <td >
+                <label style="font-size:11">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    Ciudad</label>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label >Fecha</label>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+               
+            </td>
         </tr>
         <tr>
-            <td><Label>Departamento:</Label></td>
-            <td><?= $oDepartamentos->nombre ?></td>
+            <td>&nbsp;</td>
         </tr>
         <tr>
-            <td><Label>RFC:</Label></td>
-            <td><?= $oEmpleados->rfc?></td>
+            <td >
+                <label ><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </u></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label ><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;</u></label>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;
+                <label ><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </u></label>
+            </td>
         </tr>
         <tr>
-            <td><Label>CURP:</Label></td>
-            <td><?= $oEmpleados->curp?></td>
-        </tr>
-    </table>
-    <table style="margin-left:0px; position:relative; margin-top: -0px; border: #00 1px solid;">
-        <tr>
-            <th style="color: #f3eded; background-color: #000;width:704px;  text-align:center;" COLSPAN=10>Permiso</th>
-        </tr>
-        <tr>
-            <td style='width:5px; text-align:center;'>
-                <Label>Fecha: <?= $oVacaciones->fecha ?></Label>
-                <?php if ($oVacaciones->llegada_tarde == 1) {
-                    echo " Hora: ".date("h:i:s A", strtotime($oVacaciones->entrada))." ";
-                } else if ($oVacaciones->salida_temprano == 1) {
-                    echo " Hora: ".date("h:i:s A", strtotime($oVacaciones->salida))." ";
-                } ?>
+            <td >
+                <label style="font-size:7">
+                FIRMA DE CONFORMIDAD DEL EMPLEADO</label>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-                <?php if ($oVacaciones->llegada_tarde == 1) {
-                    echo " ENTRADA ";
-                } else if ($oVacaciones->salida_temprano == 1) {
-                    echo " SALIDA ";
-                } ?>
+                <label style="font-size:7">FIRMA DE AUTORIZACION DEL GERENTE DE AREA</label>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label style="font-size:7">Vo.Bo. RECURSOS HUMANOS</label>
+               
             </td>
         </tr>
-    </table>
-    <table style="margin-left:0px; position:relative; margin-top: -0px; border: #00 1px solid;">
-    <tr>
-                <td>&nbsp;</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <td></td>
-            </tr>
         <tr>
-            <td style=" height: 40px;width:696px; text-align:center;"><Label>______________________________________<br>Firma de autorización</Label></td>
+            <td style=" height: 40px;width:696px; text-align:center;"><Label><br></Label></td>
         </tr>
     </table>
-</page>    
+    <!-- copia-->
+    <table style="margin-top: 8px;border: #00 1px solid;">
+    <tr>
+            <th style="color: #f3eded; background-color: #000;width:700px;  text-align:center;" COLSPAN=2>FORMATO DE AUTORIZACIÓN PARA VACACIONES</th>
+        </tr>
+        <tr>
+            <td>
+                <Label style="font-size:11">Nombre de la empresa : 
+                    <u style="font-size:11">RENOVA CHATARRAS INDUSTRIALES S.A. DE C.V</u> &nbsp;&nbsp;
+                </Label>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <Label style="font-size:11">Departamento: <u><?= $oDepartamentos->nombre ?></u></Label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <Label style="font-size:11">No. De Empleado: 
+                    <u style="font-size:11"><?= $oEmpleados->checador ?></u> &nbsp;&nbsp;&nbsp; 
+                </Label>
+                &nbsp;&nbsp;
+                <Label style="font-size:11">&nbsp;&nbsp;Nombre:</Label> 
+                <U style="font-size:11"><?= $oEmpleados->nombres . " " . $oEmpleados->ape_paterno . " " . $oEmpleados->ape_materno ?></U>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <Label style="font-size:11">Fecha de ingreso: <u><?= $oEmpleados->fecha_ingreso ?></u></Label>&nbsp;&nbsp;
+                &nbsp;&nbsp;
+                <Label style="font-size:11">Años de Servicio: <U style="font-size:11"><?= $años[0]->años_transcurridos ?></U></Label>&nbsp;&nbsp;
+                &nbsp;&nbsp;
+                <Label style="font-size:11">Dias que corresponde: <u style="font-size:11"><?= $dias[0]->dias ?></u></Label>&nbsp;&nbsp;
+                &nbsp;&nbsp;
+                <label style="font-size:11">Dias a Disfrutar: <u style="font-size:11"><?= $oVacaciones->dias_disfrutar ?></u></label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <Label style="font-size:11">Dias restantes: &nbsp;&nbsp;<u style="font-size:11"><?= $oVacaciones->dias_restantes ?></u></Label>&nbsp;&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <Label style="font-size:11">Periodo a Disfrutar: del año: <u style="font-size:11"> <?= $oVacaciones->periodo_inicio ?> </u></Label>&nbsp;
+                <label> al año: <u style="font-size:11"> <?= $oVacaciones->periodo_fin ?> </u> </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <?php
+                $fecha_inicio = Carbon::parse($oVacaciones->inicio_vacaci);
+                $mfecha = $fecha_inicio->month;
+                $dfecha = $fecha_inicio->day;
+                $afecha = $fecha_inicio->year;
+                ?>
+                <Label style="font-size:11">Días en que inicia sus vacaciones:&nbsp; del: &nbsp;<u style="font-size:11"> <?= $dfecha ?> </u></Label>
+                <label style="font-size:11"><u> <?= $oVacaciones->MESES[$mfecha] ?> </u>&nbsp; del </label>&nbsp;
+                <u style="font-size:11"> <?= $afecha ?> </u>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <?php
+                $fecha_fin = Carbon::parse($oVacaciones->fin_vacaci);
+                $mfecha = $fecha_fin->month;
+                $dfecha = $fecha_fin->day;
+                $afecha = $fecha_fin->year;
+                ?>
+                <Label style="font-size:11">Días en que inicia sus vacaciones: &nbsp;del:&nbsp;  <u style="font-size:11"> <?= $dfecha ?> </u></Label>
+                <label style="font-size:11"><u> <?= $oVacaciones->MESES[$mfecha] ?> </u>&nbsp; del </label>&nbsp;
+                <u style="font-size:11"> <?= $afecha ?> </u>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <?php
+                $fecha_fin = Carbon::parse($oVacaciones->reingreso);
+                $mfecha = $fecha_fin->month;
+                $dfecha = $fecha_fin->day;
+                $afecha = $fecha_fin->year;
+                ?>
+                <Label style="font-size:11">Fecha en que se debera presentar a trabajar: del: <u> <?= $dfecha ?> </u></Label>
+                <label style="font-size:11"><u> <?= $oVacaciones->MESES[$mfecha] ?> </u>&nbsp; del </label>&nbsp;
+                <u style="font-size:11"><?= $afecha ?></u>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <Label style="font-size:11">Pago de primas vacaionales: <u style="font-size:11"> <?= $oVacaciones->pago_prima ?> </u></Label>&nbsp;&nbsp;
+                <Label style="font-size:11">días de prima que se pagaron: <U> <?= $oVacaciones->dias_pagados ?> </U></Label>&nbsp;&nbsp;
+                <Label style="font-size:11">Fecha de pago de prima: <u> <?= $oVacaciones->fecha_pago ?> </u></Label>&nbsp;&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td>
+                <Label style="font-size:11">Observaciones: </Label>&nbsp;&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <td><u style="font-size:11"><?= $oVacaciones->observaciones ?></u></td>
+        </tr>
+    </table>
+    <table style="margin-left:0px; width:719px; position:relative; margin-top: -0px; border: #00 1px solid;">
+        <tr >
+            <td COLSPAN=2 style="font-size:12;  text-align:center;">
+                Por el presente expreso mi conformidad de solicitar y gozar mis vacaciones de acuerdo a lo que establece el									
+                articulo <br />76 de la Ley Federal del Trabajo considerando los datos que se mencionan en esta autorización									
+            </td>
+        </tr>
+        <tr >
+            <td COLSPAN=2>
+            </td>
+        </tr>
+        <tr>
+            <?php
+            $fecha_fin = Carbon::parse();
+            $mfecha = $fecha_fin->month;
+            $dfecha = $fecha_fin->day;
+            $afecha = $fecha_fin->year;
+            ?>
+            <td >
+                <label style="font-size:11"><u style="font-size:11"> TORREON COAH&nbsp;</u></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label style="font-size:11"><u style="font-size:11">&nbsp;<?= $dfecha ?> de <?= $oVacaciones->MESES[$mfecha] ?> de <?= $afecha ?> &nbsp;</u></label>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label ><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </u></label>
+            </td>
+        </tr>
+        <tr>
+            <td >
+                <label style="font-size:11">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    Ciudad</label>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label >Fecha</label>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+               
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td >
+                <label ><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </u></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label ><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;</u></label>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;
+                <label ><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </u></label>
+            </td>
+        </tr>
+        <tr>
+            <td >
+                <label style="font-size:7">
+                FIRMA DE CONFORMIDAD DEL EMPLEADO</label>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                <label style="font-size:7">FIRMA DE AUTORIZACION DEL GERENTE DE AREA</label>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label style="font-size:7">Vo.Bo. RECURSOS HUMANOS</label>
+               
+            </td>
+        </tr>
+        <tr>
+            <td style=" height: 40px;width:696px; text-align:center;"><Label><br></Label></td>
+        </tr>
+    </table>
+</page>

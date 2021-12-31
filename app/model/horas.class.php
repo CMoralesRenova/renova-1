@@ -19,6 +19,9 @@ class horas extends AW {
     var $user_id;
     //marcar dias 
 
+    //busqueda 
+    var $fecha_inicial;
+    var $fecha_final;
     public function __construct($sesion = true, $datos = NULL) {
         parent::__construct($sesion);
 
@@ -48,7 +51,8 @@ class horas extends AW {
         CONCAT(IFNULL(b.nombres, ''), ' ',IFNULL(b.ape_paterno, ''), ' ',IFNULL(b.ape_materno,'') ) AS empleado 
     FROM
         horas_extras AS a
-        LEFT JOIN empleados AS b ON a.id_empleado = b.id ORDER BY a.id ASC";
+        LEFT JOIN empleados AS b ON a.id_empleado = b.id
+        where fecha_registro between '{$this->fecha_inicial}' and '{$this->fecha_final}' ORDER BY a.id ASC";
         //echo nl2br($sql);
         return $this->Query($sql);
         

@@ -46,9 +46,15 @@ class ahorros extends AW
     }
 
     public function Informacion()
-    {
+    {   
+        $sqlEstatus = "";
+        if (!empty($this->estatus)){
+            $sqlEstatus = "id_empleado = '{$this->id_empleado}' and estatus = '{$this->estatus}'";
+        } else {
+            $sqlEstatus = "id='{$this->id}'";
+        }
 
-        $sql = "select * from ahorros where  id='{$this->id}'";
+        $sql = "select * from ahorros where   {$sqlEstatus}";
         $res = parent::Query($sql);
 
         if (!empty($res) && !($res === NULL)) {
@@ -77,6 +83,7 @@ class ahorros extends AW
     public function Existe()
     {
         $sql = "select id from ahorros where estatus='1' and id_empleado='{$this->id_empleado}'";
+
         $res = $this->Query($sql);
 
         $bExiste = false;

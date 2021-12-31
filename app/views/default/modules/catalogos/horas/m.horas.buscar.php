@@ -9,11 +9,16 @@ require_once($_SITE_PATH . "app/model/horas.class.php");
 $oHoras = new horas();
 $sesion = $_SESSION[$oHoras->NombreSesion];
 $oHoras->ValidaNivelUsuario("horas");
+
+$fecha_actual = date("d-m-Y");
 ?>
 <?php require_once('app/views/default/script_h.html'); ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
         Listado();
+        $('#fecha_inicial').change(Listado);
+        $('#fecha_final').change(Listado);
+
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
             var frmTrue = true;
@@ -39,6 +44,8 @@ $oHoras->ValidaNivelUsuario("horas");
 
     function Listado() {
         var jsonDatos = {
+            "fecha_inicial": $("#fecha_inicial").val(),
+            "fecha_final": $("#fecha_final").val(),
             "accion": "BUSCAR"
         };
         $.ajax({
@@ -139,7 +146,25 @@ $oHoras->ValidaNivelUsuario("horas");
                 <?php require_once('app/views/default/header.php'); ?>
                 <div class="container-fluid">
                     <!-- contenido de la pagina -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3" style="text-align:left">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <strong class="">Desde:</strong>
+                                        <input type="date" aria-describedby="" id="fecha_inicial" value="<?php  echo date("Y-m-d", strtotime($fecha_actual . "- 1 week"));  ?>" required name="fecha_inicial" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <strong class="">Hasta:</strong>
+                                    <div class="form-group">
+                                        <input type="date" aria-describedby="" id="fecha_final" value="<?php echo date('Y-m-d'); ?>" required name="fecha_final" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
 
+                        </div>
+                    </div>
                     <!-- cerrar contenido pagina-->
                     <div id="divListado"></div>
                 </div>

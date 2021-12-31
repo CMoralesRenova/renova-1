@@ -17,7 +17,7 @@ $oVacaciones->ValidaNivelUsuario("vacaciones");
         Listado();
         $('#fecha_inicial').change(Listado);
         $('#fecha_final').change(Listado);
-
+        $("#btnImprimir").hide();
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
             var frmTrue = true;
@@ -32,26 +32,18 @@ $oVacaciones->ValidaNivelUsuario("vacaciones");
                         Alert("", $(elemento).attr("description"), "warning", 900, false);
                         Empty(elemento.id);
                         frmTrue = false;
-                    }
-                }
-                if ($(elemento).hasClass("check")) {
-                    if ($(elemento).is(':not(:checked)')) {
-                        check++;
-                    }
-                }
-                if ($(elemento).hasClass("check1")) {
-                    if ($(elemento).is(':not(:checked)')) {
-                        check1++;
+                    } else {
+                        if (ValidarFechas($("#validarFehca").val())) {
+                        frmTrue = true;
+                        } else {
+                            Alert("", "La vacaciones de este periodo ya no estan disponibles", "warning", 1800, false);
+                            Empty(elemento.id);
+                            frmTrue = false;
+                        }
                     }
                 }
             });
-            if (check1 != 1){
-                Alert("", 'Seleccione el goce de sueldo', "warning", 900, false);
-            }
-            if (check != 2){
-                Alert("", 'Seleccione un tipo de permiso', "warning", 900, false);
-            }
-            if (frmTrue == true && check == 2 && check1 == 1 ) {
+            if (frmTrue == true ) {
                 $("#frmFormulario_").submit();
             }
         });
@@ -60,14 +52,7 @@ $oVacaciones->ValidaNivelUsuario("vacaciones");
             Listado();
         });
 
-        $("#btnImprimir").button().click(function(e) {
-            var opc = "fullscreen=no, menubar=no, resizable=no, scrollbars=yes, status=yes, titlebar=yes, toolbar=no, width=750, height=580";
-            var pagina = "app/views/default/modules/modulos/vacaciones/m.vacaciones.recibo.pdf.php?";
-
-            pagina += "id="+ $("#id_").val()+"&id_empleado="+ $("#id_empleado_").val();
-
-            window.open(pagina, "reporte", opc);   
-        });
+       
     });
 
     function Listado() {
@@ -91,11 +76,11 @@ $oVacaciones->ValidaNivelUsuario("vacaciones");
         });
     }
 
-    function Editar(id, nombre, empleado) {
+    function Editar(id, nombre) {
         switch (nombre) {
-            case 'Agregar':
+            case 'Editar':
                 $.ajax({
-                    data: "nombre=" + nombre,
+                    data: "id="+id+"&nombre=" + nombre,
                     type: "POST",
                     url: "app/views/default/modules/modulos/vacaciones/m.vacaciones.formulario.nominas.php",
                     beforeSend: function() {
@@ -168,13 +153,13 @@ $oVacaciones->ValidaNivelUsuario("vacaciones");
                                     <div class="col">
                                         <div class="form-group">
                                             <strong class="">Desde:</strong>
-                                            <input type="date" aria-describedby="" id="fecha_inicial" value="<?php echo date('Y-m-d'); ?>" required name="fecha_inicial" class="form-control" />
+                                            <input type="date" aria-describedby="" id="fecha_inicial" value="<?php echo date('Y-')."01-01"; ?>" required name="fecha_inicial" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col">
                                         <strong class="">Hasta:</strong>
                                         <div class="form-group">
-                                            <input type="date" aria-describedby="" id="fecha_final" value="<?php echo date('Y-m-d'); ?>" required name="fecha_final" class="form-control" />
+                                            <input type="date" aria-describedby="" id="fecha_final" value="<?php echo date('Y-')."12-31"; ?>" required name="fecha_final" class="form-control" />
                                         </div>
                                     </div>
                                 </div>
@@ -210,8 +195,8 @@ $oVacaciones->ValidaNivelUsuario("vacaciones");
             <!-- Modal -->
 
             <!-- Logout Modal-->
-            <div class="modal fade " id="myModal_vacaciones" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
+            <div class="modal fade bd-example-modal-lg" id="myModal_vacaciones" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel"><strong id="nameModal_"></strong>
@@ -226,8 +211,7 @@ $oVacaciones->ValidaNivelUsuario("vacaciones");
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Generar permiso">
-                            <input type="button" id="btnImprimir" class="btn btn-danger" name="btnImprimir" value="Imprimir Permiso">
+                            <input type="button" id="btnGuardar" class="btn btn-danger" name="btnGuardar" value="Generar Vacaciones">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>

@@ -2,35 +2,98 @@
 session_start();
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "app/model/nominas.class.php");
-require_once($_SITE_PATH . "app/model/prestamos.class.php");
+require_once($_SITE_PATH . "app/model/empleados.class.php");
+require_once($_SITE_PATH . "app/model/puestos.class.php");
+require_once($_SITE_PATH . "app/model/departamentos.class.php");
 require_once($_SITE_PATH . "app/model/otros.class.php");
-require_once($_SITE_PATH . "app/model/fonacot.class.php");
-require_once($_SITE_PATH . "app/model/infonavit.class.php");
+require_once($_SITE_PATH . "app/model/prestamos.class.php");
 
-$oNominas = new nominas(true, $_POST);
+
+$oNominas = new nominas();
 $oNominas->id = empty($_GET['id']) ? "" : $_GET['id'];
 $oNominas->id_empleado = empty($_GET['id_empleado']) ? "" : $_GET['id_empleado'];
-$oNominas->Listado_nomina();
+$lstnominas = $oNominas->Listado_prenomina();
+
+$oEmpleados = new empleados();
+$oEmpleados->id = $oNominas->id_empleado;
+$oEmpleados->Informacion();
+
+$oPuestos = new puestos();
+$oPuestos->id = $oEmpleados->id_puesto;
+$oPuestos->Informacion();
+
+$oDepartamentos = new departamentos();
+$oDepartamentos->id = $oPuestos->id_departamento;
+$oDepartamentos->Informacion();
+
+$oNominas_edit = new nominas();
+$oNominas_edit->id_nomina = $oNominas->id_nomina;
+$oNominas_edit->id_empleado = $oNominas->id_empleado;
+$oNominas_edit->Nomina_edit();
 
 $oPrestamos = new prestamos(true, $_POST);
-$oPrestamos->id = $oNominas->id_prestamo;
-$oPrestamos->Informacion();
-
-$oFonacot = new fonacot(true, $_POST);
-$oFonacot->id = $oNominas->id_fonacot;
-$oFonacot->Informacion();
-
-$oInfonavit = new infonavit(true, $_POST);
-$oInfonavit->id = $oNominas->id_infonavit;
-$oInfonavit->Informacion();
+$oPrestamos->id_empleado = empty($_GET['id_empleado']) ? "" : $_GET['id_empleado'];
+$oPrestamos->fecha = $oNominas->fecha; 
+$oPrestamos->PrestamoActivo();
 
 $oOtros = new otros(true, $_POST);
 $oOtros->id_empleado = empty($_GET['id_empleado']) ? "" : $_GET['id_empleado'];
 $oOtros->fecha_pago = $oNominas->fecha;
 $LstOtros = $oOtros->Listado();
 
-$totalaPagar = 0;
-$totalaRetencion = 0;
+    if ($oNominas_edit->nombre != '' && $oNominas_edit->estatus_final_edit == "2") {
+
+        $id_nomina = $oNominas_edit->id_nomina;
+        $id_empleado = $oNominas_edit->id_empleado;
+        $nombre = $oNominas_edit->nombre;
+        $asistencia = $oNominas_edit->asistencia;
+        $puntualidad = $oNominas_edit->puntualidad;
+        $productividad = $oNominas_edit->productividad;
+        $doce = $oNominas_edit->doce;
+        $complemento = $oNominas_edit->complemento;
+        $diario = $oNominas_edit->diario;
+        $faltas = $oNominas_edit->faltas;
+        $asistencias = $oNominas_edit->asistencias;
+        $extras = $oNominas_edit->extras;
+        $vacaciones = $oNominas_edit->vacaciones;
+        $total = $oNominas_edit->total;
+        $comedor = $oNominas_edit->comedor;
+        $ahorro = $oNominas_edit->ahorro;
+        $prestamos = $oNominas_edit->prestamos;
+        $fonacot = $oNominas_edit->fonacot;
+        $infonavit = $oNominas_edit->infonavit;
+        $otros = $oNominas_edit->otros;
+        $total_r = $oNominas_edit->total_r;
+        $total_p = $oNominas_edit->total_p;
+        $fecha = $oNominas_edit->fecha;
+    } else {
+        $id_nomina = $oNominas->id_nomina;
+        $id_empleado = $oNominas->id_empleado;
+        $nombre = $oNominas->nombre;
+        $asistencia = $oNominas->asistencia;
+        $puntualidad = $oNominas->puntualidad;
+        $productividad = $oNominas->productividad;
+        $doce = $oNominas->doce;
+        $complemento = $oNominas->complemento;
+        $diario = $oNominas->diario;
+        $faltas = $oNominas->faltas;
+        $asistencias = $oNominas->asistencias;
+        $extras = $oNominas->extras;
+        $vacaciones = $oNominas->vacaciones;
+        $total = $oNominas->total;
+        $comedor = $oNominas->comedor;
+        $ahorro = $oNominas->ahorro;
+        $prestamos = $oNominas->prestamos;
+        $fonacot = $oNominas->fonacot;
+        $infonavit = $oNominas->infonavit;
+        $otros = $oNominas->otros;
+        $total_r = $oNominas->total_r;
+        $total_p = $oNominas->total_p;
+        $fecha = $oNominas->fecha;
+    }
+
+$totalaPagar = $total_p;
+$totalaRetencion = $total_r;
 ?>
 <style>
     #encabezado .fila #col_1 {
@@ -139,7 +202,7 @@ $totalaRetencion = 0;
         <tbody>
             <tr>
                 <td>SEMANAL</td>
-                <td><?= $oNominas->fecha ?></td>
+                <td><?= $fecha ?></td>
             </tr>
         </tbody>
     </table>
@@ -149,23 +212,23 @@ $totalaRetencion = 0;
         </tr>
         <tr>
             <td><Label>Nombre:</Label></td>
-            <td><?= $oNominas->nombres . " " . $oNominas->ape_paterno . " " . $oNominas->ape_materno  ?></td>
+            <td><?= $nombre ?></td>
         </tr>
         <tr>
             <td><Label>Puesto:</Label></td>
-            <td><?= $oNominas->puesto ?></td>
+            <td><?= $oPuestos->nombre ?></td>
         </tr>
         <tr>
             <td><Label>Departamento:</Label></td>
-            <td><?= $oNominas->departamento ?></td>
+            <td><?= $oDepartamentos->nombre ?></td>
         </tr>
         <tr>
             <td><Label>RFC:</Label></td>
-            <td><?= $oNominas->rfc ?></td>
+            <td><?= $oEmpleados->rfc ?></td>
         </tr>
         <tr>
             <td><Label>CURP:</Label></td>
-            <td><?= $oNominas->curp ?></td>
+            <td><?= $oEmpleados->curp ?></td>
         </tr>
     </table>
     <table style="margin-left:458px; position:relative; margin-top: -112px; border: #00 1px solid;">
@@ -182,7 +245,7 @@ $totalaRetencion = 0;
         </tr>
         <tr>
             <td><Label>Salario integrado:</Label></td>
-            <td ><?= $oNominas->salario_diario ?> diario</td>
+            <td ><?= $oEmpleados->salario_diario ?> diario</td>
         </tr>
         <tr>
             <td><Label>Jornada:</Label></td>
@@ -204,14 +267,15 @@ $totalaRetencion = 0;
             <th style="color: #f3eded; background-color: #000;width:80px;  text-align:center;">Retención</th>
             <th style="color: #f3eded; background-color: #000;width:100px; text-align:center;">Saldo</th>
         </tr>
+        <?php
+            
+        ?>
         <tr>
             <td><Label>Sueldo normal</Label></td>
-            <?php $totalaPagar = $totalaPagar + $oNominas->dias_laborados * $oNominas->salario_diario; ?>
-            <td style="text-align:right"><?= $oNominas->dias_laborados * $oNominas->salario_diario ?></td>
-            <td style="text-align:right"><?= $oNominas->dias_laborados ?> dias</td>
+            <td style="text-align:right"><?= $asistencias * $diario ?></td>
+            <td style="text-align:right"><?= $asistencias ?> dias</td>
             <td>&nbsp;</td>
-            <?php if ($oNominas->prestamos > 0) {
-                $totalaRetencion = $totalaRetencion + $oPrestamos->monto_por_semana ?>
+            <?php if ($prestamos != "0.00") { ?>
                 <td>Prestamo</td>
                 <td style="text-align:right"><?= $oPrestamos->monto_pagar ?> </td>
                 <td style="text-align:right"><?= $oPrestamos->monto_por_semana ?></td>
@@ -221,21 +285,19 @@ $totalaRetencion = 0;
             <?php } ?>
         </tr>
         <tr>
-            <?php if ($oNominas->dias_laborados == 7) {
-                $totalaPagar = $totalaPagar + $oNominas->salario_asistencia;  ?>
+            <?php if ($asistencias == 7) {  ?>
                 <td><Label>Premio de Asistencia</Label></td>
-                <td style="text-align:right"><?= $oNominas->salario_asistencia ?></td>
+                <td style="text-align:right"><?= $asistencia ?></td>
             <?php } else { ?>
                 <td><Label>&nbsp;</Label></td>
                 <td>&nbsp;</td>
             <?php } ?>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
-            <?php if (!empty($oNominas->comedor)) { ?>
+            <?php if ($comedor > 0) { ?>
                 <td>Servicio de comedor</td>
                 <td>&nbsp;</td>
-                <td style="text-align:right"><?php echo $oNominas->comedor;
-                    $totalaRetencion = $totalaRetencion + $oNominas->comedor; ?></td>
+                <td style="text-align:right"><?php echo $comedor; ?></td>
             <?php } else { ?>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
@@ -243,17 +305,16 @@ $totalaRetencion = 0;
             <?php } ?>
         </tr>
         <tr>
-            <?php if ($oNominas->dias_laborados == 7) {
-                $totalaPagar = $totalaPagar + $oNominas->salario_puntualidad; ?>
-                <td><Label>Premio de Puntualidad</Label></td>
-                <td style="text-align:right"><?= $oNominas->salario_puntualidad ?> </td>
+            <?php if ($puntualidad > 0) {?>
+                <td><Label>Premio de Puntualidad </Label></td>
+                <td style="text-align:right"><?= $puntualidad ?> </td>
             <?php } else { ?>
                 <td><Label>&nbsp;</Label></td>
                 <td>&nbsp;</td>
             <?php } ?>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
-            <?php if ($oNominas->otros_descuentos > 0) { ?>
+            <?php if ($otros > 0) { ?>
                 <?php
                 $totalDescuentos = 0;
                 $totalSemana = 0;
@@ -274,10 +335,9 @@ $totalaRetencion = 0;
             <?php } ?>
         </tr>
         <tr>
-            <?php if ($oNominas->salario_productividad > 0) {
-                $totalaPagar = $totalaPagar +  $oNominas->salario_productividad; ?>
+            <?php if ($productividad > 0) { ?>
                 <td><Label>Bono de productividad</Label></td>
-                <td style="text-align:right"><?= $oNominas->salario_productividad ?> </td>
+                <td style="text-align:right"><?= bcdiv($productividad, '1', 2); ?> </td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <?php } else {?>
@@ -286,26 +346,20 @@ $totalaRetencion = 0;
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <?php } ?>
-                <?php if ($oNominas->monto > 0) { ?>
+                <?php if ($ahorro > 0) { ?>
                     <td><Label>Caja de ahorro</Label></td>
                     <td></td>
-                    <?php if ($oNominas->estatusAhorro == 1) {
-                        $totalaRetencion = $totalaRetencion + $oNominas->monto;
-                        echo "<td style='text-align:right'>$oNominas->monto</td>";
-                    } else {
-                        echo "<td>A/D</td>";
-                    } ?>
-                    <td style="text-align:right"><?= $oNominas->monto * $oNominas->frecuencia ?></td>
+                    <?php  echo "<td style='text-align:right'>$oNominas->monto</td>"; ?>
+                    <td style="text-align:right"></td>
                 <?php } else { ?>
                     <td><Label>&nbsp;</Label></td>
                     <td>&nbsp;</td>
                 <?php } ?>
         </tr>
         <tr>
-        <?php if ($oNominas->horas_extras > 0) {
-                $totalaPagar = $totalaPagar +  $oNominas->horas_extras; ?>
+        <?php if ($extras > 0) { ?>
                 <td><Label>Horas extras</Label></td>
-                <td style="text-align:right"><?=  bcdiv($oNominas->horas_extras, '1', 2); ?> </td>
+                <td style="text-align:right"><?=  bcdiv($extras, '1', 2); ?> </td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <?php } else {?>
@@ -314,11 +368,10 @@ $totalaRetencion = 0;
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <?php } ?>
-        <?php if ($oNominas->fonacot > 0) {
-            $totalaRetencion = $totalaRetencion + $oFonacot->monto_por_semana; ?>
+        <?php if ($fonacot > 0) { ?>
             <td><Label>Fonacot</Label></td>
             <td style="text-align:right"></td>
-            <td style="text-align:right"><?= $oFonacot->monto_por_semana ?></td>
+            <td style="text-align:right"><?= $fonacot ?></td>
             <td style="text-align:right"></td>
         <?php } else { ?>
             <td></td>
@@ -328,15 +381,22 @@ $totalaRetencion = 0;
             <?php } ?>
         </tr>
         <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-        <?php if ($oNominas->infonavit > 0) {
-            $totalaRetencion = $totalaRetencion + $oInfonavit->monto_por_semana; ?>
+        <?php if ($doce > 0) {
+                 ?>
+                <td><Label>Bono turno 12Hrs</Label></td>
+                <td style="text-align:right"><?= bcdiv($doce, '1', 2) ?> </td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <?php } else {?>
+                    <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <?php } ?>
+        <?php if ($infonavit > 0) { ?>
             <td><Label>Infonavit</Label></td>
             <td style="text-align:right"> </td>
-            <td style="text-align:right"><?= $oInfonavit->monto_por_semana ?></td>
+            <td style="text-align:right"><?= $infonavit ?></td>
             <td style="text-align:right"></td>
         <?php } else { ?>
             <td></td>
@@ -346,11 +406,37 @@ $totalaRetencion = 0;
             <?php } ?>
         </tr>
         <tr>
-            <td><Label></Label></td>
-            <td> </td>
+        <?php if ($complemento > 0) { ?>
+                <td><Label>Complemento de sueldo</Label></td>
+                <td style="text-align:right"><?= bcdiv($complemento, '1', 2) ?> </td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <?php } else {?>
+                    <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <?php } ?>
+            <td>&nbsp;</td>
+            <td style="text-align:right">&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
         </tr>
         <tr>
-            <td><Label>&nbsp;</Label></td>
+        <?php if ($vacaciones > 0) { ?>
+                <td><Label>Vacaciones</Label></td>
+                <td style="text-align:right"><?= bcdiv($vacaciones, '1', 2) ?> </td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <?php } else {?>
+                    <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <?php } ?>
+            <td>&nbsp;</td>
+            <td style="text-align:right">&nbsp;</td>
+            <td>&nbsp;</td>
             <td>&nbsp;</td>
         </tr>
         <tr>
@@ -411,7 +497,7 @@ $totalaRetencion = 0;
     <table style="margin-left:538px; position:relative; margin-top: -93px; border: #00 1px solid; heig">
         <tr>
             <td style="font-size:14px;">Total de<br> percepciones: </td>
-            <td style="width=101px; text-align:right;"><?= bcdiv($totalaPagar, '1', 2) ?></td>
+            <td style="width=101px; text-align:right;"><?= bcdiv($totalaPagar + $totalaRetencion , '1', 2) ?></td>
         </tr>
         <tr>
             <td style="font-size:15px;">Total de <br>retenciones: </td>
@@ -419,7 +505,7 @@ $totalaRetencion = 0;
         </tr>
         <tr>
             <td >Pago: </td>
-            <td style="text-align: right;"><?= bcdiv($totalaPagar - $totalaRetencion, '1', 2) ?></td>
+            <td style="text-align: right;"><?= bcdiv($totalaPagar, '1', 2) ?></td>
         </tr>
 
     </table>

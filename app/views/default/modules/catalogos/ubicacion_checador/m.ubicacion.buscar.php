@@ -87,7 +87,7 @@ $oUbicacion->ValidaNivelUsuario("ubicacion_checador");
     <?php require_once('app/views/default/head.html'); ?>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyDNuQjcMaL880tNTT_rY6X3G6DhiMqSDFw&libraries=places"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=&libraries=places"></script>
     <title>Ubicacion checador</title>
 </head>
 

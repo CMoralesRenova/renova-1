@@ -56,13 +56,14 @@ $lstnominas = $oNominas->Listado();
                             <tr>
                                 <td style="text-align: center;"><?= $campo->fecha ?></td>
                                 <td style="text-align: center;"><?= $campo->semana ?></td>
-                                <td style="text-align: center;"><?= $campo->total_nomina ?></td>
+                                <td style="text-align: center;"><?= "$".number_format($campo->total_nomina, 2, '.', ',') ?></td>
                                 <td style="text-align: center;"><?= $campo->estatus ?></td>
                                 <td style="text-align: center;">
                                     <?php if ($campo->estatus == "NO PAGADA") { ?>
-                                        <a class="btn btn-sm btn-primary" href="javascript:Editar('<?= $campo->id ?>','Pagar')">Pagar</a>
+                                        <a class="btn btn-sm btn-success" href="javascript:Editar('<?= $campo->id ?>','Pagar')">Pagar</a>
+                                        <a class="btn btn-sm btn-danger" href="javascript:Editar('<?= $campo->id ?>','<?= $campo->semana ?>')">Editar</a>
                                     <?php } ?>
-                                    <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','<?= $campo->semana ?>')">Ver</a>
+                                    <a class="btn btn-sm btn-info" href="javascript:Editar('<?= $campo->id ?>','Final','<?= $campo->semana ?>')">Ver</a>
                                 </td>
                             </tr>
                     <?php

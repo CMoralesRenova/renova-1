@@ -14,7 +14,7 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
     <?php require_once('app/views/default/script_h.html'); ?>
     <script>
 
-        var Geolocalizacion = navigator.geolocation || (window.google && google.gears && google.gears.factory.create('beta.geolocation'));
+       /* var Geolocalizacion = navigator.geolocation || (window.google && google.gears && google.gears.factory.create('beta.geolocation'));
         if (Geolocalizacion) Geolocalizacion.getCurrentPosition(MuestraLocalizacion, Excepciones);
 
         function MuestraLocalizacion(posicion) {
@@ -36,22 +36,22 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
                 default:
                     alert('ERROR: ' + error.code);
             }
-        }
+        }*/
     </script>
     <script type="text/javascript">
-        if (navigator.geolocation) {
+        /*if (navigator.geolocation) {
             var lat1 = "";
             var lon1 = "";
             var unit = "K";
 
-            if ('<?php echo $_GET["token"]; ?>' == "vLvEvk1634059456218") {
+            if (' echo $_GET["token"]; ?>' == "vLvEvk1634059456218") {
                 console.log("checador renova");
                 var lon1 = "25.597914";
                 var lat1 = "-103.3842344";
 
                 //var lat1 = "-103.3841886";,
                 //var lon1 = "25.5978008";
-            } else if ('<?php echo $_GET["token"]; ?>' == "Aasda451a55sw2as2") {
+            } else if ('< echo $_GET["token"]; ?>' == "Aasda451a55sw2as2") {
                 var lon1 = "25.5979906";
                 var lat1 = "-103.3843008";
             }
@@ -105,7 +105,7 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
             }
         } else {
             Alert("Error", "noooo", "warning", 1100, false);
-        }
+        }*/
         $(document).ready(function(e) {
             $("#token").val('<?php echo $_GET["token"]; ?>');
             $("#id").val('');
@@ -195,7 +195,7 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
                         if (tipo === "leer") {
                             if (json["statusPlantilla"] == "El usuario no existe") {
                                 Alert("", json["statusPlantilla"], "warning", 900, false);
-                            } else {
+                            } else if (json["statusPlantilla"] == "Usuario Verificado"){
                                 $("#usr").val(json["documento"]);
                                 $.ajax({
                                     type: "POST",

@@ -54,9 +54,9 @@ $lstpuestos = $oPuestos->Listado();
                             <tr>
                                 <td style="text-align: center;"><?= $campo->nombre ?></td>
                                 <td style="text-align: center;"><?= $campo->departamento ?></td>
-                                <td style="text-align: center;"><?php if ($campo->estatus == 0) {
+                                <td style="text-align: center;"><?php if ($campo->estatus == 1) {
                                                                     echo "ACTIVO";
-                                                                } else if ($campo->estatus == 1) {
+                                                                } else if ($campo->estatus == 0) {
                                                                     echo "INACTIVO";
                                                                 } ?></td>
                                 <td style="text-align: center;">

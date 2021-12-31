@@ -117,6 +117,18 @@ $aPermisos = empty($oUsuarios->perfiles_id) ? array() : explode("@", $oUsuarios-
             </div>
         </div>
         <div class="form-group">
+            <strong>Nivel del usuario</strong>
+            <div class="form-group">
+                <select id="nvl_usuario" description="Seleccione el nivel del usuario" class="form-control obligado" name="nvl_usuario" >
+                    <option value="">--SELECCIONE--</option>
+                    <option value="1" 
+                        <?php if ($oUsuarios->nvl_usuario == "1") echo "selected";?>>Administrador</option>
+                    <option value="2" 
+                       <?php if ($oUsuarios->nvl_usuario == "2") echo "selected";?>>Usuario</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
             <strong class="">Contraseña:</strong>
             <div class="form-group">
                 <input type="text" description="Ingrese la contraseña" aria-describedby="" id="clave_usuario" required name="clave_usuario" value="" class="form-control" />

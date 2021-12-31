@@ -8,7 +8,7 @@ session_start();
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "/app/model/horas.class.php");
 
-$oHoras = new horas();
+$oHoras = new horas(true, $_POST);
 $lsthoras = $oHoras->Listado();
 ?>
 <script type="text/javascript">
@@ -63,7 +63,11 @@ $lsthoras = $oHoras->Listado();
                                 <td style="text-align: center;"<?php if ($campo->est == "AUTORIZADA"){ echo "class='btn-success'";}else{echo "class='btn-warning'"; } ?>><?= $campo->est ?></td>
                                 <td style="text-align: center;"><?= $campo->fecha_registro ?></td>
                                 <td style="text-align: center;"><?= $campo->motivo ?></td>
-                                <td style="text-align: center;"><?= $campo->horas_extras ?></td>
+                                <td style="text-align: center;"><?php 
+                                echo $campo->horas_extras;
+                                /*$porciones = explode(".", $campo->horas_extras);
+                                echo $porciones[0].":".$porciones[1];*/
+                                 ?></td>
                                 <td style="text-align: center;">
                                     <?php if ($campo->estatus == 1) { ?>
                                         <a class="btn btn-sm btn-success" href="javascript:Editar('<?= $campo->id ?>','Autorizar')">✓Autorizar</a>

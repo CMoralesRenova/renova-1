@@ -15,6 +15,29 @@ class nominas extends AW
     var $user_id;
     var $id_empleado;
 
+    var $id_nomina;
+    var $nombre;
+    var $asistencia;
+    var $puntualidad;
+    var $productividad;
+    var $complemento;
+    var $bono_viaje;
+    var $semanal;
+    var $faltas;
+    var $asistencias;
+    var $extras;
+    var $total;
+    var $comedor;
+    var $ahorro;
+    var $prestamos;
+    var $fonacot;
+    var $infonavit;
+    var $otros;
+    var $total_r;
+    var $total_p;
+    var $doce;
+    var $diario;
+    var $estatus_final_edit;
 
     public function __construct($sesion = true, $datos = NULL)
     {
@@ -35,83 +58,66 @@ class nominas extends AW
 
     public function Listado()
     {
-        $sql = "SELECT nominas.fecha, nominas.id,CONCAT('$',sum( nomina_detalle.total )) AS total_nomina,CASE WHEN nominas.estatus = 0 THEN 'NO PAGADA' WHEN nominas.estatus = 1 THEN
+        $sql = "SELECT nominas.fecha, nominas.id,CONCAT(sum( nomina_detalle.total )) AS total_nomina,CASE WHEN nominas.estatus = 0 THEN 'NO PAGADA' WHEN nominas.estatus = 1 THEN
         'PAGADA' ELSE 'OTRO'END AS estatus, WEEK ( nominas.fecha ) AS semana FROM nominas LEFT JOIN nomina_detalle ON nominas.id = nomina_detalle.id_nomina 
         where fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' GROUP BY nominas.fecha, nominas.id 
         ORDER BY fecha ASC  ";
 
         return $this->Query($sql);
     }
+
+    public function Listado_peticiones()
+    {
+        $sql = "SELECT a.*, concat(b.nombre_usuario) as solicitante FROM renova.nomina_final_edit as a
+            left join usuarios as b on a.id_usuario_p = b.id where a.estatus_final_edit = '1'";
+
+        return $this->Query($sql);
+    }
+    public function AprovarDenegar()
+    {
+        $sql = "UPDATE `nomina_final_edit`
+        SET 
+        `estatus_final_edit` = '{$this->estatus}'
+        WHERE `id` = '{$this->id}'";
+        return $this->NonQuery($sql);
+    }
+
     public function Listado_nomina()
+    {
+        $tabla = "nomina_final_edit";
+        if (!empty($this->tabla)) {
+            $tabla = "nomina_final";
+        }
+
+        $where = "id = '{$this->id}' and estatus_final_edit = '{$this->estatus}'";
+        if (!empty($this->tabla)) {
+            $where = "id_nomina = '{$this->id_nomina}' and id_empleado = '{$this->id_empleado}'";
+        }
+
+
+        $sql = "select * from {$tabla}  where {$where}";
+
+        $res = parent::Query($sql);
+        if (!empty($res) && !($res === NULL)) {
+            foreach ($res[0] as $idx => $valor) {
+                $this->{$idx} = $valor;
+            }
+        } else {
+            $res = NULL;
+        }
+
+        return $res;
+    }
+
+    public function Listado_prenomina()
     {
         $sqlEmpleado = "";
         if (!empty($this->id_empleado)) {
-            $sqlEmpleado = " and c.id='{$this->id_empleado}'";
+            $sqlEmpleado = "and id_empleado = '{$this->id_empleado}'";
         }
 
-        $sql = "SELECT 
-        a.*,
-        c.id AS id_empleado,
-        nombres,
-        c.ape_paterno,
-        c.ape_materno,
-        h.nombre AS puesto,
-        i.nombre AS departamento,
-        c.rfc,
-        c.curp,
-        c.fecha_ingreso,
-        WEEK(a.fecha) AS semana,
-        c.salario_semanal,
-        c.salario_diario,
-        c.salario_asistencia,
-        c.salario_puntualidad,
-        c.salario_productividad,
-        c.complemento_sueldo,
-        c.bono_doce,
-        (SELECT  COUNT(dia) + 1 FROM asistencia  WHERE id_empleado = c.id AND estatus_entrada = 1 AND 
-        fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS dias_laborados,
-        
-        ((SELECT SUM(horas_extras) FROM horas_extras WHERE id_empleado = c.id AND estatus = 2
-        AND fecha_registro BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) * (c.salario_diario / 8)) AS horas_extras,
-        
-        ((SELECT COUNT(dia) + 1 FROM asistencia WHERE id_empleado = c.id AND estatus_entrada = 1 AND
-        fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) * c.salario_diario) AS esperado,
-        
-        (SELECT  SUM(monto_por_semana) FROM  otros WHERE id_empleado = c.id
-        AND fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS otros_descuentos,
-        
-        (SELECT monto_por_semana FROM prestamos WHERE id_empleado = c.id AND 
-        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS prestamos,
-        
-        (SELECT monto_por_semana FROM fonacot WHERE id_empleado = c.id AND 
-        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS fonacot,
-        
-        (SELECT id FROM fonacot WHERE id_empleado = c.id AND 
-        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS id_fonacot,
-        
-        (SELECT monto_por_semana FROM infonavit WHERE id_empleado = c.id AND 
-        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS infonavit,
-        
-        (SELECT id FROM infonavit WHERE id_empleado = c.id AND 
-        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS id_infonavit,
-        j.monto,
-        j.frecuencia,
-        j.estatus AS estatusAhorro,
-        f.id AS id_otros,
-        g.id AS id_prestamo,
-        j.id AS id_ahorros,
-        ((SELECT SUM(precio_platillo) FROM comedor WHERE id_empleado = c.id AND 
-        fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha)) AS comedor
-        FROM nominas a 
-        LEFT JOIN empleados c ON c.id
-        LEFT JOIN horas_extras AS d ON c.id = d.id_empleado
-        INNER JOIN (SELECT dia, id_empleado, fecha FROM asistencia) e ON c.id = e.id_empleado
-        LEFT JOIN (SELECT * FROM otros) f ON c.id = f.id_empleado
-        LEFT JOIN (SELECT * FROM prestamos) g ON c.id = g.id_empleado
-        LEFT JOIN (SELECT * FROM puestos) h ON c.id_puesto = h.id
-        LEFT JOIN (SELECT * FROM departamentos) i ON h.id_departamento = i.id
-        LEFT JOIN (SELECT * FROM ahorros) j ON c.id = j.id_empleado
-        WHERE a.id ='{$this->id}' {$sqlEmpleado} group by c.nombres";
+        $sql = "SELECT a.*, b.* FROM nominas as a 
+        inner join nomina_final as b on a.id = b.id_nomina where a.id = '{$this->id}' {$sqlEmpleado}";
 
         if (!empty($this->id_empleado)) {
             $res = parent::Query($sql);
@@ -127,250 +133,193 @@ class nominas extends AW
         } else {
             return $this->Query($sql);
         }
+        
+        return $this->Query($sql);
     }
+
+    public function Listado_nomina_final()
+    {
+        $sql = "SELECT a.*, b.* FROM nominas as a 
+        inner join nomina_final_edit as b on a.id = b.id_nomina where b.id_nomina = '{$this->id}'";
+        return $this->Query($sql);
+    }
+
     public function Pagar()
     {
-        $sql = "SELECT 
-        a.*,
-        c.id AS id_empleado,
-        nombres,
-        c.ape_paterno,
-        c.ape_materno,
-        h.nombre AS puesto,
-        i.nombre AS departamento,
-        c.rfc,
-        c.curp,
-        c.fecha_ingreso,
-        WEEK(a.fecha) AS semana,
-        c.salario_semanal,
-        c.salario_diario,
-        c.salario_asistencia,
-        c.salario_puntualidad,
-        c.salario_productividad,
-        c.complemento_sueldo,
-        c.bono_doce,
-        (SELECT  COUNT(dia) + 1 FROM asistencia  WHERE id_empleado = c.id AND estatus_entrada = 1 AND 
-        fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS dias_laborados,
-        
-        ((SELECT SUM(horas_extras) FROM horas_extras WHERE id_empleado = c.id AND estatus = 2
-        AND fecha_registro BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) * (c.salario_diario / 8)) AS horas_extras,
-        
-        ((SELECT COUNT(dia) + 1 FROM asistencia WHERE id_empleado = c.id AND estatus_entrada = 1 AND
-        fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) * c.salario_diario) AS esperado,
-        
-        (SELECT  SUM(monto_por_semana) FROM  otros WHERE id_empleado = c.id
-        AND fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS otros_descuentos,
-        
-        (SELECT monto_por_semana FROM prestamos WHERE id_empleado = c.id AND 
-        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS prestamos,
-        
-        (SELECT monto_por_semana FROM fonacot WHERE id_empleado = c.id AND 
-        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS fonacot,
-        
-        (SELECT id FROM fonacot WHERE id_empleado = c.id AND 
-        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS id_fonacot,
-        
-        (SELECT monto_por_semana FROM infonavit WHERE id_empleado = c.id AND 
-        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS infonavit,
-        
-        (SELECT id FROM infonavit WHERE id_empleado = c.id AND 
-        fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) AS id_infonavit,
-        j.monto,
-        j.frecuencia,
-        j.estatus AS estatusAhorro,
-        f.id AS id_otros,
-        g.id AS id_prestamo,
-        j.id AS id_ahorros,
-        ((SELECT SUM(precio_platillo) FROM comedor WHERE id_empleado = c.id AND 
-        fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha)) AS comedor
-        FROM nominas a 
-        LEFT JOIN empleados c ON c.id
-        LEFT JOIN horas_extras AS d ON c.id = d.id_empleado
-        INNER JOIN (SELECT dia, id_empleado, fecha FROM asistencia) e ON c.id = e.id_empleado
-        LEFT JOIN (SELECT * FROM otros) f ON c.id = f.id_empleado
-        LEFT JOIN (SELECT * FROM prestamos) g ON c.id = g.id_empleado
-        LEFT JOIN (SELECT * FROM puestos) h ON c.id_puesto = h.id
-        LEFT JOIN (SELECT * FROM departamentos) i ON h.id_departamento = i.id
-        LEFT JOIN (SELECT * FROM ahorros) j ON c.id = j.id_empleado
-        WHERE a.id ='{$this->id}' group by c.nombres";
+        $oNominas = new nominas();
+        $oNominas->id = $this->id;
+        $lstnominas = $oNominas->Listado_prenomina();
 
-        $res = parent::Query($sql);
-        if (!empty($res) && !($res === NULL)) {
-            foreach ($res as $idx => $valor) {
-                $percepciones = 0;
-                $retenciones = 0;
-                if ($valor->dias_laborados <= 6) {
-                    $percepciones = $percepciones + $valor->salario_diario * $valor->dias_laborados;
-                    $percepciones = $percepciones + $valor->salario_productividad;
-                    $percepciones = $percepciones + $valor->complemento_sueldo;
-                    $percepciones = $percepciones + $valor->bono_doce;
-                    $percepciones = $percepciones + $valor->horas_extras;
+        if (count($lstnominas) > 0) {
+            foreach ($lstnominas as $idx => $prenomina) {
+                $oNominas_edit = new nominas();
+                $oNominas_edit->id_nomina = $prenomina->id_nomina;
+                $oNominas_edit->id_empleado = $prenomina->id_empleado;
+                $oNominas_edit->Nomina_edit();
+                if ($oNominas_edit->nombre != '' && $oNominas_edit->estatus_final_edit == "2") {
+
+                    $id_nomina = $oNominas_edit->id_nomina;
+                    $id_empleado = $oNominas_edit->id_empleado;
+                
+                    $total_r = $oNominas_edit->total_r;
+                    $total_p = $oNominas_edit->total_p;
+                    $fecha = $oNominas_edit->fecha;
                 } else {
-                    $percepciones = $percepciones + $valor->salario_diario * $valor->dias_laborados;
-                    $percepciones = $percepciones + $valor->salario_productividad;
-                    $percepciones = $percepciones + $valor->complemento_sueldo;
-                    $percepciones = $percepciones + $valor->bono_doce;
-                    $percepciones = $percepciones + $valor->horas_extras;
-                    $percepciones = $percepciones + $valor->salario_asistencia;
-                    $percepciones = $percepciones + $valor->salario_puntualidad;
-                }
-                $retenciones = $retenciones + $valor->otros_descuentos;
-                $retenciones = $retenciones + $valor->prestamos;
-                $retenciones = $retenciones + $valor->comedor;
-                if ($valor->estatusAhorro == 1) {
-                    $retenciones = $retenciones + $valor->monto;
+                    $id_nomina = $prenomina->id_nomina;
+                    $id_empleado = $prenomina->id_empleado;
+                    
+                    $total_r = $prenomina->total_r;
+                    $total_p = $prenomina->total_p;
+                    $fecha = $prenomina->fecha;
                 }
 
-                $sqlOtros = "select * from otros where id_empleado='{$valor->id_empleado}' and fecha_pago between date_add('{$valor->fecha}', INTERVAL -7 DAY) and '{$valor->fecha}'";
+                $retenciones = $total_r;
+                $percepciones = $total_p;
+
+                $sqlOtros = "select * from otros where id_empleado='{$id_empleado}' and fecha_pago between date_add('{$fecha}', INTERVAL -7 DAY) and '{$fecha}'";
                 $resOtros = $this->Query($sqlOtros);
 
                 if (!empty($resOtros) && !($resOtros === NULL)) {
                     foreach ($resOtros as $idx => $otros) {
                         if ($otros->numero_semanas == ($otros->semana_actual + 1) && $otros->estatus == 1) {
                             $sqlUpdateOtros1 = "UPDATE `otros`
-                                        SET
-                                        `estatus` = 0,
-                                        `semana_actual` = ($otros->semana_actual + 1),
-                                        `restante` = '" . ($otros->restante - $otros->monto_por_semana) . "' 
-                                        WHERE `id` = '{$otros->id}'";
+                                SET
+                                `estatus` = 0,
+                                `semana_actual` = ($otros->semana_actual + 1),
+                                `restante` = '" . ($otros->restante - $otros->monto_por_semana) . "' 
+                                WHERE `id` = '{$otros->id}'";
+                                
                             $this->NonQuery($sqlUpdateOtros1);
                         } else {
                             $sqlUpdateOtros = "UPDATE `otros`
-                            SET
-                            `estatus` = '0',
-                            `restante` = '" . ($otros->restante - $otros->monto_por_semana) . "' 
-                            WHERE `id` = '{$otros->id}'";
-                            $ressqlUpdateOtros = $this->NonQuery($sqlUpdateOtros); 
+                                SET
+                                `estatus` = '0',
+                                `restante` = '" . ($otros->restante - $otros->monto_por_semana) . "' 
+                                WHERE `id` = '{$otros->id}'";
+                                
+                            $ressqlUpdateOtros = $this->NonQuery($sqlUpdateOtros);
+
                             if ($ressqlUpdateOtros) {
                                 $sqlInsertOtros = "INSERT INTO `otros`
-                                (`id_empleado`,`numero_semanas`,`semana_actual`,`estatus`,`fecha_registro`,`fecha_pago`,
-                                `monto`,`monto_por_semana`,`monto_pagar`,`motivo`,`detalles`,`restante`)
-                                VALUES
-                                ('{$otros->id_empleado}','{$otros->numero_semanas}',
-                                '" . ($otros->semana_actual + 1) . "',
-                                '1','{$otros->fecha_registro}',
-                                date_add('{$otros->fecha_pago}', INTERVAL +7 DAY),
-                                '{$otros->monto}','{$otros->monto_por_semana}','{$otros->monto_pagar}','{$otros->motivo}','{$otros->detalles}'
-                                ,'" . ($otros->restante - $otros->monto_por_semana) . "')";
+                                    (`id_empleado`,`numero_semanas`,`semana_actual`,`estatus`,`fecha_registro`,`fecha_pago`,
+                                    `monto`,`monto_por_semana`,`monto_pagar`,`motivo`,`detalles`,`restante`)
+                                    VALUES
+                                    ('{$otros->id_empleado}','{$otros->numero_semanas}',
+                                    '" . ($otros->semana_actual + 1) . "',
+                                    '1','{$otros->fecha_registro}',
+                                    date_add('{$otros->fecha_pago}', INTERVAL +7 DAY),
+                                    '{$otros->monto}','{$otros->monto_por_semana}','{$otros->monto_pagar}','{$otros->motivo}','{$otros->detalles}'
+                                    ,'" . ($otros->restante - $otros->monto_por_semana) . "')";
+                                
                                 $this->NonQuery($sqlInsertOtros);
                             }
                         }
                     }
                 }
 
-                $sqlPrestamos = "select * from prestamos where id_empleado='{$valor->id_empleado}' and fecha_pago between date_add('{$valor->fecha}', INTERVAL -7 DAY) and '{$valor->fecha}'";
+                $sqlPrestamos = "select * from prestamos where id_empleado='{$id_empleado}' and fecha_pago between date_add('{$fecha}', INTERVAL -7 DAY) and '{$fecha}'";
                 $resPrestamos = $this->Query($sqlPrestamos);
 
                 if (!empty($resPrestamos) && !($resPrestamos === NULL)) {
                     foreach ($resPrestamos as $idx => $prestamos) {
-                        if ($prestamos->numero_semanas == ($prestamos->semana_actual + 1) && $prestamos->estatus == 1) {
+                        if ($prestamos->numero_semanas == $prestamos->semana_actual && $prestamos->estatus == 1) {
                             $sqlUpdatePrestamos1 = "UPDATE `prestamos`
                                 SET
                                 `estatus` = 0,
                                 `restante` = '" . ($prestamos->restante - $prestamos->monto_por_semana) . "' 
                                 WHERE `id` = '{$prestamos->id}'";
                             $this->NonQuery($sqlUpdatePrestamos1);
-                        } else {
+                        } else if ($prestamos->estatus == 1) {
                             $sqlUpdatePrestamos = "UPDATE `prestamos`
-                            SET 
-                            `estatus` = 0,
-                            `restante` = '" . ($prestamos->restante - $prestamos->monto_por_semana) . "'
-                            WHERE `id` = '{$prestamos->id}'";
-
+                                SET 
+                                `estatus` = 0,
+                                `restante` = '" . ($prestamos->restante - $prestamos->monto_por_semana) . "'
+                                WHERE `id` = '{$prestamos->id}'";
                             if ($this->NonQuery($sqlUpdatePrestamos)) {
                                 $sqlInsertOtros = "INSERT INTO `prestamos`
-                                (`id_empleado`,`numero_semanas`, `estatus`,`fecha_registro`, `fecha_pago`, `monto`,`interes`, `monto_por_semana`,
-                                `monto_pagar`, `restante`, `semana_actual`)
-                                VALUES
-                                ('{$prestamos->id_empleado}','{$prestamos->numero_semanas}','1','{$prestamos->fecha_registro}',
-                                date_add('{$prestamos->fecha_pago}', INTERVAL +7 DAY),
-                                 '{$prestamos->monto}','{$prestamos->interes}',
-                                '{$prestamos->monto_por_semana}','{$prestamos->monto_pagar}',
-                                '" . ($prestamos->restante - $prestamos->monto_por_semana) . "', 
-                                '" . ($prestamos->semana_actual + 1) . "')";
-                                print_r($sqlInsertOtros);
+                                    (`id_empleado`,`numero_semanas`, `estatus`,`fecha_registro`, `fecha_pago`, `monto`,`interes`, `monto_por_semana`,
+                                    `monto_pagar`, `restante`, `semana_actual`)
+                                    VALUES
+                                    ('{$prestamos->id_empleado}','{$prestamos->numero_semanas}','1','{$prestamos->fecha_registro}',
+                                    date_add('{$prestamos->fecha_pago}', INTERVAL +7 DAY),
+                                    '{$prestamos->monto}','{$prestamos->interes}',
+                                    '{$prestamos->monto_por_semana}','{$prestamos->monto_pagar}',
+                                    '" . ($prestamos->restante - $prestamos->monto_por_semana) . "', 
+                                    '" . ($prestamos->semana_actual + 1) . "')";
                                 $this->NonQuery($sqlInsertOtros);
                             }
                         }
                     }
                 }
 
-                $sqlAhorros = "select * from ahorros where id_empleado='{$valor->id_empleado}' and estatus = '1'";
+                $sqlAhorros = "select * from ahorros where id_empleado='{$id_empleado}' and estatus = '1'";
                 $resAhorros = $this->Query($sqlAhorros);
 
                 if (!empty($resAhorros) && !($resAhorros === NULL)) {
                     foreach ($resAhorros as $idx => $ahorros) {
-                        if ($ahorros->estatus == 1) {
                             $sqlUpdateahorros = "UPDATE `ahorros`
                             SET
                             `frecuencia` = frecuencia + 1,
                             `acumulado` = `acumulado` + `monto` 
                             WHERE `id` = '{$ahorros->id}'";
-                            $this->NonQuery($sqlUpdateahorros);
-                        }
+                                    $this->NonQuery($sqlUpdateahorros);
                     }
                 }
 
-                $sqlfonacot = "select * from fonacot where id_empleado='{$valor->id_empleado}' and fecha_pago between date_add('{$valor->fecha}', INTERVAL -7 DAY) and '{$valor->fecha}'";
+                $sqlfonacot = "select * from fonacot where id_empleado='{$id_empleado}' and fecha_pago between date_add('{$fecha}', INTERVAL -7 DAY) and '{$fecha}'";
                 $resfonacot = $this->Query($sqlfonacot);
 
                 if (!empty($resfonacot) && !($resfonacot === NULL)) {
                     foreach ($resfonacot as $idx => $fonacot) {
-                        $sqlUpdatefonacot = "UPDATE `fonacot`
+                        if ($fonacot->estatus == "1") {
+                            $sqlUpdatefonacot = "UPDATE `fonacot`
                             SET 
                             `estatus` = 0
                             WHERE `id` = '{$fonacot->id}'";
 
-                        if ($this->NonQuery($sqlUpdatefonacot)) {
-                            $sqlInsertOtros = "INSERT INTO `fonacot`
+                            if ($this->NonQuery($sqlUpdatefonacot)) {
+                                $sqlInsertOtros = "INSERT INTO `fonacot`
                                 (`id_empleado`, `estatus`,`fecha_registro`, `fecha_pago`, `monto_por_semana`)
                                 VALUES
                                 ('{$fonacot->id_empleado}','1','{$fonacot->fecha_registro}',
                                 date_add('{$fonacot->fecha_pago}', INTERVAL +7 DAY), '{$fonacot->monto_por_semana}')";
-                            $this->NonQuery($sqlInsertOtros);
+                                $this->NonQuery($sqlInsertOtros);
+                            }
                         }
                     }
                 }
 
-                $sqlinfonavit = "select * from infonavit where id_empleado='{$valor->id_empleado}' and fecha_pago between date_add('{$valor->fecha}', INTERVAL -7 DAY) and '{$valor->fecha}'";
+                $sqlinfonavit = "select * from infonavit where id_empleado='{$id_empleado}' and fecha_pago between date_add('{$fecha}', INTERVAL -7 DAY) and '{$fecha}'";
                 $resinfonavit = $this->Query($sqlinfonavit);
 
                 if (!empty($resinfonavit) && !($resinfonavit === NULL)) {
                     foreach ($resinfonavit as $idx => $infonavit) {
-                        $sqlUpdateinfonavit = "UPDATE `infonavit`
+                        if ($infonavit->estatus == "1") {
+                            $sqlUpdateinfonavit = "UPDATE `infonavit`
                             SET 
                             `estatus` = 0
                             WHERE `id` = '{$infonavit->id}'";
 
-                        if ($this->NonQuery($sqlUpdateinfonavit)) {
-                            $sqlInsertOtros = "INSERT INTO `infonavit`
+                            if ($this->NonQuery($sqlUpdateinfonavit)) {
+                                $sqlInsertOtros = "INSERT INTO `infonavit`
                                 (`id_empleado`, `estatus`,`fecha_registro`, `fecha_pago`,  `monto_por_semana`)
                                 VALUES
                                 ('{$infonavit->id_empleado}','1','{$infonavit->fecha_registro}',
                                 date_add('{$infonavit->fecha_pago}', INTERVAL +7 DAY),
                                 '{$infonavit->monto_por_semana}')";
-                            $this->NonQuery($sqlInsertOtros);
+                                $this->NonQuery($sqlInsertOtros);
+                            }
                         }
                     }
                 }
-
-                $sql1 = "INSERT INTO `nomina_detalle`
-                (`id_nomina`,`id_empleado`,`percepciones`,`retenciones`, `total`)
-                VALUES
-                ('{$valor->id}','{$valor->id_empleado}','" . ($percepciones - $retenciones) . "','{$retenciones}','{$percepciones}')";
+                $sql1 = "INSERT INTO `nomina_detalle` (`id_nomina`,`id_empleado`,`percepciones`,`retenciones`, `total`)
+                    VALUES
+                ('{$id_nomina}','{$id_empleado}','{$percepciones}','{$retenciones}','".($percepciones + $retenciones)."')";
                 $this->NonQuery($sql1);
             }
-        } else {
-            $res = NULL;
         }
 
-        $sql2 = "update
-                    nominas
-                set
-                estatus = '1',
-                fecha_pago = now()
-                where
-                  id='{$this->id}'";
+        $sql2 = "update nominas set estatus = '1', fecha_pago = now() where id='{$this->id}'";
         return $this->NonQuery($sql2);
     }
 
@@ -378,6 +327,23 @@ class nominas extends AW
     {
 
         $sql = "select * from nominas where  id='{$this->id}'";
+        $res = parent::Query($sql);
+
+        if (!empty($res) && !($res === NULL)) {
+            foreach ($res[0] as $idx => $valor) {
+                $this->{$idx} = $valor;
+            }
+        } else {
+            $res = NULL;
+        }
+
+        return $res;
+    }
+
+    public function Nomina_edit()
+    {
+
+        $sql = "select * from nomina_final_edit where  id_nomina = '{$this->id_nomina}' and id_empleado = '{$this->id_empleado}' order by id desc limit 1";
         $res = parent::Query($sql);
 
         if (!empty($res) && !($res === NULL)) {
@@ -421,23 +387,371 @@ class nominas extends AW
         return $this->NonQuery($sql);
     }
 
-    public function Desactivar()
-    {
+    public function DiasVacacion($num, $fecha, $inicio_vacaci, $fin_vacaci)
+    {   
+        $total_dias = 0;
+        $fecha_fin = date("Y-m-d",strtotime($fecha."- 6 days"));
+        if ($inicio_vacaci >= $fecha_fin  && $inicio_vacaci <= $fecha  ) {
+            for ($i = 0; $i<=$num; $i++) {
+                $sqlFecha = "SELECT DATE_FORMAT(DATE_ADD('{$inicio_vacaci}', INTERVAL $i DAY), '%Y-%m-%d') as fecha";
+                $resultFecha = parent::Query($sqlFecha);
 
-        $sql = "update
-                    nominas
-                set
-                estatus = '{$this->estatus}'
-                where
-                  id='{$this->id}'";
-        // echo nl2br($sql);
-        return $this->NonQuery($sql);
+                if ($resultFecha[0]->fecha == $fecha) {
+                    $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$inicio_vacaci}', INTERVAL $i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
+                    $result = parent::Query($sql);
+                    $total_dias = $total_dias + $result[0]->dia;
+                    break;
+                } else {
+                    $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$inicio_vacaci}', INTERVAL $i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
+                    $result = parent::Query($sql);
+                    $total_dias = $total_dias + $result[0]->dia;
+                }
+            }
+        } else if ($inicio_vacaci <= $fecha  && $fin_vacaci >= $fecha  ) {
+            for ($i = 0; $i<=$num; $i++) {
+                $sqlFecha = "SELECT DATE_FORMAT(DATE_ADD('{$fecha_fin}', INTERVAL $i DAY), '%Y-%m-%d') as fecha";
+                $resultFecha = parent::Query($sqlFecha);
+                if ($resultFecha[0]->fecha == $fecha) {
+                    $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$fecha_fin}', INTERVAL $i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
+                    $result = parent::Query($sql);
+                    $total_dias = $total_dias + $result[0]->dia;
+                    break;
+                } else {
+                    $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$fecha_fin}', INTERVAL $i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
+                    $result = parent::Query($sql);
+                    $total_dias = $total_dias + $result[0]->dia;
+                }
+            }
+        } else if ($fin_vacaci >= $fecha_fin && $fin_vacaci <= $fecha  ) {
+            if ($fin_vacaci >= $fecha) {
+                $fin_vacaci = $fecha;
+            }
+            for ($i = 0; $i<=$num; $i++) {
+                $sqlFecha = "SELECT DATE_FORMAT(DATE_ADD('{$fin_vacaci}', INTERVAL -$i DAY), '%Y-%m-%d') as fecha";
+
+                $resultFecha = parent::Query($sqlFecha);
+                if ($resultFecha[0]->fecha <= $fecha_fin ) {
+                    $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$fin_vacaci}', INTERVAL -$i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
+                    $result = parent::Query($sql);
+                    $total_dias = $total_dias + $result[0]->dia;
+                    break;
+                } else if ($resultFecha[0]->fecha >= $fecha_fin ) {
+                    $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$fin_vacaci}', INTERVAL -$i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
+                    $result = parent::Query($sql);
+                    $total_dias = $total_dias + $result[0]->dia;
+                }
+            }
+        } 
+        return $total_dias;
+    }
+
+    public function Nomina($id)
+    {
+        $sqlNomina = "SELECT 
+            a.*,
+            c.id AS id_empleado,
+            c.ape_paterno,
+            c.ape_materno,
+            nombres,
+            h.nombre AS puesto,
+            i.nombre AS departamento,
+            c.rfc,
+            c.curp,
+            c.fecha_ingreso,
+            WEEK(a.fecha) AS semana,
+            c.salario_semanal,
+            c.salario_diario,
+            c.salario_asistencia,
+            c.salario_puntualidad,
+            c.salario_productividad,
+            c.complemento_sueldo,
+            c.bono_doce,
+            c.id_horario,
+            (SELECT  COUNT(dia) FROM asistencia  WHERE id_empleado = c.id AND estatus_entrada = 1 AND 
+            fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS dias_laborados,
+
+            (SELECT  COUNT(dia) FROM asistencia  WHERE id_empleado = c.id AND estatus_entrada = 2 AND 
+            fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS dias_laborados1,
+
+            (SELECT COUNT(quitar_bonos) FROM  asistencia WHERE id_empleado = c.id
+            and quitar_bonos != null and quitar_bonos > 0
+            AND fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS quitar_bonos,
+            
+            ((SELECT SUM(horas_extras) FROM horas_extras WHERE id_empleado = c.id AND estatus = 2
+            AND fecha_registro BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) * (c.salario_diario / 8) * 2) AS horas_extras,
+            
+            ((SELECT COUNT(dia) + 1 FROM asistencia WHERE id_empleado = c.id AND estatus_entrada = 1 AND
+            fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) * c.salario_diario) AS esperado,
+            
+            (SELECT  SUM(monto_por_semana) FROM  otros WHERE id_empleado = c.id
+            AND fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS otros_descuentos,
+            
+            (SELECT monto_por_semana FROM prestamos WHERE id_empleado = c.id AND 
+            fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS prestamos,
+            
+            (SELECT monto_por_semana FROM fonacot WHERE id_empleado = c.id AND 
+            fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS fonacot,
+            
+            (SELECT id FROM fonacot WHERE id_empleado = c.id AND 
+            fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS id_fonacot,
+            
+            (SELECT monto_por_semana FROM infonavit WHERE id_empleado = c.id AND 
+            fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS infonavit,
+            
+            (SELECT id FROM infonavit WHERE id_empleado = c.id AND 
+            fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS id_infonavit,
+            j.monto,
+            j.frecuencia,
+            j.estatus AS estatusAhorro,
+            f.id AS id_otros,
+            g.id AS id_prestamo,
+            j.id AS id_ahorros,
+            ((SELECT SUM(precio_platillo) FROM comedor WHERE id_empleado = c.id AND 
+            fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha)) AS comedor,
+            ((SELECT pago_prima FROM vacaciones WHERE id_empleado = c.id AND fecha_pago 
+            BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha limit 1)) AS vacaciones,
+
+            ((SELECT inicio_vacaci
+            FROM vacaciones where id_empleado = c.id and
+            (inicio_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha or 
+            fin_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha))) as inicio_vacaci,
+            ((SELECT fin_vacaci
+            FROM vacaciones where id_empleado = c.id and 
+            (inicio_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha or 
+            fin_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha))) as fin_vacaci,
+            ((SELECT DATEDIFF(fin_vacaci, inicio_vacaci) AS days
+            FROM vacaciones where id_empleado = c.id and 
+            (inicio_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha or 
+            fin_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha) )) as daysVaca
+            FROM nominas a 
+            LEFT JOIN empleados c ON c.id
+            LEFT JOIN horas_extras AS d ON c.id = d.id_empleado
+            INNER JOIN (SELECT dia, id_empleado, fecha FROM asistencia) e ON c.id = e.id_empleado
+            LEFT JOIN (SELECT * FROM otros) f ON c.id = f.id_empleado
+            LEFT JOIN (SELECT * FROM prestamos) g ON c.id = g.id_empleado
+            LEFT JOIN (SELECT * FROM puestos) h ON c.id_puesto = h.id
+            LEFT JOIN (SELECT * FROM departamentos) i ON h.id_departamento = i.id
+            LEFT JOIN (SELECT * FROM ahorros) j ON c.id = j.id_empleado
+            LEFT JOIN (SELECT * FROM vacaciones) k ON c.id = k.id_empleado
+            WHERE a.id ='{$id}' and c.estatus = '1' group by c.id";
+
+        $resNomina = $this->Query($sqlNomina);
+
+            $sqlAdminist = "SELECT 
+            a.*,
+            c.id AS id_empleado,
+            c.ape_paterno,
+            c.ape_materno,
+            nombres,
+            h.nombre AS puesto,
+            i.nombre AS departamento,
+            c.rfc,
+            c.curp,
+            c.fecha_ingreso,
+            WEEK(a.fecha) AS semana,
+            c.salario_semanal,
+            c.salario_diario,
+            c.salario_asistencia,
+            c.salario_puntualidad,
+            c.salario_productividad,
+            c.complemento_sueldo,
+            c.bono_doce,
+            c.id_horario,
+            1 AS dias_laborados,
+            5 AS dias_laborados1,
+            (SELECT COUNT(quitar_bonos) FROM  asistencia WHERE id_empleado = c.id
+            and quitar_bonos != null and quitar_bonos > 0
+            AND fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS quitar_bonos,
+            
+            ((SELECT SUM(horas_extras) FROM horas_extras WHERE id_empleado = c.id AND estatus = 2
+            AND fecha_registro BETWEEN DATE_ADD(a.fecha, INTERVAL - 7 DAY) AND a.fecha) * (c.salario_diario / 8) * 2) AS horas_extras,
+            
+            ((SELECT COUNT(dia) + 1 FROM asistencia WHERE id_empleado = c.id AND estatus_entrada = 1 AND
+            fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) * c.salario_diario) AS esperado,
+            
+            (SELECT  SUM(monto_por_semana) FROM  otros WHERE id_empleado = c.id
+            AND fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS otros_descuentos,
+            
+            (SELECT monto_por_semana FROM prestamos WHERE id_empleado = c.id AND 
+            fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS prestamos,
+            
+            (SELECT monto_por_semana FROM fonacot WHERE id_empleado = c.id AND 
+            fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS fonacot,
+            
+            (SELECT id FROM fonacot WHERE id_empleado = c.id AND 
+            fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS id_fonacot,
+            
+            (SELECT monto_por_semana FROM infonavit WHERE id_empleado = c.id AND 
+            fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS infonavit,
+            
+            (SELECT id FROM infonavit WHERE id_empleado = c.id AND 
+            fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS id_infonavit,
+            j.monto,
+            j.frecuencia,
+            j.estatus AS estatusAhorro,
+            f.id AS id_otros,
+            g.id AS id_prestamo,
+            j.id AS id_ahorros,
+            ((SELECT SUM(precio_platillo) FROM comedor WHERE id_empleado = c.id AND 
+            fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha)) AS comedor,
+
+            ((SELECT pago_prima FROM vacaciones WHERE id_empleado = c.id AND fecha_pago 
+            BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha limit 1)) AS vacaciones,
+
+            ((SELECT inicio_vacaci
+            FROM vacaciones where id_empleado = c.id and
+            (inicio_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha or 
+            fin_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha))) as inicio_vacaci,
+            ((SELECT fin_vacaci
+            FROM vacaciones where id_empleado = c.id and 
+            (inicio_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha or 
+            fin_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha))) as fin_vacaci,
+            ((SELECT DATEDIFF(fin_vacaci, inicio_vacaci) AS days
+            FROM vacaciones where id_empleado = c.id and 
+            (inicio_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha or 
+            fin_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha) )) as daysVaca
+            FROM nominas a 
+            LEFT JOIN empleados c ON c.id
+            LEFT JOIN horas_extras AS d ON c.id = d.id_empleado
+            LEFT JOIN (SELECT dia, id_empleado, fecha FROM asistencia) e ON c.id = e.id_empleado
+            LEFT JOIN (SELECT * FROM otros) f ON c.id = f.id_empleado
+            LEFT JOIN (SELECT * FROM prestamos) g ON c.id = g.id_empleado
+            LEFT JOIN (SELECT * FROM puestos) h ON c.id_puesto = h.id
+            LEFT JOIN (SELECT * FROM departamentos) i ON h.id_departamento = i.id
+            LEFT JOIN (SELECT * FROM ahorros) j ON c.id = j.id_empleado
+            LEFT JOIN (SELECT * FROM vacaciones) k ON c.id = k.id_empleado
+            WHERE a.id ='{$this->id}' and c.id = '35' || c.id = '7' || c.id = '26' || c.id = '89' || c.id = '90' || c.id = '88' 
+            || c.id = '87' || c.id = '85' || c.id = '93' group by c.id";
+            $resAdmin = $this->Query($sqlAdminist);
+
+            foreach ($resAdmin as $idx => $campo) { 
+                array_push($resNomina, $campo);
+            }
+        return $resNomina;
+    }
+
+    public function Solicitud()
+    {
+        $sqlNomina = "select * from nomina_final where id_nomina = '{$this->id_}' and id_empleado = '{$this->id_empleado_}'";
+        $resNomina = $this->Query($sqlNomina);
+
+        $update = "UPDATE `nomina_final` SET `estatus_final` = '1' WHERE `id_nomina` = '{$this->id_}' and id_empleado = '{$this->id_empleado_}'";
+
+        if ($this->NonQuery($update)) { 
+            $sqlEmpleado = "select * from empleados where id = '{$this->id_empleado_}'";
+            $resEmpleado = $this->Query($sqlEmpleado);
+
+            if ($resNomina[0]) {
+
+                $totalEsperado = 0;
+                $totalRetenciones = 0;
+
+                //vareables para insert
+                $nombre = $resNomina[0]->nombre;
+
+                //verificar si esta se
+                if ($this->asistencia_ == '1') {
+                    $asistencia = bcdiv($resEmpleado[0]->salario_asistencia, '1', 2);
+                    $totalEsperado = $totalEsperado + $asistencia;
+                } else {
+                    $asistencia = bcdiv($resNomina[0]->asistencia, '1', 2);
+                    $totalEsperado = $totalEsperado + $asistencia;
+                }
+
+                if ($this->puntualidad_ == '1') {
+                    $puntualidad = bcdiv($resEmpleado[0]->salario_puntualidad, '1', 2);
+                    $totalEsperado = $totalEsperado + $puntualidad;
+                } else {
+                    $puntualidad = bcdiv($resNomina[0]->puntualidad, '1', 2);
+                    $totalEsperado = $totalEsperado + $puntualidad;
+                }
+
+                if ($this->laborados_ != $resNomina[0]->asistencias) {
+                    $faltas = (7 - $this->laborados_);
+                    $asistencias = $this->laborados_;
+                } else {
+                    $faltas = $resNomina[0]->faltas;
+                    $asistencias = $resNomina[0]->asistencias;
+                }
+
+                $productividad = bcdiv($resEmpleado[0]->salario_productividad, '1', 2);
+
+                $s_productividad = '';
+                if ($asistencias < 7) {
+                    $s_productividad = $productividad / 6 * ($asistencias);
+                    $totalEsperado = $totalEsperado +  $s_productividad;
+                } else {
+                    $s_productividad = $productividad;
+                    $totalEsperado = $totalEsperado +  $s_productividad;
+                }
+
+                if ($resNomina[0]->complemento != $this->complemento_) {
+                    $complemento = $this->complemento_;
+                } else {
+                    $complemento = bcdiv($resNomina[0]->complemento, '1', 2);
+                }
+
+                $s_doce = '';
+                if ($asistencias < 7) {
+                    $s_doce = $resEmpleado[0]->bono_doce / 6 * ($asistencias);
+                    $totalEsperado = $totalEsperado +  $s_doce;
+                } else {
+                    $s_doce = $resEmpleado[0]->bono_doce;
+                    $totalEsperado = $totalEsperado +  $s_doce;
+                }
+
+                $diario = bcdiv($resNomina[0]->diario, '1', 2);
+                $extras = bcdiv($resNomina[0]->extras, '1', 2);
+
+                //total esperado
+                $totalEsperado = $totalEsperado + $resEmpleado[0]->salario_diario * $asistencias;
+                $totalEsperado = $totalEsperado + $extras;
+                $totalEsperado = $totalEsperado + $complemento;
+
+                $total = $totalEsperado;
+                //correccion de comedor 
+                if ($resNomina[0]->comedor != $this->comedor_) {
+                    $comedor = $this->comedor_;
+                    $totalRetenciones = $totalRetenciones + $comedor;
+                } else {
+                    $comedor = $resNomina[0]->comedor;
+                    $totalRetenciones = $totalRetenciones + $comedor;
+                }
+
+                $ahorro = $resNomina[0]->ahorro;
+                $totalRetenciones = $totalRetenciones + $ahorro;
+
+                $prestamos = bcdiv($resNomina[0]->prestamos, '1', 2);
+                $totalRetenciones = $totalRetenciones + $prestamos;
+
+                $fonacot = bcdiv($resNomina[0]->fonacot, '1', 2);
+                $totalRetenciones = $totalRetenciones + $fonacot;
+
+                $infonavit = bcdiv($resNomina[0]->infonavit, '1', 2);
+                $totalRetenciones = $totalRetenciones + $infonavit;
+
+                $otros = bcdiv($resNomina[0]->otros, '1', 2);
+                $totalRetenciones = $totalRetenciones + $otros;
+
+                $total_r = bcdiv($totalRetenciones, '1', 2);
+                $total_p = bcdiv($totalEsperado - $totalRetenciones, '1', 2);
+
+                $sqlInserNominaEdit = "INSERT INTO `nomina_final_edit`
+                    (`id_nomina`,`id_empleado`,`nombre`,`asistencia`,`puntualidad`,`productividad`,`doce`,`complemento`,`diario`,`faltas`,
+                    `asistencias`,`extras`,`total`,`comedor`,`ahorro`,`prestamos`,`fonacot`,`infonavit`,
+                    `otros`,`total_r`,`total_p`,`fecha`,`id_usuario_p`,`estatus_final_edit`)
+                    VALUES
+                    ('{$this->id_}','{$this->id_empleado_}','{$nombre}','{$asistencia}','{$puntualidad}','{$productividad}','{$s_doce}', 
+                    '{$complemento}','{$diario}','{$faltas}','{$asistencias}','{$extras}','{$total}','{$comedor}','{$ahorro}',
+                    '{$prestamos}','{$fonacot}','{$infonavit}','{$otros}','{$total_r}','{$total_p}','{$resNomina[0]->fecha}','{$_SESSION[$this->NombreSesion]->id}','1')";
+                $bResultado = $this->NonQuery($sqlInserNominaEdit);
+            }
+        }
+        return $bResultado;
     }
 
     public function Agregar()
     {
-
-
         $sql = "insert into nominas
                 (`id`,`fecha`,`estatus`)
                 values
@@ -449,7 +763,177 @@ class nominas extends AW
 
         $this->id = $res[0]->id;
 
+        if ($bResultado && !empty($this->id)) {
+            $resNomina = $this->Nomina($this->id);
+
+            if (count($resNomina) > 0) {
+                foreach ($resNomina as $idx => $campo) {
+                    $totalEsperado = 0;
+                    $totalRetenciones = 0;
+                    $dias_vacaciones = 0;
+                    if ($campo->daysVaca != "" && $campo->inicio_vacaci != "" && $campo->fin_vacaci != "") {
+                        $dias_vacaciones = $this->DiasVacacion($campo->daysVaca, $campo->fecha, $campo->inicio_vacaci, $campo->fin_vacaci);
+                    }
+
+                    if ($campo->id_horario == "16"){
+                        $campo->dias_laborados = $campo->dias_laborados + 1;    
+                    }
+
+                    $campo->dias_laborados = $campo->dias_laborados + $campo->dias_laborados1;
+                    if ($campo->dias_laborados > 0 && $campo->dias_laborados1 > 0 ) {
+                        $campo->dias_laborados = $campo->dias_laborados + 1;
+                    }
+
+                    if ($dias_vacaciones > 0) {
+                        $campo->dias_laborados = $campo->dias_laborados + $dias_vacaciones;
+                        if ($dias_vacaciones > 5) {
+                            $campo->dias_laborados = $campo->dias_laborados + 1;
+                        }
+                    }
+                    //vareables para insert
+                    $nombre = ucwords($campo->ape_paterno . " " . $campo->ape_materno . " " . $campo->nombres);
+
+                    $asistencia = "0.00";
+                    if ($campo->dias_laborados > 6) {
+                        $asistencia = bcdiv($campo->salario_asistencia, '1', 2);
+                        $totalEsperado = $totalEsperado +  $asistencia;
+                    }
+
+                    if ($campo->quitar_bonos >= 1 || $campo->dias_laborados < 7) {
+                        $puntualidad = "0.00";
+                    } else {
+                        $puntualidad = bcdiv($campo->salario_puntualidad, '1', 2);
+                        $totalEsperado = $totalEsperado + $puntualidad;
+                    }
+
+                    $productividad = bcdiv($campo->salario_productividad, '1', 2);
+
+                    $complemento = bcdiv($campo->complemento_sueldo, '1', 2);
+
+                    $diario = bcdiv($campo->salario_diario, '1', 2);
+
+                    $faltas = (7 - $campo->dias_laborados);
+
+                    $asistencias = $campo->dias_laborados;
+
+                    $extras = bcdiv($campo->horas_extras, '1', 2);
+                    //total esperado
+
+                    $s_productividad = '';
+                    if ($asistencias < 7) {
+                        $s_productividad = $productividad / 6;
+                        $s_productividad = $s_productividad * ($asistencias - 1);
+                        $totalEsperado = $totalEsperado +  $s_productividad;
+                    } else {
+                        $s_productividad = $productividad;
+                        $totalEsperado = $totalEsperado +  $s_productividad;
+                    }
+
+                    $s_doce = '';
+                    if ($asistencias < 7) {
+                        $s_doce = $campo->bono_doce / 6;
+                        $s_doce = $s_doce * ($asistencias - 1);
+                        $totalEsperado = $totalEsperado +  $s_doce;
+                    } else {
+                        $s_doce = $campo->bono_doce;
+                        $totalEsperado = $totalEsperado +  $s_doce;
+                    }
+
+                    $totalEsperado = $totalEsperado + $diario * $asistencias;
+                    $totalEsperado = $totalEsperado + $complemento;
+                    $totalEsperado = $totalEsperado + $extras;
+                    $vacaciones = 0.00;
+                    if (!empty($campo->vacaciones)) {
+                        $vacaciones = $campo->vacaciones;
+                        $totalEsperado = $totalEsperado + $campo->vacaciones;
+                    }
+
+                    $total = $totalEsperado;
+
+                    $comedor = "0.00";
+                    if (!empty($campo->comedor)) {
+                        $comedor = $campo->comedor;
+                        $totalRetenciones = $totalRetenciones + $comedor;
+                    }
+                    $ahorro = "0.00";
+                    if ($campo->estatusAhorro == 1) {
+                        $ahorro = $campo->monto;
+                        $totalRetenciones = $totalRetenciones + $ahorro;
+                    }
+                    $prestamos = bcdiv($campo->prestamos, '1', 2);
+                    $totalRetenciones = $totalRetenciones + $prestamos;
+
+                    $fonacot = bcdiv($campo->fonacot, '1', 2);
+                    $totalRetenciones = $totalRetenciones + $fonacot;
+
+                    $infonavit = bcdiv($campo->infonavit, '1', 2);
+                    $totalRetenciones = $totalRetenciones + $infonavit;
+
+                    $otros = bcdiv($campo->otros_descuentos, '1', 2);
+                    $totalRetenciones = $totalRetenciones + $otros;
+
+                    $total_r = bcdiv($totalRetenciones, '1', 2);
+                    $total_p = bcdiv($totalEsperado - $totalRetenciones, '1', 2);
+
+                    $sqlInserNomina = "INSERT INTO `nomina_final`
+                        (`id_nomina`,`id_empleado`,`nombre`,`asistencia`,`puntualidad`,`productividad`,`doce`,`complemento`,`diario`,`faltas`,
+                        `asistencias`,`extras`,`vacaciones`,`total`,`comedor`,`ahorro`,`prestamos`,`fonacot`,`infonavit`,
+                        `otros`,`total_r`,`total_p`,`fecha`)
+                        VALUES
+                        ('{$this->id}','{$campo->id_empleado}','{$nombre}','{$asistencia}','{$puntualidad}','{$s_productividad}','{$s_doce}',
+                        '{$complemento}','{$diario}','{$faltas}','{$asistencias}','{$extras}','{$vacaciones}','{$total}','{$comedor}','{$ahorro}',
+                        '{$prestamos}','{$fonacot}','{$infonavit}','{$otros}','{$total_r}','{$total_p}','{$campo->fecha}')";
+                    $bResultado = $this->NonQuery($sqlInserNomina);
+                }
+            }
+        }
         return $bResultado;
+    }
+    public function AddNomina() {
+        $sqlSelect = "select id from nomina_final where id_nomina='{$this->id_nomina}' and id_empleado='{$this->id_empleado}'";
+        $resSelect = $this->Query($sqlSelect);
+
+        if (count($resSelect) > 0) {
+            $sql = "UPDATE `renova`.`nomina_final`
+        SET
+        `asistencia` = '{$this->asistencia}',
+        `puntualidad` = '{$this->puntualidad}',
+        `productividad` = '{$this->productividad}',
+        `doce` = '{$this->doce}',
+        `complemento` = '{$this->complemento}',
+        `bono_viaje` = '{$this->bono_viaje}' ,
+        `diario` = '{$this->diario}',
+        `faltas` = '{$this->faltas}',
+        `asistencias` = '{$this->asistencias}',
+        `extras` = '{$this->extras}',
+        `total` = '{$this->total}',
+        `comedor` = '{$this->comedor}',
+        `ahorro` = '{$this->ahorro}',
+        `prestamos` = '{$this->prestamos}',
+        `fonacot` = '{$this->fonacot}',
+        `infonavit` = '{$this->infonavit}',
+        `otros` = '{$this->otros}',
+        `total_r` = '{$this->total_r}',
+        `total_p` = '{$this->total_p}'
+
+        WHERE `id_nomina` = '{$this->id_nomina}' and id_empleado = '{$this->id_empleado}'";
+        $result = $this->NonQuery($sql);
+        return $result;
+        } else {
+            $sqlInsert="INSERT INTO `renova`.`nomina_final`
+            (`id_nomina`,`id_empleado`,`nombre`,`asistencia`, `puntualidad`, `productividad`,`doce`,
+            `complemento`,`diario`,`faltas`,`asistencias`, `extras`,`total`,`comedor`,`ahorro`,`prestamos`,
+            `fonacot`,`infonavit`, `otros`,`total_r`,`total_p`,`fecha`,`estatus_final`)
+            VALUES
+            (
+            '{$this->id_nomina}','{$this->id_empleado}','{$this->nombre}','{$this->asistencia}','{$this->puntualidad}',
+            '{$this->productividad}','{$this->doce}','{$this->complemento}','{$this->diario}','{$this->faltas}',
+            '{$this->asistencias}','{$this->extras}','{$this->total}','{$this->comedor}','{$this->ahorro}',
+            '{$this->prestamos}','{$this->fonacot}','{$this->infonavit}','{$this->otros}','{$this->total_r}',
+            '{$this->total_p}','{$this->fecha}','{$this->estatus_final}')";
+            $bResultado = $this->NonQuery($sqlInsert);
+            return $bResultado;
+        }
     }
 
     public function Guardar()
