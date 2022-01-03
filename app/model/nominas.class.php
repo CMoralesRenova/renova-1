@@ -395,31 +395,42 @@ class nominas extends AW
             for ($i = 0; $i<=$num; $i++) {
                 $sqlFecha = "SELECT DATE_FORMAT(DATE_ADD('{$inicio_vacaci}', INTERVAL $i DAY), '%Y-%m-%d') as fecha";
                 $resultFecha = parent::Query($sqlFecha);
+                
+                $sqlFEstivos = "SELECT * FROM festivos where fecha = '{$resultFecha[0]->fecha}'";
+                $res = $this->Query($sqlFEstivos);
 
-                if ($resultFecha[0]->fecha == $fecha) {
-                    $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$inicio_vacaci}', INTERVAL $i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
-                    $result = parent::Query($sql);
-                    $total_dias = $total_dias + $result[0]->dia;
-                    break;
-                } else {
-                    $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$inicio_vacaci}', INTERVAL $i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
-                    $result = parent::Query($sql);
-                    $total_dias = $total_dias + $result[0]->dia;
+                if (count($res) <= 0) {
+                    if ($resultFecha[0]->fecha == $fecha) {
+                        $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$inicio_vacaci}', INTERVAL $i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
+                        $result = parent::Query($sql);
+                        $total_dias = $total_dias + $result[0]->dia;
+                        break;
+                    } else {
+                        $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$inicio_vacaci}', INTERVAL $i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
+                        $result = parent::Query($sql);
+                        $total_dias = $total_dias + $result[0]->dia;
+                    }
                 }
             }
         } else if ($inicio_vacaci <= $fecha  && $fin_vacaci >= $fecha  ) {
             for ($i = 0; $i<=$num; $i++) {
                 $sqlFecha = "SELECT DATE_FORMAT(DATE_ADD('{$fecha_fin}', INTERVAL $i DAY), '%Y-%m-%d') as fecha";
                 $resultFecha = parent::Query($sqlFecha);
-                if ($resultFecha[0]->fecha == $fecha) {
-                    $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$fecha_fin}', INTERVAL $i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
-                    $result = parent::Query($sql);
-                    $total_dias = $total_dias + $result[0]->dia;
-                    break;
-                } else {
-                    $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$fecha_fin}', INTERVAL $i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
-                    $result = parent::Query($sql);
-                    $total_dias = $total_dias + $result[0]->dia;
+
+                $sqlFEstivos = "SELECT * FROM festivos where fecha = '{$resultFecha[0]->fecha}'";
+                $res = $this->Query($sqlFEstivos);
+
+                if (count($res) <= 0) {
+                    if ($resultFecha[0]->fecha == $fecha) {
+                        $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$fecha_fin}', INTERVAL $i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
+                        $result = parent::Query($sql);
+                        $total_dias = $total_dias + $result[0]->dia;
+                        break;
+                    } else {
+                        $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$fecha_fin}', INTERVAL $i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
+                        $result = parent::Query($sql);
+                        $total_dias = $total_dias + $result[0]->dia;
+                    }
                 }
             }
         } else if ($fin_vacaci >= $fecha_fin && $fin_vacaci <= $fecha  ) {
@@ -428,17 +439,22 @@ class nominas extends AW
             }
             for ($i = 0; $i<=$num; $i++) {
                 $sqlFecha = "SELECT DATE_FORMAT(DATE_ADD('{$fin_vacaci}', INTERVAL -$i DAY), '%Y-%m-%d') as fecha";
-
                 $resultFecha = parent::Query($sqlFecha);
-                if ($resultFecha[0]->fecha <= $fecha_fin ) {
-                    $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$fin_vacaci}', INTERVAL -$i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
-                    $result = parent::Query($sql);
-                    $total_dias = $total_dias + $result[0]->dia;
-                    break;
-                } else if ($resultFecha[0]->fecha >= $fecha_fin ) {
-                    $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$fin_vacaci}', INTERVAL -$i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
-                    $result = parent::Query($sql);
-                    $total_dias = $total_dias + $result[0]->dia;
+
+                $sqlFEstivos = "SELECT * FROM festivos where fecha = '{$resultFecha[0]->fecha}'";
+                $res = $this->Query($sqlFEstivos);
+
+                if (count($res) <= 0) {
+                    if ($resultFecha[0]->fecha == $fecha_fin ) {
+                        $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$fin_vacaci}', INTERVAL -$i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
+                        $result = parent::Query($sql);
+                        $total_dias = $total_dias + $result[0]->dia;
+                        break;
+                    } else if ($resultFecha[0]->fecha >= $fecha_fin ) {
+                        $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$fin_vacaci}', INTERVAL -$i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
+                        $result = parent::Query($sql);
+                        $total_dias = $total_dias + $result[0]->dia;
+                    }
                 }
             }
         } 
@@ -510,7 +526,6 @@ class nominas extends AW
             fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha)) AS comedor,
             ((SELECT pago_prima FROM vacaciones WHERE id_empleado = c.id AND fecha_pago 
             BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha limit 1)) AS vacaciones,
-
             ((SELECT inicio_vacaci
             FROM vacaciones where id_empleado = c.id and
             (inicio_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha or 
@@ -524,7 +539,8 @@ class nominas extends AW
             (inicio_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha or 
             fin_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha) )) as daysVaca,
             ((SELECT count(id) FROM festivos where fecha 
-            between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha))as festivos
+            between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha))as festivos,
+            0 as NominaAdministrativa
             FROM nominas a 
             LEFT JOIN empleados c ON c.id
             LEFT JOIN horas_extras AS d ON c.id = d.id_empleado
@@ -613,7 +629,8 @@ class nominas extends AW
             (inicio_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha or 
             fin_vacaci between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha) )) as daysVaca,
             ((SELECT count(id) FROM festivos where fecha 
-            between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha))as festivos
+            between DATE_ADD(a.fecha, INTERVAL - 6 DAY) and a.fecha))as festivos,
+            1 as NominaAdministrativa
             FROM nominas a 
             LEFT JOIN empleados c ON c.id
             LEFT JOIN horas_extras AS d ON c.id = d.id_empleado
@@ -776,46 +793,36 @@ class nominas extends AW
                     $totalRetenciones = 0;
                     $dias_vacaciones = 0;
 
-                    if ($campo->daysVaca != "" && $campo->inicio_vacaci != "" && $campo->fin_vacaci != "") {
+                    if ($campo->daysVaca != "" && $campo->inicio_vacaci != "" && $campo->fin_vacaci != "" && $campo->NominaAdministrativa == '0') {
                         $dias_vacaciones = $this->DiasVacacion($campo->daysVaca, $campo->fecha, $campo->inicio_vacaci, $campo->fin_vacaci);
-                        print_r($dias_vacaciones." numero de dias de vacaciones ");
-                        print"<br>";
                     }
 
-                    if ($campo->id_horario == "16" ){
+                    if ($campo->id_horario == "16" && $campo->festivos <= 1){
                         $campo->dias_laborados = $campo->dias_laborados + 1;    
                     }
 
-                    print_r($campo->dias_laborados." dIAS LABORADOS ");
-                    print"<br>";
                     if ($campo->dias_laborados > 0 || $campo->dias_laborados1 > 0 ) {
                         $campo->dias_laborados = $campo->dias_laborados + $campo->dias_laborados1;
                         $campo->dias_laborados = $campo->dias_laborados + 1;
                     }
-                    print_r($campo->dias_laborados." dIAS LABORADOS mas 1");
-                    print"<br>";
-                    if ($dias_vacaciones > 0) {
+
+                    if ($dias_vacaciones > 0 && $campo->NominaAdministrativa == "0") {
                         $campo->dias_laborados = $campo->dias_laborados + $dias_vacaciones;
-                        if ($dias_vacaciones > 5) {
+                        if ($dias_vacaciones > 5 && $dias_vacaciones < 6) {
                             $campo->dias_laborados = $campo->dias_laborados + 1;
-                            print_r($campo->dias_laborados." dias mas el domingo");
-                            print"<br>";
-                        } else {
-                            $campo->dias_laborados = $campo->dias_laborados + $campo->festivos;
-                            print_r($campo->dias_laborados." dias festivos sumados ".$campo->festivos);
-                            print"<br>";
-                        }
-                    } else {
-                        if ($campo->id_horario == "16" && $campo->dias_laborados >= 7){ 
 
                         } else {
                             $campo->dias_laborados = $campo->dias_laborados + $campo->festivos;
-                            print_r($campo->dias_laborados." 
-                            SOLO dias festivos ".$campo->ape_paterno . " " . $campo->ape_materno . " " . $campo->nombres." ".$campo->festivos);
-                            print"<br>";
+                        }
+                    } else {
+                        if ($campo->id_horario == "16" && $campo->dias_laborados >= 6 && $campo->NominaAdministrativa == "0") { 
+
+                        } else {
+                            if ($campo->NominaAdministrativa == "0") {
+                                $campo->dias_laborados = $campo->dias_laborados + $campo->festivos;
+                            }
                         }
                     }
-                    print"siguiente /////////////////////////////////// <br>";
                     //vareables para insert
                     $nombre = ucwords($campo->ape_paterno . " " . $campo->ape_materno . " " . $campo->nombres);
 

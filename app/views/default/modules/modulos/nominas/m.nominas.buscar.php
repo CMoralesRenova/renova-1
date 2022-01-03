@@ -32,7 +32,7 @@ $fecha_actual = date("d-m-Y");
                         Empty(elemento.id);
                         frmTrue = false;
                     } else {
-                       /* if (ValidarFechas($("#fecha").val())) {
+                        /*if (ValidarFechas($("#fecha").val())) {
                         frmTrue = true;
                         } else {
                             Alert("", "La fecha seleccionada debe ser mayor o igual a la actual", "warning", 900, false);
@@ -42,7 +42,7 @@ $fecha_actual = date("d-m-Y");
                     }
                 }
             });
-
+//4152313789414815
             if (frmTrue == true) {
                 $.ajax({
                     data: $('#frmFormulario_').submit(),
