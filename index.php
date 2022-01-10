@@ -76,6 +76,8 @@ if ($action === "login") {
         $mvc_default->vacaciones();
     }else if ($action === "ubicacion_checador") {
         $mvc_default->ubicacion_checador();
+    }else if ($action === "festivos") {
+        $mvc_default->festivos();
     }else if ($action === "cerrar_sesion") {
         $mvc->CerrarSesion();
     }else if ($action === "acceso_denegado") {

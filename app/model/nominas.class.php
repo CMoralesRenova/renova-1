@@ -391,6 +391,7 @@ class nominas extends AW
     {   
         $total_dias = 0;
         $fecha_fin = date("Y-m-d",strtotime($fecha."- 6 days"));
+
         if ($inicio_vacaci >= $fecha_fin  && $inicio_vacaci <= $fecha  ) {
             for ($i = 0; $i<=$num; $i++) {
                 $sqlFecha = "SELECT DATE_FORMAT(DATE_ADD('{$inicio_vacaci}', INTERVAL $i DAY), '%Y-%m-%d') as fecha";
@@ -460,7 +461,7 @@ class nominas extends AW
         } 
         return $total_dias;
     }
-
+    
     public function Nomina($id)
     {
         $sqlNomina = "SELECT 
@@ -490,7 +491,7 @@ class nominas extends AW
             fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS dias_laborados1,
 
             (SELECT COUNT(quitar_bonos) FROM  asistencia WHERE id_empleado = c.id
-            and quitar_bonos != null and quitar_bonos > 0
+            and quitar_bonos > 0
             AND fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS quitar_bonos,
             
             ((SELECT SUM(horas_extras) FROM horas_extras WHERE id_empleado = c.id AND estatus = 2
@@ -499,29 +500,21 @@ class nominas extends AW
             ((SELECT COUNT(dia) + 1 FROM asistencia WHERE id_empleado = c.id AND estatus_entrada = 1 AND
             fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) * c.salario_diario) AS esperado,
             
-            (SELECT  SUM(monto_por_semana) FROM  otros WHERE id_empleado = c.id
+            (SELECT  SUM(monto_por_semana) FROM  otros WHERE estatus = 1 and id_empleado = c.id
             AND fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS otros_descuentos,
             
-            (SELECT monto_por_semana FROM prestamos WHERE id_empleado = c.id AND 
+            (SELECT monto_por_semana FROM prestamos WHERE estatus = 1 and id_empleado = c.id AND 
             fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS prestamos,
             
-            (SELECT monto_por_semana FROM fonacot WHERE id_empleado = c.id AND 
+            (SELECT monto_por_semana FROM fonacot WHERE estatus = 1 and id_empleado = c.id AND 
             fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS fonacot,
             
-            (SELECT id FROM fonacot WHERE id_empleado = c.id AND 
-            fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS id_fonacot,
-            
-            (SELECT monto_por_semana FROM infonavit WHERE id_empleado = c.id AND 
+            (SELECT monto_por_semana FROM infonavit WHERE estatus = 1 and id_empleado = c.id AND 
             fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS infonavit,
-            
-            (SELECT id FROM infonavit WHERE id_empleado = c.id AND 
-            fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS id_infonavit,
+
             j.monto,
             j.frecuencia,
             j.estatus AS estatusAhorro,
-            f.id AS id_otros,
-            g.id AS id_prestamo,
-            j.id AS id_ahorros,
             ((SELECT SUM(precio_platillo) FROM comedor WHERE id_empleado = c.id AND 
             fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha)) AS comedor,
             ((SELECT pago_prima FROM vacaciones WHERE id_empleado = c.id AND fecha_pago 
@@ -578,7 +571,7 @@ class nominas extends AW
             1 AS dias_laborados,
             5 AS dias_laborados1,
             (SELECT COUNT(quitar_bonos) FROM  asistencia WHERE id_empleado = c.id
-            and quitar_bonos != null and quitar_bonos > 0
+            and quitar_bonos > 0
             AND fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS quitar_bonos,
             
             ((SELECT SUM(horas_extras) FROM horas_extras WHERE id_empleado = c.id AND estatus = 2
@@ -587,29 +580,20 @@ class nominas extends AW
             ((SELECT COUNT(dia) + 1 FROM asistencia WHERE id_empleado = c.id AND estatus_entrada = 1 AND
             fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) * c.salario_diario) AS esperado,
             
-            (SELECT  SUM(monto_por_semana) FROM  otros WHERE id_empleado = c.id
+            (SELECT  SUM(monto_por_semana) FROM  otros WHERE estatus = 1 and id_empleado = c.id
             AND fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS otros_descuentos,
             
-            (SELECT monto_por_semana FROM prestamos WHERE id_empleado = c.id AND 
+            (SELECT monto_por_semana FROM prestamos WHERE estatus = 1 and id_empleado = c.id AND 
             fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS prestamos,
             
-            (SELECT monto_por_semana FROM fonacot WHERE id_empleado = c.id AND 
+            (SELECT monto_por_semana FROM fonacot WHERE estatus = 1 and id_empleado = c.id AND 
             fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS fonacot,
             
-            (SELECT id FROM fonacot WHERE id_empleado = c.id AND 
-            fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS id_fonacot,
-            
-            (SELECT monto_por_semana FROM infonavit WHERE id_empleado = c.id AND 
+            (SELECT monto_por_semana FROM infonavit WHERE estatus = 1 and id_empleado = c.id AND 
             fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS infonavit,
-            
-            (SELECT id FROM infonavit WHERE id_empleado = c.id AND 
-            fecha_pago BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha) AS id_infonavit,
             j.monto,
             j.frecuencia,
             j.estatus AS estatusAhorro,
-            f.id AS id_otros,
-            g.id AS id_prestamo,
-            j.id AS id_ahorros,
             ((SELECT SUM(precio_platillo) FROM comedor WHERE id_empleado = c.id AND 
             fecha BETWEEN DATE_ADD(a.fecha, INTERVAL - 6 DAY) AND a.fecha)) AS comedor,
 
@@ -699,7 +683,7 @@ class nominas extends AW
 
                 $s_productividad = '';
                 if ($asistencias < 7) {
-                    $s_productividad = $productividad / 6 * ($asistencias);
+                    $s_productividad = $productividad / 6 * ($asistencias - 1);
                     $totalEsperado = $totalEsperado +  $s_productividad;
                 } else {
                     $s_productividad = $productividad;
@@ -714,7 +698,7 @@ class nominas extends AW
 
                 $s_doce = '';
                 if ($asistencias < 7) {
-                    $s_doce = $resEmpleado[0]->bono_doce / 6 * ($asistencias);
+                    $s_doce = $resEmpleado[0]->bono_doce / 6 * ($asistencias - 1);
                     $totalEsperado = $totalEsperado +  $s_doce;
                 } else {
                     $s_doce = $resEmpleado[0]->bono_doce;
@@ -762,7 +746,7 @@ class nominas extends AW
                     `asistencias`,`extras`,`total`,`comedor`,`ahorro`,`prestamos`,`fonacot`,`infonavit`,
                     `otros`,`total_r`,`total_p`,`fecha`,`id_usuario_p`,`estatus_final_edit`)
                     VALUES
-                    ('{$this->id_}','{$this->id_empleado_}','{$nombre}','{$asistencia}','{$puntualidad}','{$productividad}','{$s_doce}', 
+                    ('{$this->id_}','{$this->id_empleado_}','{$nombre}','{$asistencia}','{$puntualidad}','{$s_productividad}','{$s_doce}', 
                     '{$complemento}','{$diario}','{$faltas}','{$asistencias}','{$extras}','{$total}','{$comedor}','{$ahorro}',
                     '{$prestamos}','{$fonacot}','{$infonavit}','{$otros}','{$total_r}','{$total_p}','{$resNomina[0]->fecha}','{$_SESSION[$this->NombreSesion]->id}','1')";
                 $bResultado = $this->NonQuery($sqlInserNominaEdit);
@@ -773,6 +757,10 @@ class nominas extends AW
 
     public function Agregar()
     {
+        $bResultado = false;
+        //start transaction
+        $this->BeginTransaction("START TRANSACTION;");
+
         $sql = "insert into nominas
                 (`id`,`fecha`,`estatus`)
                 values
@@ -786,8 +774,9 @@ class nominas extends AW
 
         if ($bResultado && !empty($this->id)) {
             $resNomina = $this->Nomina($this->id);
-
+            $countRow = 0;
             if (count($resNomina) > 0) {
+                
                 foreach ($resNomina as $idx => $campo) {
                     $totalEsperado = 0;
                     $totalRetenciones = 0;
@@ -797,22 +786,29 @@ class nominas extends AW
                         $dias_vacaciones = $this->DiasVacacion($campo->daysVaca, $campo->fecha, $campo->inicio_vacaci, $campo->fin_vacaci);
                     }
 
-                    if ($campo->id_horario == "16" && $campo->festivos <= 1){
+                    if ($campo->id_horario == "16" && $campo->festivos <= 1) {
                         $campo->dias_laborados = $campo->dias_laborados + 1;    
                     }
 
-                    if ($campo->dias_laborados > 0 || $campo->dias_laborados1 > 0 ) {
+                    if ($campo->dias_laborados > 0 || $campo->dias_laborados1 > 0) {
                         $campo->dias_laborados = $campo->dias_laborados + $campo->dias_laborados1;
                         $campo->dias_laborados = $campo->dias_laborados + 1;
                     }
+                    
 
                     if ($dias_vacaciones > 0 && $campo->NominaAdministrativa == "0") {
-                        $campo->dias_laborados = $campo->dias_laborados + $dias_vacaciones;
-                        if ($dias_vacaciones > 5 && $dias_vacaciones < 6) {
-                            $campo->dias_laborados = $campo->dias_laborados + 1;
 
+                        $campo->dias_laborados = $campo->dias_laborados + $dias_vacaciones;
+                        if ($campo->dias_laborados >= 0 && $campo->dias_laborados <= 6) {
+                            $campo->dias_laborados = $campo->dias_laborados + $campo->festivos;
+                            if ($campo->dias_laborados < 7) {
+                                $campo->dias_laborados = $campo->dias_laborados + 1;
+                            }
                         } else {
                             $campo->dias_laborados = $campo->dias_laborados + $campo->festivos;
+                        }
+                        if ($campo->dias_laborados > 5 && $campo->dias_laborados < 7) {
+                            $campo->dias_laborados = $campo->dias_laborados +1;
                         }
                     } else {
                         if ($campo->id_horario == "16" && $campo->dias_laborados >= 6 && $campo->NominaAdministrativa == "0") { 
@@ -854,8 +850,7 @@ class nominas extends AW
 
                     $s_productividad = '';
                     if ($asistencias < 7) {
-                        $s_productividad = $productividad / 6;
-                        $s_productividad = $s_productividad * ($asistencias - 1);
+                        $s_productividad = $productividad / 6 * ($asistencias - 1);
                         $totalEsperado = $totalEsperado +  $s_productividad;
                     } else {
                         $s_productividad = $productividad;
@@ -864,8 +859,7 @@ class nominas extends AW
 
                     $s_doce = '';
                     if ($asistencias < 7) {
-                        $s_doce = $campo->bono_doce / 6;
-                        $s_doce = $s_doce * ($asistencias - 1);
+                        $s_doce = $campo->bono_doce / 6  * ($asistencias - 1);
                         $totalEsperado = $totalEsperado +  $s_doce;
                     } else {
                         $s_doce = $campo->bono_doce;
@@ -908,7 +902,8 @@ class nominas extends AW
                     $total_r = bcdiv($totalRetenciones, '1', 2);
                     $total_p = bcdiv($totalEsperado - $totalRetenciones, '1', 2);
 
-                    $sqlInserNomina = "INSERT INTO `nomina_final`
+                    try {
+                        $sqlInserNomina = "INSERT INTO `nomina_final`
                         (`id_nomina`,`id_empleado`,`nombre`,`asistencia`,`puntualidad`,`productividad`,`doce`,`complemento`,`diario`,`faltas`,
                         `asistencias`,`extras`,`vacaciones`,`total`,`comedor`,`ahorro`,`prestamos`,`fonacot`,`infonavit`,
                         `otros`,`total_r`,`total_p`,`fecha`)
@@ -916,12 +911,30 @@ class nominas extends AW
                         ('{$this->id}','{$campo->id_empleado}','{$nombre}','{$asistencia}','{$puntualidad}','{$s_productividad}','{$s_doce}',
                         '{$complemento}','{$diario}','{$faltas}','{$asistencias}','{$extras}','{$vacaciones}','{$total}','{$comedor}','{$ahorro}',
                         '{$prestamos}','{$fonacot}','{$infonavit}','{$otros}','{$total_r}','{$total_p}','{$campo->fecha}')";
-                    $bResultado = $this->NonQuery($sqlInserNomina);
+                        if ($this->NonQuery($sqlInserNomina)) {
+                            $countRow++;
+                        } else {
+                            $this->BeginTransaction("ROLLBACK;");
+                        }
+                    } catch (\Exception $e) {
+                        $this->BeginTransaction("ROLLBACK;");
+                    }
+                    
                 }
+            }
+            if (count($resNomina) == $countRow) {
+                $this->BeginTransaction("COMMIT;");
+                $bResultado = true;
+            } else {
+                $rest = $res[0]->id; 
+                $this->NonQuery("DELETE FROM `nominas` WHERE id = '{$res[0]->id}'");
+                $this->NonQuery("ALTER TABLE `nominas` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=$rest ");
+                $this->BeginTransaction("ROLLBACK;");
+                $bResultado = false;
             }
         }
         return $bResultado;
-    }
+}
     public function AddNomina() {
         $sqlSelect = "select id from nomina_final where id_nomina='{$this->id_nomina}' and id_empleado='{$this->id_empleado}'";
         $resSelect = $this->Query($sqlSelect);

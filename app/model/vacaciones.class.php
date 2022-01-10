@@ -113,9 +113,35 @@ class vacaciones extends AW
         where anos = '{$anos}')
         union all
         (select dias_restantes from  vacaciones
-        where ano = '{$anos}' and id_empleado = '{$id_empleado}')";
-
+        where ano = '{$anos}' and id_empleado = '{$id_empleado}' order by id desc limit 1)";
+        //print_r($sql);
         return $this->Query($sql);
+    }
+
+    public function DiasVacacion($num,$inicio_vacaci, $fin_vacaci)
+    {   
+        $total_dias = 0;
+            for ($i = 0; $i<=$num; $i++) {
+                $sqlFecha = "SELECT DATE_FORMAT(DATE_ADD('{$inicio_vacaci}', INTERVAL $i DAY), '%Y-%m-%d') as fecha";
+                $resultFecha = parent::Query($sqlFecha);
+
+                $sqlFEstivos = "SELECT * FROM festivos where fecha = '{$resultFecha[0]->fecha}'";
+                $res = $this->Query($sqlFEstivos);
+
+                if (count($res) <= 0) {
+                    if ($resultFecha[0]->fecha == $fin_vacaci) {
+                        $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$inicio_vacaci}', INTERVAL $i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
+                        $result = parent::Query($sql);
+                        $total_dias = $total_dias + $result[0]->dia;
+                        break;
+                    } else {
+                        $sql = "SELECT if( DAYOFWEEK(DATE_FORMAT(DATE_ADD('{$inicio_vacaci}', INTERVAL $i DAY), '%Y-%m-%d')) < 2, 0, 1) as dia";
+                        $result = parent::Query($sql);
+                        $total_dias = $total_dias + $result[0]->dia;
+                    }
+                }
+            }
+        return $total_dias;
     }
 
     public function Existe()
@@ -153,10 +179,10 @@ class vacaciones extends AW
 
         $sqlPagar = "";
         if (!empty($this->pagar)) {
-            $sqlPagar = "
+            $sqlPagar = ",
             pagar_dias='{$this->pagar_dias}',
             pagar_total = '{$this->pagar_total}',
-            pagar_concepto = '{$this->pagar_concepto}',";
+            pagar_concepto = '{$this->pagar_concepto}'";
         }
 
         $sql = " UPDATE `vacaciones`
@@ -165,15 +191,15 @@ class vacaciones extends AW
                 `dias_restantes` = '{$this->dias_restantes}',
                 `inicio_vacaci` = '{$this->inicio_vacaci}',
                 `fin_vacaci` = '{$this->fin_vacaci}',
-                `reingreso` = '{$this->reingreso}',
+                `reingreso` = '{$this->reingreso}'
                 {$sqlPagar}
-                `observaciones` = '{$this->observaciones}'
+                ,`observaciones` = '{$this->observaciones}'
         WHERE `id` = '{$this->id}';";
         //print_r($sql);
         $bResultado = $this->NonQuery($sql);
 
         if ($bResultado) {
-            if ($this->dias_restantes) {
+            if ($this->dias_restantes > 0) {
                 $fechaActual = date('Y-m-d');
                 if($fechaActual <= $fechaFinal) {
                     $sqlSiguiente = "INSERT INTO `renova`.`vacaciones`
@@ -182,8 +208,7 @@ class vacaciones extends AW
                     VALUES
                     ('{$this->id_empleado}','{$this->dias_correspondientes}','{$this->dias_restantes}','{$this->periodo_inicio}',
                     '{$this->periodo_fin}','{$this->pago_prima}','{$this->dias_pagados}','{$this->fecha_pago}',now(),'{$fechaFinal}','{$this->ano}')";
-
-                    $bResultado = $this->NonQuery($sqlSiguiente);
+                    return $bResultado = $this->NonQuery($sqlSiguiente);
                 }
             }
         }

@@ -186,3 +186,16 @@ function ValidarFechas(dato) {
     }
     return ret;
 }
+
+function is_numeric(value) {
+	return !isNaN(parseFloat(value)) && isFinite(value);
+}
+
+function is_negative_number(number=0){
+
+    if( (is_numeric(number)) && (number<0) ){
+        return true;
+    }else{
+        return false;
+    }
+}

@@ -100,6 +100,15 @@ class database extends Configuracion
     }
 
     // -----------------------------------------------------------------------------------
+    public function BeginTransaction($sql)
+    {
+        $this->IsConected();
+
+        $res = mysqli_query($this->Link, $sql);
+        return $res;
+    }
+
+    // -----------------------------------------------------------------------------------
     public function NonQuery($sql, $bGuardarBitacora = true)
     {
         $this->IsConected();
@@ -132,6 +141,7 @@ class database extends Configuracion
         return true;
     }
     // ------------------------------------------------------------------------------
+
 }
 
 ?>

@@ -51,7 +51,7 @@ class asistencia extends AW
     {
         $sqlEmpleado = "";
         if (!empty($this->id_empleado)) {
-            $sqlEmpleado = "and id_empleado = '{$this->id_empleado}' order by a.fecha asc";
+            $sqlEmpleado = " order by a.fecha asc";
         } else {
             $sqlEmpleado = "order by a.order desc limit 5";
         }

@@ -93,5 +93,8 @@ class mvc_controller_default extends mvc_controller {
     public function ubicacion_checador () {
         include_once("app/views/default/modules/catalogos/ubicacion_checador/m.ubicacion.buscar.php");
     }
+    public function festivos () {
+        include_once("app/views/default/modules/catalogos/festivos/m.festivos.buscar.php");
+    }
 }
 ?>

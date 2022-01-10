@@ -46,5 +46,19 @@ if ($accion == "GUARDAR") {
     } else {
         echo '0';
     }
+} else if ($accion == "DiasTotales") {
+    $oVacaciones = new vacaciones(true, $_POST);
+    $dias = addslashes(filter_input(INPUT_POST, "dias"));
+    $fecha_inicial = addslashes(filter_input(INPUT_POST, "fecha_inicial"));
+    $fecha_final = addslashes(filter_input(INPUT_POST, "fecha_final"));
+
+    $resultado = $oVacaciones->DiasVacacion($dias, $fecha_inicial, $fecha_final); 
+    
+    echo $resultado;
+    /*if (!empty($resultado[1]->dias)) {
+        echo $resultado[1]->dias;
+    } else {
+        echo '0';
+    }*/
 }
 ?>

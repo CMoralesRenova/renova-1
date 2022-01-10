@@ -71,6 +71,9 @@ $aPermisos = empty($oUsuario->perfiles_id) ? array() : explode("@", $oUsuario->p
                 <?php if ($oUsuario->ExistePermiso("empleados", $aPermisos) === true) { ?>
                     <a class='collapse-item' id="empleados">Empleados</a>
                 <?php } ?>
+                <?php if ($oUsuario->ExistePermiso("festivos", $aPermisos) === true) { ?>
+                    <a class='collapse-item' href='index.php?action=festivos'>Festivos</a>
+                <?php } ?>
                 <?php if ($oUsuario->ExistePermiso("proveedores", $aPermisos) === true) { ?>
                     <a class='collapse-item' href='index.php?action=proveedores'>Proveedores</a>
                 <?php } ?>

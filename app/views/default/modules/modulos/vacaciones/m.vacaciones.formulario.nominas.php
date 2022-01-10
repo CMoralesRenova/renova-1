@@ -222,17 +222,23 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
                                         var dias_pagados = <?= $oVacaciones->dias_pagados; ?> + 0;
                                         $("#dias_correspondientes").val(dias_correspondientes);
 
-                                        $("#dias_restantes").val(dias_correspondientes - dias_restantes);
-                                        $("#dias_restantes_1").val(dias_restantes);
+                                        if (dias_restantes <= 0) {
+                                            $("#dias_restantes").val(dias_correspondientes);
+                                            $("#dias_restantes_1").val(dias_correspondientes);
+                                            dias_restantes = dias_correspondientes;
+                                        } else {
+                                            $("#dias_restantes").val(dias_restantes);
+                                            $("#dias_restantes_1").val(dias_restantes);
+                                        }
 
-                                        diasOption = (dias_correspondientes - dias_restantes);
+                                        diasOption = (dias_restantes);
                                         if (diasOption > 1) {
                                             var options = '';
                                             options += "<option value=''>--SELECCIONE--</option>";
                                             for (var i = 1; i <= diasOption; i++) {
                                                 options += '<option value="' + i + '">' + i + '</option>';
                                             }
-                                            $("#dias_disfrutar").html(options);
+                                            $("#dias_disfrutar_view").html(options);
                                         }
 
                                         if (dias_correspondientes > 1) {
@@ -259,8 +265,47 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
     }
 
     function Restante() {
-        restante = $("#dias_correspondientes").val() - $("#dias_disfrutar").val() - $("#dias_restantes_1").val();
-        $("#dias_restantes").val(restante);
+        restante = $("#dias_restantes_1").val() - $("#dias_disfrutar").val();
+        if (is_negative_number(restante)) {
+            $("#btnGuardar").hide();
+            Alert("", 'Nose pueden seleccionar mas dias de los disponibles', "warning",1000, false);
+        } else {
+            $("#btnGuardar").show();
+            $("#dias_restantes").val(restante);
+        }
+    }
+    function contador_dias () {
+        var timeStart = new Date(document.getElementById("inicio_vacaci").value);
+        var timeEnd = new Date(document.getElementById("fin_vacaci").value);
+        var actualDate = new Date();
+        if (timeEnd > timeStart)
+        {
+            var diff = timeEnd.getTime() - timeStart.getTime();
+            dias_totales = Math.round(diff / (1000 * 60 * 60 * 24) + 1);
+
+            var jsonDatos = {
+                "fecha_inicial": $("#inicio_vacaci").val(),
+                "fecha_final": $("#fin_vacaci").val(),
+                "dias": dias_totales,
+                "accion": "DiasTotales"
+            };
+
+            $.ajax({
+                data: jsonDatos,
+                type: "POST",
+                url: "app/views/default/modules/modulos/vacaciones/m.vacaciones.procesa.php",
+                beforeSend: function() {
+                },
+                success: function(datos) {
+                    $("#dias_disfrutar").val(datos).trigger('change');
+                    $("#dias_disfrutar_view").val(datos).trigger('change');
+
+                }
+            });
+        }
+        else if (timeEnd != null && timeEnd < timeStart) {
+            Alert("", 'La fecha final de la promoción debe ser mayor a la fecha inicial', "warning", 900, false);
+        }
     }
 </script>
 
@@ -271,6 +316,9 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
                 <div class="form-group">
                     <strong class="">Empleado:</strong>
                     <div class="form-group">
+                        <?php if ($oVacaciones->id_empleado != "") { 
+                            echo "<input type='hidden' name='id_empleado' value='$oVacaciones->id_empleado' >";
+                        } ?>
                         <select id="id_empleado" description="Seleccione el empleado" <?php if ($oVacaciones->id_empleado != "") {
                                                                                             echo "disabled";
                                                                                         } ?> class="form-control obligado" onchange="" name="id_empleado">
@@ -322,12 +370,13 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
                 <div class="form-group">
                     <strong class="">Seleccionar dias:</strong>
                     <?php if ($oVacaciones->inicio_vacaci != "") {
-                        echo "<br>" . $oVacaciones->dias_pagados;
+                        echo "<br>" . $oVacaciones->dias_disfrutar;
                     } else { ?>
                         <div class="form-group">
-                            <select id="dias_disfrutar" description="Seleccione los dias a disfrutar" class="form-control obligado" onchange="" name="dias_disfrutar">
+                            <select id="dias_disfrutar_view" disabled description="Seleccione los dias a disfrutar" class="form-control obligado" onchange="" name="dias_disfrutar">
 
                             </select>
+                            <input type="hidden" name="dias_disfrutar" id="dias_disfrutar">
                         </div>
                     <?php } ?>
                 </div>
@@ -336,7 +385,7 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
                 <div class="form-group">
                     <strong class="">Dias restantes:</strong>
                     <div class="form-group">
-                        <input type="int" description="Seleccione la fecha" aria-describedby="" id="dias_restantes" value="<?= $oVacaciones->dias_restantes ?>" readonly="true" name="dias_restantes" class="form-control obligado" />
+                        <input type="int" description="" aria-describedby="" id="dias_restantes" value="<?= $oVacaciones->dias_restantes ?>" readonly="true" name="dias_restantes" class="form-control " />
                         <input type="hidden" id="dias_restantes_1" class="" />
                     </div>
                 </div>
@@ -400,7 +449,7 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
                 <div class="form-group ">
                     <input type="date" id="fin_vacaci" name="fin_vacaci" <?php if (!empty($oVacaciones->fin_vacaci)) {
                                                                                 echo "readonly='true'";
-                                                                            } ?> value="<?= $oVacaciones->fin_vacaci; ?>" class="form-control">
+                                                                            } ?> value="<?= $oVacaciones->fin_vacaci; ?>" onchange="contador_dias()" class="form-control">
                 </div>
             </div>
         </div>
@@ -424,6 +473,7 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
                     <strong class="">Pago de primas vacaionales:</strong>
                     <?php if ($oVacaciones->pago_prima != "") {
                         echo "$" . $oVacaciones->pago_prima;
+                        echo "<input type='hidden' name='pago_prima' value='$oVacaciones->pago_prima'>";
                     } else { ?>
                         <div class="input-group mb-2">
                             <div class="input-group-prepend">
@@ -439,6 +489,7 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
                     <strong class="">Dias de prima que se pagaron:</strong>
                     <?php if ($oVacaciones->dias_pagados != "") {
                         echo $oVacaciones->dias_pagados;
+                        echo "<input type='hidden' name='dias_pagados' value='$oVacaciones->dias_pagados'>";
                     } else { ?>
                         <div class="form-group">
                             <select id="dias_pagados" description="Seleccione los dias a disfrutar" class="form-control obligado" value="<?= $oVacaciones->dias_pagados; ?>" name="dias_pagados">
@@ -452,6 +503,7 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
                     <strong class="">Fecha de pago de prima:</strong>
                     <?php if ($oVacaciones->fecha_pago != "") {
                         echo $oVacaciones->fecha_pago;
+                        echo "<input type='hidden' name='fecha_pago' value='$oVacaciones->fecha_pago'>";
                     } else { ?>
                         <div class="form-group">
                             <input type="date" description="Seleccione la fecha" aria-describedby="" id="fecha_pago" name="fecha_pago" value="<?= $oVacaciones->fecha_pago; ?>" class="form-control obligado" />

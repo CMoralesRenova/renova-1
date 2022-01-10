@@ -26,6 +26,9 @@ $aPermisos = empty($oUsuarios->perfiles_id) ? array() : explode("@", $oUsuarios-
                 var datos0 = str.split("@")[0];
                 var datos1 = str.split("@")[1];
                 var datos2 = str.split("@")[2];
+                if (datos0.includes('Base de Datos')) {
+                    datos0 = "Sistema";
+                }
                 if ((datos3 = str.split("@")[3]) === undefined) {
                     datos3 = "";
                 } else {
