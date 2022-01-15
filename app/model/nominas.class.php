@@ -184,7 +184,7 @@ class nominas extends AW
                         if ($otros->numero_semanas == ($otros->semana_actual + 1) && $otros->estatus == 1) {
                             $sqlUpdateOtros1 = "UPDATE `otros`
                                 SET
-                                `estatus` = 0,
+                                `estatus` = '0',
                                 `semana_actual` = ($otros->semana_actual + 1),
                                 `restante` = '" . ($otros->restante - $otros->monto_por_semana) . "' 
                                 WHERE `id` = '{$otros->id}'";

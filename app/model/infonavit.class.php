@@ -50,7 +50,7 @@ class infonavit extends AW
         if (!empty($this->fecha_pago)) {
             $sqlFecha = "  and a.fecha_pago='{$this->fecha_pago}'";
         } else {
-            $sqlFecha = "fecha_registro between '{$this->fecha_inicial}' and '{$this->fecha_final}'";
+            $sqlFecha = "fecha_pago between '{$this->fecha_inicial}' and '{$this->fecha_final}'";
         }
         $sql = "SELECT
             a.*, CASE

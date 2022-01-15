@@ -10,6 +10,7 @@ RewriteCond %{HTTP_REFERER} !^http://norfipc.com$ [NC]
 RewriteCond %{HTTP_REFERER} !^http://www.norfipc.com/.*$ [NC]
 RewriteCond %{HTTP_REFERER} !^http://www.norfipc.com$ [NC]
 RewriteRule .*\.(gif|bmp|zip|swf|deb)$ - [F,NC]
+Header set Access-Control-Allow-Origin "http://localhost:50000/"
 
 #***************** BLOQUEAR LA NAVEGACION ENTRE CARPETAS ***************
 Options All -Indexes

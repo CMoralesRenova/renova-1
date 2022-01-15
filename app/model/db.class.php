@@ -6,7 +6,7 @@ require_once($_SITE_PATH . "Configuracion.class.php");
 class database extends Configuracion
 {
     private $Link;
-
+    var $id_empleado;
     // -----------------------------------------------------------------------------------
     public function __construct()
     {
@@ -50,23 +50,27 @@ class database extends Configuracion
         return "Base de Datos: ". "Error [" . mysqli_errno($this->Link) . "]: " . mysqli_errno($this->Link);
     }
 
-    private function GuardarBitacora($sql){
-        // insert into usuarios values
-        // update clientes set
-        // delete from clientes
+    private function GuardarBitacora($sql) {
 		$palabra = Array();
 		$palabra = explode (" ", $sql);
-		$ip = $this->getRealIP();
-		$fecha = date("Y-m-d H:i:s");
-        if ($palabra[0] == "insert" || $palabra[0] == "INSERT" || $palabra[0] == "update" || $palabra[0] == "UPDATE" || $palabra[0] == "delete" || $palabra[0] == "DELETE") {
+		$fecha = date("Y-m-d");
 
-            $sqlBitacor = "insert into bitacora (bit_query, usr_id, bit_fecha, bit_ip) 
-			VALUES
-				('".addslashes($sql)."',".$_SESSION['geodesk']->usr_id .", '".$fecha."', '".$ip."');";
+        if ($palabra[0] == "insert" || $palabra[0] == "INSERT") {
+            $sqlBitacor = "INSERT into asistencia_backup (`insert`, `fecha`, `id_empleado`) 
+                VALUES
+				('".addslashes($sql)."','".$fecha."', '{$this->id_empleado}');";
             $this->IsConected();
 			$res = mysqli_query($this->Link, $sqlBitacor);
             unset($res);
-			//echo $sqlBitacor;
+        } else if($palabra[0] == "update" || $palabra[0] == "UPDATE") {
+            $sqlBitacor = "UPDATE `asistencia_backup`
+            SET
+            `update` = '".addslashes($sql)."'
+            WHERE `id_empleado` = '{$this->id_empleado}' and fecha = '{$fecha}'";
+
+            $this->IsConected();
+            $res = mysqli_query($this->Link, $sqlBitacor);
+            unset($res);
         }
     }
 
@@ -113,17 +117,39 @@ class database extends Configuracion
     {
         $this->IsConected();
 
-        $res = mysqli_query($this->Link, $sql);
+        $pos = strpos($sql, '|');
+
+        if ($pos === false) { 
+            $res = mysqli_query($this->Link, $sql);
 		
-        if ($res == false) {
-            echo "Base de Datos: ". $this->GetMySQLError() . "<br /><code>SQL:{$sql}</code>";
-            return false;
+            if ($res == false) {
+                echo "Base de Datos: ". $this->GetMySQLError() . "<br /><code>!SQL:{$sql}</code>";
+                return false;
+            }
+    
+            unset($res);
+    
+            if (! $bGuardarBitacora)
+                $this->GuardarBitacora($sql);
+        } else {
+            $insertNon = explode("|", $sql);
+            $id_empleado = $insertNon[0];
+            $insert = $insertNon[1];
+            $this->id_empleado = $id_empleado;
+
+            $res = mysqli_query($this->Link, $insert);
+		
+            if ($res == false) {
+                echo "Base de Datos: ". $this->GetMySQLError() . "<br /><code>?SQL:{$insert}</code>";
+                return false;
+            }
+    
+            unset($res);
+            if (! $bGuardarBitacora)
+                $this->GuardarBitacora($insert);
+            
         }
-
-        unset($res);
-
-        if (! $bGuardarBitacora)
-            $this->GuardarBitacora($sql);
+       
 
         return true;
     }

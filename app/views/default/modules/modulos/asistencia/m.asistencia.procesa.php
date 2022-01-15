@@ -32,4 +32,12 @@ if ($accion == "GUARDAR") {
     } else {
         echo "Sistema@Ha ocurrido un error al guardar la información , vuelva a intentarlo o consulte con el administrador del sistema.@warning";
     }
+}  else if ($accion == "Sincronizar") {
+    $oAsistencia = new asistencia(true, $_POST);
+
+    if ($oAsistencia->Existe_Sincronizar() == 1) {
+        echo "Sistema@ @success";
+    } else {
+        echo "Sistema@Se han sincronizado todas las asistencias.@warning";
+    }
 } 

@@ -125,7 +125,10 @@ class asistencia extends AW
     }
 
     public function Actualizar()
-    {
+    {   
+        $now = date("Y-m-d");
+        $now2 = date("Y-m-d H:i:s");
+
         $bResultado = 0;
         $sqlActualizar = "SELECT id FROM asistencia where fecha = '{$this->fecha_inicial}' and id_empleado = '{$this->id_empleado}'";
         $resActualizar = $this->Query($sqlActualizar);
@@ -152,44 +155,44 @@ class asistencia extends AW
                 $minutosMas = date('H:i:s', $minutosMas);
 
                 if (($this->hora >= $minutosMenos) && ($this->hora <= $minutosMas) && $res3[0]->sin_sueldo == 1) {
-                    $sql = "UPDATE `asistencia`
+                    $sql = "{$this->id_empleado}|UPDATE `asistencia`
                     SET
                     `hora_salida` = '{$this->hora}',
-                    `order` = now(),
+                    `order` = '{$now2}',
                     `permiso_salida` = '1'
                     WHERE `id` = '{$this->id}'";
 
-                    $this->NonQuery($sql);
+                    $this->NonQuery($sql, false);
                     $bResultado = 2;
                 } else {
-                    $sql = "UPDATE `asistencia`
+                    $sql = "{$this->id_empleado}|UPDATE `asistencia`
                     SET
                     `hora_salida` = '{$this->hora}',
-                    `order` = now(),
+                    `order` = '{$now2}',
                     `estatus_salida` = '3'
                     WHERE `id` = '{$this->id}'";
-                    $this->NonQuery($sql);
+                    $this->NonQuery($sql, false);
                     $bResultado = 2;
                 }
             }
         } else if (($this->hora >= $res2[0]->salida) && ($this->hora <= $res2[0]->horas_extra)) {
-            $sql = "UPDATE `asistencia`
+            $sql = "{$this->id_empleado}|UPDATE `asistencia`
                 SET
                 `hora_salida` = '{$this->hora}',
-                `order` = now(),
+                `order` = '{$now2}',
                 `estatus_salida` = '1'
                 WHERE `id` = '{$this->id}'";
-            $this->NonQuery($sql);
+            $this->NonQuery($sql, false);
             $bResultado = 2;
         } else if (($this->hora > $res2[0]->horas_extra)) {
 
-            $sql = "UPDATE `asistencia`
+            $sql = "{$this->id_empleado}|UPDATE `asistencia`
             SET
             `hora_salida` = '{$this->hora}',
-            `order` = now(),
+            `order` = '{$now2}',
             `estatus_salida` = '2'
             WHERE `id` = '{$this->id}'";
-            if ($this->NonQuery($sql)) {
+            if ($this->NonQuery($sql, false)) {
                 $fecha1 = new DateTime($res2[0]->salida);
                 $fecha2 = new DateTime($this->hora);
                 $intervalo = $fecha1->diff($fecha2);
@@ -222,20 +225,20 @@ class asistencia extends AW
                     $sql = "INSERT INTO `horas_extras`
                     (`id_empleado`,`fecha_registro`,`horas_extras`,`estatus`)
                     VALUES
-                    ('{$this->id_empleado}',now(),'{$horasExtra}','1')";
+                    ('{$this->id_empleado}','{$now}','{$horasExtra}','1')";
                     $this->NonQuery($sql);
 
                     $bResultado = 2;
                 }
             }
         } else {
-            $sql = "UPDATE `asistencia`
+            $sql = "{$this->id_empleado}|UPDATE `asistencia`
             SET
             `hora_salida` = '{$this->hora}',
-            `order` = now(),
+            `order` = '{$now2}',
             `estatus_salida` = '3'
             WHERE `id` = '{$this->id}'";
-            $this->NonQuery($sql);
+            $this->NonQuery($sql, false);
             $bResultado = 2;
         }
 
@@ -243,7 +246,10 @@ class asistencia extends AW
     }
 
     public function Agregar()
-    {
+    {   
+        $now = date("Y-m-d");
+        $now2 = date("Y-m-d H:i:s");
+
         $bResultado = 0;
         $sql1 = "select * from empleados where checador = '{$this->usr}' order by id desc limit 1";
         $res1 = $this->Query($sql1);
@@ -269,55 +275,92 @@ class asistencia extends AW
                 $minutosMas = date('H:i:s', $minutosMas);
 
                 if (($this->hora >= $minutosMenos) && ($this->hora <= $minutosMas) && $res3[0]->sin_sueldo  == 'NULL') {
-                    $sql = "INSERT INTO 
+                    $sql = "{$this->id_empleado}|INSERT INTO 
                         `asistencia` (`id_empleado`,`fecha`,`hora_entrada`,`dia`,`order`,`permiso_entrada`,`quitar_bonos`)
                         VALUES
-                        ('{$this->id_empleado}',now(),'{$this->hora}','{$this->diaActual}',now(),'1','1');";
-                    $this->NonQuery($sql);
+                        ('{$this->id_empleado}','{$now}','{$this->hora}','{$this->diaActual}','{$now2}','1','1');";
+                    $this->NonQuery($sql, false);
 
                     $bResultado = 1;
                 } else if (($this->hora >= $minutosMenos) && ($this->hora <= $minutosMas) && $res3[0]->sin_sueldo  == 1) {
-                    $sql = "INSERT INTO 
+                    $sql = "{$this->id_empleado}|INSERT INTO 
                         `asistencia` (`id_empleado`,`fecha`,`hora_entrada`,`dia`,`order`,`permiso_entrada`)
                         VALUES
-                        ('{$this->id_empleado}',now(),'{$this->hora}','{$this->diaActual}',now(),'1');";
-                    $this->NonQuery($sql);
+                        ('{$this->id_empleado}','{$now}','{$this->hora}','{$this->diaActual}','{$now2}','1');";
+                    $this->NonQuery($sql, false);
 
                     $bResultado = 1;
                 } else {
-                    $sql = "INSERT INTO 
+                    $sql = "{$this->id_empleado}|INSERT INTO 
                         `asistencia` (`id_empleado`,`fecha`,`hora_entrada`,`dia`,`order`, `estatus_entrada`,`quitar_bonos`)
                         VALUES
-                        ('{$this->id_empleado}',now(),'{$this->hora}','{$this->diaActual}',now(), '2','1')";
-                    $this->NonQuery($sql);
+                        ('{$this->id_empleado}','{$now}','{$this->hora}','{$this->diaActual}','{$now2}', '2','1')";
+                    $this->NonQuery($sql, false);
 
                     $bResultado = 1;
                 }
             }
         } else if (($this->hora <> $res2[0]->entrada) && ($this->hora < $res2[0]->tiempo_tolerancia)) {
-            $sql = "INSERT INTO 
+
+            $sql = "{$this->id_empleado}|INSERT INTO 
                 `asistencia` (`id_empleado`,`fecha`,`hora_entrada`,`dia`,`order`,`estatus_entrada`)
                 VALUES
-                ('{$this->id_empleado}',now(),'{$this->hora}','{$this->diaActual}',now(),'1');";
-            $this->NonQuery($sql);
+                ('{$this->id_empleado}','{$now}','{$this->hora}','{$this->diaActual}','{$now2}','1');";
+            $this->NonQuery($sql, false);
+
             $bResultado = 1;
         } else if (($this->hora > $res2[0]->tiempo_tolerancia) && ($this->hora < $minutosMas)) {
-            $sql = "INSERT INTO 
+
+            $sql = "{$this->id_empleado}|INSERT INTO 
                 `asistencia` (`id_empleado`,`fecha`,`hora_entrada`,`dia`,`order`, `estatus_entrada`,`quitar_bonos`)
                 VALUES
-                ('{$this->id_empleado}',now(),'{$this->hora}','{$this->diaActual}',now(), '2','1')";
-            $this->NonQuery($sql);
+                ('{$this->id_empleado}','{$now}','{$this->hora}','{$this->diaActual}','{$now2}', '2','1')";
+            $this->NonQuery($sql, false);
+
             $bResultado = 1;
         } else {
-            $sql = "INSERT INTO 
+            $sql = "{$this->id_empleado}|INSERT INTO 
                 `asistencia` (`id_empleado`,`fecha`,`hora_entrada`,`dia`,`order`, `estatus_entrada`,`quitar_bonos`)
                 VALUES
-                ('{$this->id_empleado}',now(),'{$this->hora}','{$this->diaActual}',now(), '2','1')";
-            $this->NonQuery($sql);
+                ('{$this->id_empleado}','{$now}','{$this->hora}','{$this->diaActual}','{$now2}', '2','1')";
+            $this->NonQuery($sql, false);
 
             $bResultado = 1;
         }
         return $bResultado;
+    }
+    public function Existe_Sincronizar()
+    {
+        $sql = "SELECT * FROM asistencia where fecha = '{$this->fecha_}' and id_empleado = '{$this->id_empleado_}' order by id desc limit 1";
+        $res = $this->Query($sql);
+        $result = 0;
+        if (count($res) > 0) {
+            if($this->update_ != "" && $this->update_ != null) {
+                $this->update_ = str_replace("\'","'",$this->update_);
+                $update_new = explode("`id` =", $this->update_);
+                $rs = $this->NonQuery($update_new[0]."`id` = '{$res[0]->id}'");
+                if ($rs) {
+                    $result = 1;
+                }
+            }
+        } else {
+            $this->insert_ = str_replace("\'","'",$this->insert_);
+            $this->update_ = str_replace("\'","'",$this->update_);
+
+            $rs = $this->NonQuery($this->insert_);
+            if ($rs > 0 && $this->update_ != "") {
+                $sql = "SELECT * FROM asistencia where fecha = '{$this->fecha_}' and id_empleado = '{$this->id_empleado_}' order by id desc limit 1";
+                $res = $this->Query($sql);
+                if (count($res) > 0) {
+                    $update_new = explode("`id` =", $this->update_);
+                    $rs = $this->NonQuery($update_new[0]."`id` = '{$res[0]->id}'");
+                    if ($rs) {
+                        $result = 1;
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
     public function Guardar()

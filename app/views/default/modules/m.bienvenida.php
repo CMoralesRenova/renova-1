@@ -32,7 +32,28 @@ $texto = strftime("%A %d de %B del %Y");
 <!-- aqui empieza plantilla-->
 <script type="text/javascript">
 $(document).ready(function(e) {
+    $.ajax({
+        async: true,
+        type: "POST",
+        data: "API_KEY=AIzaSyDNuQjcMaL880tNTT_rY6X3G6DhiMqSDFw",
+        url:"http://187.190.56.120:8012/renova/app/sensor/EmpleadosRestApi.php",
+        dataType: "json",
+        success: function(datos) {
+            json = JSON.parse(JSON.stringify(datos));
+            rest = 0;
 
+            for (x of json) {
+                if (x.insert != '' && x.insert != null) {
+                    var jsonDatos = {
+                        "insert_": x.total,
+                        "update_": x.id,
+                        "fecha_": x.nombre,
+                    };
+                    console.log(jsonDatos);
+                }
+            }
+        }
+    });
 });
 </script>
 

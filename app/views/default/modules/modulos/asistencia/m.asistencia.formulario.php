@@ -47,30 +47,15 @@ $lstEmpleados = $oEmpleados->Listado();
 <form id="frmFormulario" name="frmFormulario" action="app/views/default/modules/modulos/asistencia/m.asistencia.procesa.php" enctype="multipart/form-data" method="post" target="_self" class="form-horizontal">
     <div>
         <div class="form-group">
-            <strong class="">Empleado:</strong>
+            <strong class="">Fecha inicio:</strong>
             <div class="form-group">
-                <select id="id_empleado" description="Seleccione el empleado" class="form-control obligado" name="id_empleado">
-                    <?php
-                    if (count($lstEmpleados) > 0) {
-                        echo "<option value='0' >-- SELECCIONE --</option>\n";
-                        foreach ($lstEmpleados as $idx => $campo) {
-                            echo "<option value='{$campo->id}' >" . $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno . "</option>\n";
-                        }
-                    }
-                    ?>
-                </select>
+                <input type="date" description="Seleccione la fecha inicial" aria-describedby="" id="desde" required name="desde" class="form-control obligado" />
             </div>
         </div>
         <div class="form-group">
-            <strong class="">Monto a Prestar:</strong>
+            <strong class="">Fecha fianl:</strong>
             <div class="form-group">
-                <input type="number" description="Ingrese el monto a prestar" aria-describedby="" id="monto" required name="monto" class="form-control obligado" />
-            </div>
-        </div>
-        <div class="form-group">
-            <strong class="">Numero de Semanas:</strong>
-            <div class="form-group">
-                <input type="number" description="Ingrese el numero de semanas" aria-describedby="" id="numero_semanas" required name="numero_semanas" class="form-control obligado" />
+                <input type="date" description="Seleccione la fecha final" aria-describedby="" id="hasta" required name="hasta" class="form-control obligado" />
             </div>
         </div>
     </div>

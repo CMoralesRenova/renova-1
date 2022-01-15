@@ -33,9 +33,9 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        var btnGuardar = <?php echo empty($oVacaciones->inicio_vacaci); ?>+"";
-        console.log(btnGuardar+" estetete");
-        if (btnGuardar <= 0){
+        var btnGuardar = <?php echo empty($oVacaciones->inicio_vacaci); ?> + "";
+        console.log(btnGuardar + " estetete");
+        if (btnGuardar <= 0) {
             console.log("boton");
             $("#btnGuardar").hide();
         }
@@ -72,9 +72,9 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
             var opc = "fullscreen=no, menubar=no, resizable=no, scrollbars=yes, status=yes, titlebar=yes, toolbar=no, width=750, height=580";
             var pagina = "app/views/default/modules/modulos/vacaciones/m.vacaciones.recibo.pdf.php?";
 
-            pagina += "id="+ $("#id").val();
+            pagina += "id=" + $("#id").val();
 
-            window.open(pagina, "reporte", opc);   
+            window.open(pagina, "reporte", opc);
         });
 
         $('#id_empleado').select2({
@@ -194,15 +194,15 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
                                 var date = curWeekDay + ", " + curDay + " " + curMonth + " " + curYear;
                                 mont = '';
 
-                                if (r.getMonth() + 1 <= 10){
-                                    mont = "0"+(r.getMonth() + 1);
+                                if (r.getMonth() + 1 <= 10) {
+                                    mont = "0" + (r.getMonth() + 1);
                                 } else {
                                     mont = (r.getMonth() + 1);
                                 }
-                                
-                                $("#validarFehca").val(curYear+"-"+mont+"-"+curDay);
+
+                                $("#validarFehca").val(curYear + "-" + mont + "-" + curDay);
                                 $("#vacacionesInput").val(date);
-                                $("#vacionesDisponibles").html("  "+date+"  ");
+                                $("#vacionesDisponibles").html("  " + date + "  ");
 
                                 console.log(date);
                                 var jsonDatos = {
@@ -268,18 +268,18 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
         restante = $("#dias_restantes_1").val() - $("#dias_disfrutar").val();
         if (is_negative_number(restante)) {
             $("#btnGuardar").hide();
-            Alert("", 'Nose pueden seleccionar mas dias de los disponibles', "warning",1000, false);
+            Alert("", 'Nose pueden seleccionar mas dias de los disponibles', "warning", 1000, false);
         } else {
             $("#btnGuardar").show();
             $("#dias_restantes").val(restante);
         }
     }
-    function contador_dias () {
+
+    function contador_dias() {
         var timeStart = new Date(document.getElementById("inicio_vacaci").value);
         var timeEnd = new Date(document.getElementById("fin_vacaci").value);
         var actualDate = new Date();
-        if (timeEnd > timeStart)
-        {
+        if (timeEnd > timeStart) {
             var diff = timeEnd.getTime() - timeStart.getTime();
             dias_totales = Math.round(diff / (1000 * 60 * 60 * 24) + 1);
 
@@ -294,16 +294,14 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
                 data: jsonDatos,
                 type: "POST",
                 url: "app/views/default/modules/modulos/vacaciones/m.vacaciones.procesa.php",
-                beforeSend: function() {
-                },
+                beforeSend: function() {},
                 success: function(datos) {
                     $("#dias_disfrutar").val(datos).trigger('change');
                     $("#dias_disfrutar_view").val(datos).trigger('change');
 
                 }
             });
-        }
-        else if (timeEnd != null && timeEnd < timeStart) {
+        } else if (timeEnd != null && timeEnd < timeStart) {
             Alert("", 'La fecha final de la promoción debe ser mayor a la fecha inicial', "warning", 900, false);
         }
     }
@@ -316,7 +314,7 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
                 <div class="form-group">
                     <strong class="">Empleado:</strong>
                     <div class="form-group">
-                        <?php if ($oVacaciones->id_empleado != "") { 
+                        <?php if ($oVacaciones->id_empleado != "") {
                             echo "<input type='hidden' name='id_empleado' value='$oVacaciones->id_empleado' >";
                         } ?>
                         <select id="id_empleado" description="Seleccione el empleado" <?php if ($oVacaciones->id_empleado != "") {
@@ -368,7 +366,7 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
             </div>
             <div class="col">
                 <div class="form-group">
-                    <strong class="">Seleccionar dias:</strong>
+                    <strong class="">Dias a disfrutar:</strong>
                     <?php if ($oVacaciones->inicio_vacaci != "") {
                         echo "<br>" . $oVacaciones->dias_disfrutar;
                     } else { ?>
@@ -419,9 +417,9 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
             </div>
             <div class="col-sm-6 float-left">
                 <div class="form-group ">
-                    <label id="vacionesDisponibles" class="btn-danger" data-toggle="tooltip" title="" data-original-title="<?= $ley ?>" ></label>
+                    <label id="vacionesDisponibles" class="btn-danger" data-toggle="tooltip" title="" data-original-title="<?= $ley ?>"></label>
                     <input type="hidden" id="vacacionesInput" name="vacacionesInput" value="<?= $oVacaciones->vacacionesInput ?>">
-                    <input type="hidden" id="validarFehca"  >
+                    <input type="hidden" id="validarFehca">
                 </div>
             </div>
         </div>
@@ -514,10 +512,10 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
         </div>
         <div class="row">
             <div class="col">
-            <?php if ($oVacaciones->inicio_vacaci != "") {
-                echo "Dias Pagados";
-            } else { ?>
-                <input type="checkbox" name="pagar" id="pagar" value="recoleccion"><strong> Pagar dias</strong><br>
+                <?php if ($oVacaciones->inicio_vacaci != "") {
+                    echo "Dias Pagados";
+                } else { ?>
+                    <input type="checkbox" name="pagar" id="pagar" value="recoleccion"><strong> Pagar dias</strong><br>
                 <?php } ?>
             </div>
         </div>
@@ -577,7 +575,7 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
                 </div>
             <?php } ?>
         </div>
-        <?php if ($oVacaciones->inicio_vacaci != "") {?>
+        <?php if ($oVacaciones->inicio_vacaci != "") { ?>
             <input type="button" id="btnImprimir" class="btn btn-danger btn-block" name="btnImprimir" value="Imprimir Vacaciones">
         <?php } ?>
     </div>

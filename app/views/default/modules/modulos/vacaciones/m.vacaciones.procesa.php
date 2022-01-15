@@ -55,10 +55,5 @@ if ($accion == "GUARDAR") {
     $resultado = $oVacaciones->DiasVacacion($dias, $fecha_inicial, $fecha_final); 
     
     echo $resultado;
-    /*if (!empty($resultado[1]->dias)) {
-        echo $resultado[1]->dias;
-    } else {
-        echo '0';
-    }*/
 }
 ?>

@@ -15,12 +15,7 @@ if ($accion == "GUARDAR") {
     $oAhorros = new ahorros(true, $_POST);
     $resultado = $oAhorros->Existe();
     $resultado1 = $oAhorros->AhorroActivo();
-
-    if ($oAhorros->Guardar() === true) {
-        echo "Sistema@Se ha registrado exitosamente la información. @success";
-    } else {
-        echo "Sistema@Ha ocurrido un error al guardar la información , vuelva a intentarlo o consulte con el administrador del sistema.@warning";
-    }
+    
     if (date("m-d") >= '01-01' && date("m-d") <= '01-31') {
         if ($resultado) {
             echo "Sistema@El empleado ya tiene un ahorro activo este año. @warning";

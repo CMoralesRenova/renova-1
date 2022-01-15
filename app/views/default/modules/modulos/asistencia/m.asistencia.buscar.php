@@ -1,4 +1,5 @@
 <?php
+header("Acces-Control-Allow-Origin: *");
 /*
  * Copyright 2021 - Felipe angel cerda contreras 
  * felipeangelcerdacontreras@gmail.com
@@ -36,6 +37,60 @@ $oAsistencia->ValidaNivelUsuario("asistencia");
                 $("#frmFormulario").submit();
             }
         });
+        $("#sincronizar").button().click(function(e) {
+            Editar("", "Sincronizar");
+        });
+        $("#btnSincronizar").button().click(function(e) {
+            if ($("#desde").val() != "" && $("#hasta").val() != "") {
+                $.ajax({
+                    async: true,
+                    data: "desde=" + $("#desde").val() + "&hasta=" + $("#hasta").val(),
+                    type: "POST",
+                    url:"http://192.168.1.161/renova/app/sensor/AsistenciaRestApi.php",
+                    dataType: "json",
+                    success: function(datos) {
+                        json = JSON.parse(JSON.stringify(datos));
+                        rest = 0;
+
+                        $("#btnSincronizar").hide();
+                        $("#divFormulario_").html(
+                            '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Insertando informacion en la BD, espere un momento por favor...</center></div>'
+                        );
+
+                        for (x of json) {
+                            if (x.insert != '' && x.insert != null) {
+                                var jsonDatos = {
+                                    "accion": "Sincronizar",
+                                    "insert_": x.insert,
+                                    "update_": x.update,
+                                    "fecha_": x.fecha,
+                                    "id_empleado_": x.id_empleado
+                                };
+
+                                $.ajax({
+                                    async: true,
+                                    data: jsonDatos,
+                                    type: "POST",
+                                    url: "app/views/default/modules/modulos/asistencia/m.asistencia.procesa.php",
+                                    dataType: "json",
+                                    success: function(datos) {
+                                       
+                                    }
+                                });
+                            }
+                            rest++;
+                            if (json[0]['total'] == rest) {
+                                $("#myModal").modal("hide");
+                                Listado();
+                                $("#btnSincronizar").show();
+                            }
+                        }
+                    }
+                });
+            } else {
+                Alert("", "Selecciona las fechas para sincronizar asistencia", "warning", 900, false);
+            }
+        });
     });
 
     function Listado() {
@@ -61,11 +116,11 @@ $oAsistencia->ValidaNivelUsuario("asistencia");
 
     function Editar(id, nombre) {
         switch (nombre) {
-            case 'Reporte':
+            case 'Sincronizar':
                 $.ajax({
-                    data: "nombre=" + nombre + "&id_empleado=" + id + "&fecha_inicial=" + $("#fecha_inicial").val() + "&fecha_final=" + $("#fecha_final").val(),
+                    data: "nombre=" + nombre,
                     type: "POST",
-                    url: "app/views/default/modules/modulos/asistencia/m.asistencia.reporte.php",
+                    url: "app/views/default/modules/modulos/asistencia/m.asistencia.formulario.php",
                     beforeSend: function() {
                         $("#divFormulario").html(
                             '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
@@ -89,7 +144,6 @@ $oAsistencia->ValidaNivelUsuario("asistencia");
     <?php require_once('app/views/default/head.html'); ?>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.0.0/js/buttons.print.min.js"></script>
     <title>Asistencia</title>
 </head>
 
@@ -124,7 +178,9 @@ $oAsistencia->ValidaNivelUsuario("asistencia");
                                     </div>
                                 </div>
                             </div>
-
+                            <div class="row" style="float: right">
+                                <button class="btn btn-danger" tabindex="0" id="sincronizar" type="button"><span>Sincronizar Asistencia</span></button>
+                            </div>
                         </div>
                     </div>
                     <!-- cerrar contenido pagina-->
@@ -149,7 +205,7 @@ $oAsistencia->ValidaNivelUsuario("asistencia");
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <input type="button" id="btn" class="btn btn-danger" name="btn" value="Imprimir">
+                            <input type="button" id="btnSincronizar" class="btn btn-danger" name="btnSincronizar" value="Sincronizar">
                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cerrar</button>
                         </div>
                     </div>
@@ -166,6 +222,7 @@ $oAsistencia->ValidaNivelUsuario("asistencia");
         <i class="fas fa-angle-up"></i>
     </a>
     <?php require_once('app/views/default/script_f.html'); ?>
+    <script src="https://cdn.datatables.net/buttons/2.0.0/js/buttons.print.min.js"></script>
 </body>
 
 </html>
