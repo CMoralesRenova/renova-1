@@ -55,6 +55,8 @@ $LstOtros = $oOtros->Listado();
         $faltas = $oNominas_edit->faltas;
         $asistencias = $oNominas_edit->asistencias;
         $extras = $oNominas_edit->extras;
+        $monto_incapacida = $oNominas_edit->monto_incapacida;
+        $dias_incapacida = $oNominas_edit->dias_incapacida;
         $vacaciones = $oNominas_edit->vacaciones;
         $total = $oNominas_edit->total;
         $comedor = $oNominas_edit->comedor;
@@ -79,6 +81,8 @@ $LstOtros = $oOtros->Listado();
         $faltas = $oNominas->faltas;
         $asistencias = $oNominas->asistencias;
         $extras = $oNominas->extras;
+        $monto_incapacida = $oNominas->monto_incapacida;
+        $dias_incapacida = $oNominas->dias_incapacida;
         $vacaciones = $oNominas->vacaciones;
         $total = $oNominas->total;
         $comedor = $oNominas->comedor;
@@ -96,73 +100,7 @@ $totalaPagar = $total_p;
 $totalaRetencion = $total_r;
 ?>
 <style>
-    #encabezado .fila #col_1 {
-        width: 50.3%;
 
-    }
-
-    #encabezado .fila #col_2 {
-        width: 50.3%;
-    }
-
-    #encabezado .fila #col_0 {
-        width: 30%;
-    }
-
-    #encabezadosup {
-        padding: 5px 0;
-        margin-top: -30px;
-        margin-left: -30px;
-        border-top: 0px solid;
-        border-bottom: 0px solid;
-        border: 0px solid;
-        width: 100%;
-    }
-
-    #encabezado {
-        padding: 5px 0;
-        margin-left: -30px;
-        border-top: 0px solid;
-        border-bottom: 0px solid;
-        border: 0px solid;
-        width: 100%;
-    }
-
-    #encabezado1 {
-        padding: 5px 0;
-        margin-left: -30px;
-        border-top: 0px solid;
-        border-bottom: 0px solid;
-        border: 0px solid;
-        width: 100%;
-    }
-
-
-    #encabezado .fila #ref1 {
-        width: 52%;
-    }
-
-    #encabezado .fila #ref2 {
-        width: 50%;
-    }
-
-    #encabezadosup .filasup #col_1 {
-        width: 55%;
-    }
-
-    #encabezadosup .filasup #col_2 {
-        width: 113%;
-    }
-
-    #encabezado .fila #col_2 {
-        width: 113%;
-        height: 10px;
-    }
-
-    #encabezadosup .filasup #col_3 {
-        width: 10%;
-        height: 6%
-    }
 </style>
 <page backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm" style="border: #00 1px solid;">
     <table style="margin-top: -10px;">
@@ -256,235 +194,174 @@ $totalaRetencion = $total_r;
             <td><?= $oNominas->fecha_ingreso ?></td>
         </tr>
     </table>
-    <table style="margin-left:0px; position:relative; margin-top: 5px; border: #00 1px solid;">
-        <tr>
-            <th style="color: #f3eded; background-color: #000;width:175px; text-align:center;">Percepción</th>
-            <th style="color: #f3eded; background-color: #000;width:85px; text-align:center;">Monto</th>
-            <th style="color: #f3eded; background-color: #000;width:60px; height:14px; text-align:center;">Unidades</th>
-            <th></th>
-            <th style="margin-left:10px;color: #f3eded; background-color: #000;width:134px; text-align:center;">Concepto</th>
-            <th style="color: #f3eded; background-color: #000;width:80px;  text-align:center;">Monto</th>
-            <th style="color: #f3eded; background-color: #000;width:80px;  text-align:center;">Retención</th>
-            <th style="color: #f3eded; background-color: #000;width:100px; text-align:center;">Saldo</th>
-        </tr>
-        <?php
-            
-        ?>
-        <tr>
-            <td><Label>Sueldo normal</Label></td>
-            <td style="text-align:right"><?= $asistencias * $diario ?></td>
-            <td style="text-align:right"><?= $asistencias ?> dias</td>
-            <td>&nbsp;</td>
-            <?php if ($prestamos != "0.00") { ?>
-                <td>Prestamo</td>
-                <td style="text-align:right"><?= $oPrestamos->monto_pagar ?> </td>
-                <td style="text-align:right"><?= $oPrestamos->monto_por_semana ?></td>
-                <td style="text-align:right"><?= $oPrestamos->restante ?></td>
-            <?php } else { ?>
-                <td>&nbsp;</td>
-            <?php } ?>
-        </tr>
-        <tr>
+    <div style="border: #00 1px solid; position:relative; margin-top: -1px;">
+        <table style="margin-left:0px; position:relative; margin-top: 0px; ">
+            <tr>
+                <th style="color: #f3eded; width:175px; background-color: #000; text-align:center;">Percepción</th>
+                <th style="color: #f3eded; width:85px; background-color: #000; text-align:center;">Monto</th>
+                <th style="color: #f3eded; width:60px; background-color: #000; text-align:center;">Unidades</th>
+            </tr>
+            <tr>
+                <td><Label>Sueldo normal</Label></td>
+                <td style="text-align:right"><?= $asistencias * $diario ?></td>
+                <td style="text-align:right"><?= $asistencias ?> dias</td>
+            </tr>
             <?php if ($asistencias == 7) {  ?>
-                <td><Label>Premio de Asistencia</Label></td>
-                <td style="text-align:right"><?= $asistencia ?></td>
-            <?php } else { ?>
-                <td><Label>&nbsp;</Label></td>
-                <td>&nbsp;</td>
+                <tr>
+                    <td><Label>Premio de Asistencia</Label></td>
+                    <td style="text-align:right"><?= $asistencia ?></td>
+                </tr>
             <?php } ?>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <?php if ($comedor > 0) { ?>
-                <td>Servicio de comedor</td>
-                <td>&nbsp;</td>
-                <td style="text-align:right"><?php echo $comedor; ?></td>
-            <?php } else { ?>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-            <?php } ?>
-        </tr>
-        <tr>
             <?php if ($puntualidad > 0) {?>
-                <td><Label>Premio de Puntualidad </Label></td>
-                <td style="text-align:right"><?= $puntualidad ?> </td>
-            <?php } else { ?>
+                <tr>
+                    <td><Label>Premio de Puntualidad </Label></td>
+                    <td style="text-align:right"><?= $puntualidad ?> </td>
+                </tr>
+            <?php } ?>
+            <?php if ($productividad > 0) { ?>
+                <tr>
+                    <td><Label>Bono de productividad</Label></td>
+                    <td style="text-align:right"><?= bcdiv($productividad, '1', 2); ?> </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+            <?php }  ?>
+            <?php if ($extras > 0) { ?>
+                <tr>
+                    <td><Label>Horas extras</Label></td>
+                    <td style="text-align:right"><?=  bcdiv($extras, '1', 2); ?> </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+            <?php } ?>
+            <?php if ($doce > 0) { ?>
+                <tr>
+                    <td><Label>Bono turno 12Hrs</Label></td>
+                    <td style="text-align:right"><?= bcdiv($doce, '1', 2) ?> </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+            <?php } ?>
+            <?php if ($complemento > 0) { ?>
+                <tr>
+                    <td><Label>Complemento de sueldo</Label></td>
+                    <td style="text-align:right"><?= bcdiv($complemento, '1', 2) ?> </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+            <?php } ?>
+            <?php if ($dias_incapacida > 0) { ?>
+                <tr>
+                    <td><Label>Incapacidades</Label></td>
+                    <td style="text-align:right"><?= bcdiv(($dias_incapacida * $monto_incapacida), '1', 2) ?> </td>
+                    <td style="text-align:right"><?= $dias_incapacida ?> dias</td>
+                    <td>&nbsp;</td>
+                </tr>
+            <?php } ?>
+            <?php if ($vacaciones > 0) { ?>
+                <tr>
+                    <td><Label>Vacaciones</Label></td>
+                    <td style="text-align:right"><?= bcdiv($vacaciones, '1', 2) ?> </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+            <?php } ?>
+            <tr>
                 <td><Label>&nbsp;</Label></td>
                 <td>&nbsp;</td>
-            <?php } ?>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <?php if ($otros > 0) { ?>
-                <?php
-                $totalDescuentos = 0;
-                $totalSemana = 0;
-                $totalRestante = 0;
-                if (count($LstOtros) > 0) {
-
-                    foreach ($LstOtros as $idx => $campo) {
-                        $totalDescuentos = $totalDescuentos + $campo->monto_pagar;
-                        $totalSemana = $totalSemana + $campo->monto_por_semana;
-                        $totalRestante = $totalRestante + $campo->restante;
-                    }
-                    $totalaRetencion = $totalaRetencion + $totalSemana;
-                    echo "<td>Otros Cargos</td>";
-                    echo "<td style='text-align:right'>$totalDescuentos</td>";
-                    echo "<td style='text-align:right'>$totalSemana</td>";
-                    echo "<td style='text-align:right'>$totalRestante</td>";
-                } ?>
-            <?php } ?>
-        </tr>
-        <tr>
-            <?php if ($productividad > 0) { ?>
-                <td><Label>Bono de productividad</Label></td>
-                <td style="text-align:right"><?= bcdiv($productividad, '1', 2); ?> </td>
+            </tr>
+            <tr>
+                <td><Label>&nbsp;</Label></td>
                 <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td><Label>&nbsp;</Label></td>
                 <td>&nbsp;</td>
-                <?php } else {?>
+            </tr>
+            <tr>
+                <td><Label>&nbsp;</Label></td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td><Label>&nbsp;</Label></td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td><Label>&nbsp;</Label></td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+        <!--segunda parte -->  
+        <table style="margin-left:333px; position:absolute; margin-top: 1px; ">
+            <tr>
+                <th style="margin-left:10px; width:134px;color: #f3eded; background-color: #000; text-align:center;">Concepto</th>
+                <th style="color: #f3eded; width:80px; background-color: #000;  text-align:center;">Monto</th>
+                <th style="color: #f3eded; width:80px; background-color: #000; text-align:center;">Retención</th>
+                <th style="color: #f3eded; width:100px; background-color: #000; text-align:center;">Saldo</th>
+            </tr>
+            <?php if ($prestamos != "0.00") { ?>
+                <tr>
+                    <td>Prestamo</td>
+                    <td style="text-align:right"><?= $oPrestamos->monto_pagar ?> </td>
+                    <td style="text-align:right"><?= $oPrestamos->monto_por_semana ?></td>
+                    <td style="text-align:right"><?= $oPrestamos->restante ?></td>
+                </tr>
+            <?php } ?>
+            <?php if ($comedor > 0) { ?>
+                <tr>
+                    <td>Servicio de comedor</td>
                     <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <?php } ?>
-                <?php if ($ahorro > 0) { ?>
+                    <td style="text-align:right"><?php echo $comedor; ?></td>
+                </tr>
+            <?php } ?>
+            <?php if ($otros > 0) { ?>
+                <tr>
+                    <?php
+                    $totalDescuentos = 0;
+                    $totalSemana = 0;
+                    $totalRestante = 0;
+                    if (count($LstOtros) > 0) {
+
+                        foreach ($LstOtros as $idx => $campo) {
+                            $totalDescuentos = $totalDescuentos + $campo->monto_pagar;
+                            $totalSemana = $totalSemana + $campo->monto_por_semana;
+                            $totalRestante = $totalRestante + $campo->restante;
+                        }
+                        $totalaRetencion = $totalaRetencion + $totalSemana;
+                        echo "<td>Otros Cargos</td>";
+                        echo "<td style='text-align:right'>$totalDescuentos</td>";
+                        echo "<td style='text-align:right'>$totalSemana</td>";
+                        echo "<td style='text-align:right'>$totalRestante</td>";
+                    } ?>
+                </tr>
+            <?php } ?>
+            <?php if ($ahorro > 0) { ?>
+                <tr>
                     <td><Label>Caja de ahorro</Label></td>
                     <td></td>
-                    <?php  echo "<td style='text-align:right'>$oNominas->monto</td>"; ?>
+                    <?php  echo "<td style='text-align:right'>$oNominas->ahorro</td>"; ?>
                     <td style="text-align:right"></td>
-                <?php } else { ?>
-                    <td><Label>&nbsp;</Label></td>
-                    <td>&nbsp;</td>
-                <?php } ?>
-        </tr>
-        <tr>
-        <?php if ($extras > 0) { ?>
-                <td><Label>Horas extras</Label></td>
-                <td style="text-align:right"><?=  bcdiv($extras, '1', 2); ?> </td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <?php } else {?>
-                    <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <?php } ?>
-        <?php if ($fonacot > 0) { ?>
-            <td><Label>Fonacot</Label></td>
-            <td style="text-align:right"></td>
-            <td style="text-align:right"><?= $fonacot ?></td>
-            <td style="text-align:right"></td>
-        <?php } else { ?>
-            <td></td>
-            <td style="text-align:right"> </td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
+                </tr>
             <?php } ?>
-        </tr>
-        <tr>
-        <?php if ($doce > 0) {
-                 ?>
-                <td><Label>Bono turno 12Hrs</Label></td>
-                <td style="text-align:right"><?= bcdiv($doce, '1', 2) ?> </td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <?php } else {?>
-                    <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <?php } ?>
-        <?php if ($infonavit > 0) { ?>
-            <td><Label>Infonavit</Label></td>
-            <td style="text-align:right"> </td>
-            <td style="text-align:right"><?= $infonavit ?></td>
-            <td style="text-align:right"></td>
-        <?php } else { ?>
-            <td></td>
-            <td style="text-align:right"> </td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
+            <?php if ($fonacot > 0) { ?>
+                <tr>
+                    <td><Label>Fonacot</Label></td>
+                    <td style="text-align:right"></td>
+                    <td style="text-align:right"><?= $fonacot ?></td>
+                    <td style="text-align:right"></td>
+                </tr>
             <?php } ?>
-        </tr>
-        <tr>
-        <?php if ($complemento > 0) { ?>
-                <td><Label>Complemento de sueldo</Label></td>
-                <td style="text-align:right"><?= bcdiv($complemento, '1', 2) ?> </td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <?php } else {?>
-                    <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <?php } ?>
-            <td>&nbsp;</td>
-            <td style="text-align:right">&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-        <?php if ($vacaciones > 0) { ?>
-                <td><Label>Vacaciones</Label></td>
-                <td style="text-align:right"><?= bcdiv($vacaciones, '1', 2) ?> </td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <?php } else {?>
-                    <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <?php } ?>
-            <td>&nbsp;</td>
-            <td style="text-align:right">&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><Label>&nbsp;</Label></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><Label>&nbsp;</Label></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><Label>&nbsp;</Label></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><Label>&nbsp;</Label></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><Label>&nbsp;</Label></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><Label>&nbsp;</Label></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><Label>&nbsp;</Label></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><Label>&nbsp;</Label></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><Label>&nbsp;</Label></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><Label>&nbsp;</Label></td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td><Label>&nbsp;</Label></td>
-            <td>&nbsp;</td>
-        </tr>
-    </table>
-    <table style="margin-left:0px; position:relative; margin-top: 0px; border: #00 1px solid;">
+            <?php if ($infonavit > 0) { ?>
+                <tr>
+                    <td><Label>Infonavit</Label></td>
+                    <td style="text-align:right"> </td>
+                    <td style="text-align:right"><?= $infonavit ?></td>
+                    <td style="text-align:right"></td>
+                </tr>
+            <?php } ?>
+        </table>
+    </div>
+    <table style="margin-left:0px; position:relative; margin-top: -1px; border: #00 1px solid;">
         <tr>
             <td style="width:529px;"><Label style=" font-size:12px;">Recibí de esta empresa la cantidad que señala este recibo de pago, estando conforme con las<br>
                     percepciones y las retenciones descritas, por lo que certifico que no se me adeuda cantidad alguna<br>

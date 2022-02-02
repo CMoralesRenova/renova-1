@@ -72,7 +72,6 @@ class usuarios extends AW {
     }
 
     public function Actualizar() {
-        print"actualizar";
         $sPermisos = "";
         if (! empty($this->perfiles_id)) {
             foreach ($this->perfiles_id as $idx => $valor) {

@@ -74,6 +74,8 @@ if ($action === "login") {
         $mvc_default->infonavit();
     }else if ($action === "vacaciones") {
         $mvc_default->vacaciones();
+    }else if ($action === "incapacidades") {
+        $mvc_default->incapacidades();
     }else if ($action === "ubicacion_checador") {
         $mvc_default->ubicacion_checador();
     }else if ($action === "festivos") {

@@ -186,7 +186,7 @@ class prestamos extends AW
             $restanteCantidad = $this->monto;
         }
         
-        $interes = $this->numero_semanas * 1.5;
+        $interes = $this->numero_semanas * 1.25;
         $cantidad = ($restanteCantidad * $interes) / 100;
         $monto_pagar = $restanteCantidad + $cantidad;
         $interes_pagar = $monto_pagar - $restanteCantidad;

@@ -10,10 +10,10 @@ $con = new bd();
 $method = $_SERVER['REQUEST_METHOD'];
 
 $KEY = 'AIzaSyDNuQjcMaL880tNTT_rY6X3G6DhiMqSDFw';
-$API = filter_input(INPUT_POST, "API_KEY");
+$API = $_GET['API_KEY'];
 
 // Metodo para peticiones tipo GET
-if ($method == "POST" && $KEY == $API) {
+if ($method == "GET" && $KEY == $API) {
 
     $sql = 'SELECT id, concat(nombres," ",ape_paterno," ",ape_materno) as nombre  FROM empleados where estatus = "1"';
     $rs = $con->findAll($sql);     
@@ -30,4 +30,6 @@ if ($method == "POST" && $KEY == $API) {
         $arrayResponse[] = $arrayObject;
     }
     echo json_encode($arrayResponse);
+} else {
+    echo json_encode("Sin datos");
 }

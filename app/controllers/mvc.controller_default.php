@@ -90,6 +90,9 @@ class mvc_controller_default extends mvc_controller {
     public function vacaciones () {
         include_once("app/views/default/modules/modulos/vacaciones/m.vacaciones.buscar.php");
     }
+    public function incapacidades () {
+        include_once("app/views/default/modules/modulos/incapacidades/m.incapacidades.buscar.php");
+    }
     public function ubicacion_checador () {
         include_once("app/views/default/modules/catalogos/ubicacion_checador/m.ubicacion.buscar.php");
     }

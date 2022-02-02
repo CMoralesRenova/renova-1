@@ -103,6 +103,7 @@ $aPermisos = empty($oUsuarios->perfiles_id) ? array() : explode("@", $oUsuarios-
                     <input type="checkbox" name="perfiles_id[]" value="fonacot" <?php if ($oUsuarios->ExistePermiso("fonacot", $aPermisos) === true) echo "checked" ?>><strong> Fonacot</strong><br />
                     <input type="checkbox" name="perfiles_id[]" value="infonavit" <?php if ($oUsuarios->ExistePermiso("infonavit", $aPermisos) === true) echo "checked" ?>><strong> Infonavit</strong><br />
                     <input type="checkbox" name="perfiles_id[]" value="vacaciones" <?php if ($oUsuarios->ExistePermiso("vacaciones", $aPermisos) === true) echo "checked" ?>><strong> Vacaciones</strong><br />
+                    <input type="checkbox" name="perfiles_id[]" value="incapacidades" <?php if ($oUsuarios->ExistePermiso("incapacidades", $aPermisos) === true) echo "checked" ?>><strong> Incapacidades</strong><br />
                     <input type="checkbox" name="perfiles_id[]" value="ubicacion_checador" <?php if ($oUsuarios->ExistePermiso("ubicacion_checador", $aPermisos) === true) echo "checked" ?>><strong> Ubicación Checador</strong><br />
                     <strong class="">Catalogos: </strong><br>
                     <input type="checkbox" name="perfiles_id[]" value="departamentos" <?php if ($oUsuarios->ExistePermiso("departamentos", $aPermisos) === true) echo "checked" ?>><strong> Departamentos</strong><br />

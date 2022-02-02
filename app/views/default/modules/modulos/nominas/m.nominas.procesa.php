@@ -24,6 +24,13 @@ if ($accion == "GUARDAR") {
     } else {
         echo "Sistema@Ha ocurrido un error al guardar la información , vuelva a intentarlo o consulte con el administrador del sistema.@warning";
     }
+} else if ($accion == "Recalcular") {
+    $oNominas = new nominas(true, $_POST);
+    if ($oNominas->Agregar() === true) {
+        echo "Sistema@Se ha recalculado exitosamente la nomina. @success";
+    } else {
+        echo "Sistema@Ha ocurrido un error al recalcular la nomina, vuelva a intentarlo o consulte con el administrador del sistema.@warning";
+    }
 } else if ($accion == "ADD_NOMINA") {
     $oNominas = new nominas(true, $_POST);
     if ($oNominas->AddNomina() === true) {

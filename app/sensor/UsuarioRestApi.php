@@ -79,7 +79,6 @@ if ($method == "PUT") {
                 . "where pc_serial = '" . $jsonOBJ->serial . "'";
     }
 
-    print_r($query);
     $row = $con->exec($query);
     $con->desconectar();
     echo json_encode("Filas Actualizadas: " . $row);

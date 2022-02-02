@@ -29,48 +29,8 @@ $lstnominas = $oNominas->Listado_prenomina();
                         columns: [0, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17]
                     }
                 }],
-                "footerCallback": function(row, data, start, end, display) {
-                    var api = this.api(),
-                        data;
-
-                    // Remove the formatting to get integer data for summation
-                    var intVal = function(i) {
-                        return typeof i === 'string' ?
-                            i.replace(/[\$,]/g, '') * 1 :
-                            typeof i === 'number' ?
-                            i : 0;
-                    };
-
-                    // Total over all pages
-                    total = api
-                        .column(16)
-                        .data()
-                        .reduce(function(a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                    // Total over this page
-                    pageTotal = api
-                        .column(16, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce(function(a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-
-                    // Update footer
-                    $(api.column(1).footer()).html(
-                        '$' + total + ' total'
-                    );
-                }
             });
             $(".buttons-html5 ").addClass("btn btn-danger");
-            var total = 0;
-            $('#dataTable2').DataTable().rows().data().each(function(el, index) {
-                //Asumiendo que es la columna 5 de cada fila la que quieres agregar a la sumatoria
-                total += el[8];
-            });
         });
     });
 </script>
@@ -93,6 +53,7 @@ $lstnominas = $oNominas->Listado_prenomina();
                         <th>Dias Laborados</th>
                         <th>Horas Extras</th>
                         <th>Vacaciones</th>
+                        <th>Incapacidades</th>
                         <th>Total Percepciones</th>
                         <th>Comedor</th>
                         <th>Ahorro</th>
@@ -137,6 +98,7 @@ $lstnominas = $oNominas->Listado_prenomina();
                                 </td>
                                 <td style="text-align: center;"><?= "$" . $campo->extras ?></td>
                                 <td style="text-align: center;"><?= "$" . $campo->vacaciones ?></td>
+                                <td style="text-align: center;"><?= "$" . bcdiv(($campo->monto_incapacida * $campo->dias_incapacida), '1', 2) ?></td>
                                 <td style="text-align: center;"><?= "$" . $campo->total ?></td>
                                 <td style="text-align: center;">
                                 <?= $campo->comedor ?>
@@ -165,9 +127,25 @@ $lstnominas = $oNominas->Listado_prenomina();
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th colspan="18" style="text-align:right">Total:</th>
-                        <th></th>
-                        <th></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
                     </tr>
                 </tfoot>
             </table>

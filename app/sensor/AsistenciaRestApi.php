@@ -1,6 +1,10 @@
 <?php
 
 //Api Rest
+/*
+ * Copyright 2022 - Felipe angel cerda contreras 
+ * felipeangelcerdacontreras@gmail.com
+ */
 header("Acces-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 

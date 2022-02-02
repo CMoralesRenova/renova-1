@@ -152,6 +152,40 @@ $fecha_actual = date("d-m-Y");
                     }
                 });
                 break;
+            case 'Recalcular':
+                swal({
+                    title: "¿DESEA RECALCULAR LA NOMINA SELECCIONADA?",
+                    text: "",
+                    icon: "warning",
+                    buttons: [
+                        'No',
+                        'Si'
+                    ],
+                    dangerMode: true,
+                }).then(function(isConfirm) {
+                    if (isConfirm) {
+                        swal({
+                            title: 'Recalculada!',
+                            text: 'La nomina seleccionada a sido recalculada',
+                            icon: 'success'
+                        }).then(function() {
+                            $.ajax({
+                                data: "accion=Recalcular&id=" + id+"&recalcular=1",
+                                type: "POST",
+                                url: "app/views/default/modules/modulos/nominas/m.nominas.procesa.php",
+                                beforeSend: function() {
+                                    //Alert("", "Solicitando edicion", "warning", 900, false);
+                                },
+                                success: function(datos) {
+                                    Listado();
+                                }
+                            });
+                        });
+                    } else {
+                        swal("Cancelado", "Nomina no Recalculada", "error");
+                    }
+                });
+                break;
             case 'Agregar':
                 $.ajax({
                     data: "nombre=" + nombre,

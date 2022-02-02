@@ -63,6 +63,12 @@ $lstEmpleados = $oEmpleados->Listado();
             </div>
         </div>
         <div class="form-group">
+            <strong class="">Fecha de pago:</strong>
+            <div class="form-group">
+                <input type="date" description="Ingrese las horas a registrar" class="form-control obligado" aria-describedby="" id="fecha_registro" required name="fecha_registro" value="<?= $oHoras->fecha_registro ?>" />
+            </div>
+        </div>
+        <div class="form-group">
             <strong class="">Horas Extras a Registrar:</strong>
             <div class="form-group">
                 <input type="number" description="Ingrese las horas a registrar" class="form-control obligado" aria-describedby="" id="horas_extras" required name="horas_extras" value="<?= $oHoras->horas_extras ?>" />

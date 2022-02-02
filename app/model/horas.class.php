@@ -111,7 +111,7 @@ class horas extends AW {
         $sql = "INSERT INTO `horas_extras`
         (`id`, `id_empleado`,`fecha_registro`,`horas_extras`,`id_usuario_creador`, `estatus`,`motivo`)
         VALUES
-        ('{$this->id}','{$this->id_empleado}','".date('Y-m-d')."','{$this->horas_extras}','{$this->user_id}','1','{$this->motivo}');
+        ('{$this->id}','{$this->id_empleado}','{$this->fecha_registro}','{$this->horas_extras}','{$this->user_id}','1','{$this->motivo}');
         ";
         $bResultado = $this->NonQuery($sql);
         

@@ -13,7 +13,7 @@ $fecha = (filter_input(INPUT_POST, "fecha"));
 
 $oEmpleados = new empleados();
 $sesion = $_SESSION[$oEmpleados->NombreSesion];
-$oEmpleados->id_puesto = "19";
+//$oEmpleados->id_puesto = "19";
 $lstEmpleados = $oEmpleados->Listado();
 ?>
 <script type="text/javascript">

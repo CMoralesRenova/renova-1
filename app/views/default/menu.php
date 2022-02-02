@@ -124,6 +124,9 @@ $aPermisos = empty($oUsuario->perfiles_id) ? array() : explode("@", $oUsuario->p
                 <?php if ($oUsuario->ExistePermiso("vacaciones", $aPermisos) === true) { ?>
                     <a class='collapse-item' href='index.php?action=vacaciones'>Vacaciones</a>
                 <?php } ?>
+                <?php if ($oUsuario->ExistePermiso("incapacidades", $aPermisos) === true) { ?>
+                    <a class='collapse-item' href='index.php?action=incapacidades'>Incapacidades</a>
+                <?php } ?>
                 <?php if ($oUsuario->ExistePermiso("recoleccion", $aPermisos) === true) { ?>
                     <a class='collapse-item' href='index.php?action=recoleccion'>Recolección</a>
                 <?php } ?>

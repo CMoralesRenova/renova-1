@@ -30,7 +30,7 @@ $lstnominas = $oNominas->Listado_prenomina();
                 text: 'Exportar a pdf',
                 orientation: 'landscape',
                 exportOptions: {
-                    columns: [0, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+                    columns: [0, 12, 13, 14, 15, 16, 17, 18, 19, 20]
                 }
             }],
             "footerCallback": function(row, data, start, end, display) {
@@ -39,7 +39,6 @@ $lstnominas = $oNominas->Listado_prenomina();
 
                 // Remove the formatting to get integer data for summation
                 var intVal = function(i) {
-                    console.log(i+" aaaaaaa");
                     return typeof i === 'string' ?
                         i.replace(/[\$,]/g, '') * 1 :
                         typeof i === 'number' ?
@@ -65,6 +64,7 @@ $lstnominas = $oNominas->Listado_prenomina();
                     .column(3)
                     .data()
                     .reduce(function(a, b) {
+                        console.log("esta es a ="+a+" esta es b ="+b);
                         return intVal(a) + intVal(b);
                     }, 0);
 
@@ -94,56 +94,68 @@ $lstnominas = $oNominas->Listado_prenomina();
                     .reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
-                total = api
+                vacaciones = api
                     .column(10)
                     .data()
                     .reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
-                comedor = api
+                incapacidades = api
                     .column(11)
                     .data()
                     .reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
-                ahorro = api
+                total = api
                     .column(12)
                     .data()
                     .reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
-                prestamo = api
+                comedor = api
                     .column(13)
                     .data()
                     .reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
-                fonacot = api
+                ahorro = api
                     .column(14)
                     .data()
                     .reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
-                infonavit = api
+                prestamo = api
                     .column(15)
                     .data()
                     .reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
-                otros = api
+                fonacot = api
                     .column(16)
                     .data()
                     .reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
-                retencionesT = api
+                infonavit = api
                     .column(17)
                     .data()
                     .reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
-                pagar = api
+                otros = api
                     .column(18)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                retencionesT = api
+                    .column(19)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                pagar = api
+                    .column(20)
                     .data()
                     .reduce(function(a, b) {
                         return intVal(a) + intVal(b);
@@ -163,28 +175,35 @@ $lstnominas = $oNominas->Listado_prenomina();
                 $(api.column(7).footer()).html(faltas);
 
                 $(api.column(9).footer()).html(formatterDolar.format(extras));
+                $(api.column(10).footer()).html(formatterDolar.format(vacaciones));
+                $(api.column(11).footer()).html(formatterDolar.format(incapacidades));
 
-                $(api.column(10).footer()).html(formatterDolar.format(total));
+                $(api.column(12).footer()).html(formatterDolar.format(total));
 
-                $(api.column(11).footer()).html(formatterDolar.format(comedor));
+                $(api.column(13).footer()).html(formatterDolar.format(comedor));
 
-                $(api.column(12).footer()).html(formatterDolar.format(ahorro));
+                $(api.column(14).footer()).html(formatterDolar.format(ahorro));
 
-                $(api.column(13).footer()).html(formatterDolar.format(prestamo));
+                $(api.column(15).footer()).html(formatterDolar.format(prestamo));
 
-                $(api.column(14).footer()).html(formatterDolar.format(fonacot));
+                $(api.column(16).footer()).html(formatterDolar.format(fonacot));
 
-                $(api.column(15).footer()).html(formatterDolar.format(infonavit));
+                $(api.column(17).footer()).html(formatterDolar.format(infonavit));
 
-                $(api.column(16).footer()).html(formatterDolar.format(otros));
+                $(api.column(18).footer()).html(formatterDolar.format(otros));
 
-                $(api.column(17).footer()).html(formatterDolar.format(retencionesT));
+                $(api.column(19).footer()).html(formatterDolar.format(retencionesT));
 
-                $(api.column(18).footer()).html(formatterDolar.format(pagar));
+                $(api.column(20).footer()).html(formatterDolar.format(pagar));
                 
             }
         });
         $(".buttons-html5 ").addClass("btn btn-danger");
+        var total = 0;
+            $('#dataTable2').DataTable().rows().data().each(function(el, index) {
+                //Asumiendo que es la columna 5 de cada fila la que quieres agregar a la sumatoria
+                total += el[8];
+            });
     });
 </script>
 <!-- DataTales Example -->
@@ -204,6 +223,8 @@ $lstnominas = $oNominas->Listado_prenomina();
                         <th style="text-align: left;">Faltas</th>
                         <th style="text-align: left;">Dias Laborados</th>
                         <th style="text-align: left;">Horas Extras</th>
+                        <th style="text-align: left;">Vacaciones</th>
+                        <th style="text-align: left;">Incapacidades</th>
                         <th style="text-align: left;">Total Percepciones</th>
                         <th style="text-align: left;">Comedor</th>
                         <th style="text-align: left;">Ahorro</th>
@@ -239,6 +260,7 @@ $lstnominas = $oNominas->Listado_prenomina();
                                 $faltas = $oNominas_edit->faltas;
                                 $asistencias = $oNominas_edit->asistencias;
                                 $extras = $oNominas_edit->extras;
+                                $vacaciones = $oNominas_edit->vacaciones;
                                 $total = $oNominas_edit->total;
                                 $comedor = $oNominas_edit->comedor;
                                 $ahorro = $oNominas_edit->ahorro;
@@ -261,6 +283,7 @@ $lstnominas = $oNominas->Listado_prenomina();
                                 $faltas = $prenomina->faltas;
                                 $asistencias = $prenomina->asistencias;
                                 $extras = $prenomina->extras;
+                                $vacaciones = $prenomina->vacaciones;
                                 $total = $prenomina->total;
                                 $comedor = $prenomina->comedor;
                                 $ahorro = $prenomina->ahorro;
@@ -283,6 +306,8 @@ $lstnominas = $oNominas->Listado_prenomina();
                                 <td style="text-align: center;"><?= $faltas ?></td>
                                 <td style="text-align: center;"><?= $asistencias ?></td>
                                 <td style="text-align: center;"><?= "$" . $extras ?></td>
+                                <td style="text-align: center;"><?= "$" . $vacaciones ?></td>
+                                <td style="text-align: center;"><?= "$" . bcdiv(($prenomina->monto_incapacida * $prenomina->dias_incapacida), '1', 2) ?></td>
                                 <td style="text-align: center;"><?= "$" . $total ?></td>
                                 <td style="text-align: center;"><?= "-$" . $comedor ?></td>
                                 <td style="text-align: center;"><?= "-$" . $ahorro ?></td>
@@ -295,8 +320,8 @@ $lstnominas = $oNominas->Listado_prenomina();
                                 <td style="text-align: center;">
                                     <?= $nombre . "<br>" ?>
                                     <?php if ($prenomina->estatus == 1) { ?>
-                                        <a class="btn btn-sm btn-warning" href="javascript:Reporte('<?= $id_nomina ?>','<?= $id_empleado ?>')">Ver</a>
                                     <?php } ?>
+                                    <a class="btn btn-sm btn-warning" href="javascript:Reporte('<?= $id_nomina ?>','<?= $id_empleado ?>')">Ver</a>
                                 </td>
                             </tr>
                     <?php
@@ -307,6 +332,8 @@ $lstnominas = $oNominas->Listado_prenomina();
                 <tfoot>
                     <tr>
                         <th style="text-align:right">Totales:</th>
+                        <th style="text-align:right"></th>
+                        <th style="text-align:right"></th>
                         <th style="text-align:right"></th>
                         <th style="text-align:right"></th>
                         <th style="text-align:right"></th>

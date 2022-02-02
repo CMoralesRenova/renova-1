@@ -61,6 +61,7 @@ $lstnominas = $oNominas->Listado();
                                 <td style="text-align: center;">
                                     <?php if ($campo->estatus == "NO PAGADA") { ?>
                                         <a class="btn btn-sm btn-success" href="javascript:Editar('<?= $campo->id ?>','Pagar')">Pagar</a>
+                                        <a class="btn btn-sm btn-warning" href="javascript:Editar('<?= $campo->id ?>','Recalcular')">Recalcular</a>
                                         <a class="btn btn-sm btn-danger" href="javascript:Editar('<?= $campo->id ?>','<?= $campo->semana ?>')">Editar</a>
                                     <?php } ?>
                                     <a class="btn btn-sm btn-info" href="javascript:Editar('<?= $campo->id ?>','Final','<?= $campo->semana ?>')">Ver</a>
