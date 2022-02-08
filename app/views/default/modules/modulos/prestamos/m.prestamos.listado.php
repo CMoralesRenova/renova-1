@@ -14,8 +14,64 @@ $lstprestamos = $oPrestamos->Listado();
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        $("#dataTable").DataTable();
+        const formatterDolar = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        })
+        $("#dataTable").DataTable({
+            dom: 'Bfrtip',
+            buttons: [{
+                extend: 'pdfHtml5',
+                footer: true,
+                title: 'Reporte Prestamos al dia <?= date('d-m-Y') ?>',
+                text: 'Exportar a pdf',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4]
+                }
+            }],
+            "footerCallback": function(row, data, start, end, display) {
+                var api = this.api(),
+                    data;
 
+                // Remove the formatting to get integer data for summation
+                var intVal = function(i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+
+                // Total over all pages
+                solicitado = api
+                    .column(3)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                
+                pagar = api
+                    .column(4)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                pagarSemana = api
+                    .column(5)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Update footer
+                $(api.column(3).footer()).html(formatterDolar.format(solicitado));
+
+                $(api.column(4).footer()).html(formatterDolar.format(pagar));
+
+                $(api.column(5).footer()).html(formatterDolar.format(pagarSemana));
+            }
+        });
+        $(".buttons-html5 ").addClass("btn btn-danger");
         $("#btnAgregar").button().click(function(e) {
             Editar("", "Agregar");
         });
@@ -51,9 +107,9 @@ $lstprestamos = $oPrestamos->Listado();
                     <th>Empleado</th>
                     <th>Fecha de registro</th>
                     <th>Fecha pago</th>
-                    <th>Monto Solicitado</th>
-                    <th>Monto A Pagar</th>
-                    <th>Cantidad A Pagar Por Semana</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                     <th>Semanas</th>
                     <th>Semana actual</th>
                     <th>Estatus</th>

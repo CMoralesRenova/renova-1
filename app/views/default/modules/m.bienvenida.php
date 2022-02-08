@@ -20,8 +20,15 @@ if ($horasaludo >= "12:00" && $horasaludo < "19:00"){
 if ($horasaludo >= "19:00" && $horasaludo < "24:00"){
     $horasaludoF = "Buenas noches";
 }
-setlocale(LC_ALL,"es_ES");
+set_time_limit(0);
+date_default_timezone_set("America/Mexico_City");
 $texto = strftime("%A %d de %B del %Y");
+
+$fechaActual = date('Y-m-d');
+$month = date('Y-m');
+$aux         = date('Y-m-d', strtotime("{$month} + 1 month"));
+$last_day = date('Y-m-d', strtotime("{$aux} - 1 day"));
+
 ?>
 <?php require_once('app/views/default/script_h.html'); ?>
 <!DOCTYPE html PUBLIC>
@@ -32,28 +39,10 @@ $texto = strftime("%A %d de %B del %Y");
 <!-- aqui empieza plantilla-->
 <script type="text/javascript">
 $(document).ready(function(e) {
-    $.ajax({
-        async: true,
-        type: "POST",
-        data: "API_KEY=AIzaSyDNuQjcMaL880tNTT_rY6X3G6DhiMqSDFw",
-        url:"http://187.190.56.120:8012/renova/app/sensor/EmpleadosRestApi.php",
-        dataType: "json",
-        success: function(datos) {
-            json = JSON.parse(JSON.stringify(datos));
-            rest = 0;
-
-            for (x of json) {
-                if (x.insert != '' && x.insert != null) {
-                    var jsonDatos = {
-                        "insert_": x.total,
-                        "update_": x.id,
-                        "fecha_": x.nombre,
-                    };
-                    console.log(jsonDatos);
-                }
-            }
-        }
-    });
+    console.log("<?= $fechaActual ?>"+" == "+"<?= $last_day ?>");
+    if ("<?= $fechaActual ?>" == "<?= $last_day ?>") {
+        $('#myModal-').modal('toggle');
+    }
 });
 </script>
 
@@ -97,6 +86,27 @@ $(document).ready(function(e) {
 
             </div>
             <!-- End of Main Content -->
+            <!-- Logout Modal-->
+            <div class="modal fade" id="myModal-" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- contenido del modal-->
+                            <h1>Verificar los montos de Infonavit y fonacot</h1>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal -->
 
             <!-- Footer -->
             <?php require_once('app/views/default/footer.php'); ?>

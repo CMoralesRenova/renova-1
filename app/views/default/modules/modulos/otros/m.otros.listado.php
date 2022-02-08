@@ -13,8 +13,59 @@ $lstotros = $oOtros->Listado();
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        $("#dataTable").DataTable();
+        $("#dataTable").DataTable({
+            dom: 'Bfrtip',
+            buttons: [{
+                extend: 'excel',
+                footer: true,
+                title: 'Reporte otros descuentos al dia <?= date('d-m-Y') ?>',
+                text: 'Exportar a Excel',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                }
+            },{
+                extend: 'pdfHtml5',
+                footer: true,
+                title: 'Reporte otros descuentos al dia <?= date('d-m-Y') ?>',
+                text: 'Exportar a pdf',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                }
+            }],
+            "footerCallback": function(row, data, start, end, display) {
+                var api = this.api(),
+                    data;
 
+                // Remove the formatting to get integer data for summation
+                var intVal = function(i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+
+                // Total over all pages
+                monto = api
+                    .column(3)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                
+                semana = api
+                    .column(4)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Update footer
+                $(api.column(3).footer()).html(formatterDolar.format(monto));
+
+                $(api.column(4).footer()).html(formatterDolar.format(semana));
+            }
+        });
+        $(".buttons-html5 ").addClass("btn btn-danger");
         $("#btnAgregar").button().click(function(e) {
             Editar("", "Agregar");
         });
@@ -50,8 +101,8 @@ $lstotros = $oOtros->Listado();
                     <th>Empleado</th>
                     <th>Fecha de registro</th>
                     <th>Fecha pago</th>
-                    <th>Monto A Pagar</th>
-                    <th>Cantidad A Pagar Por Semana</th>
+                    <th></th>
+                    <th></th>
                     <th>Semanas</th>
                     <th>Semana actual</th>
                     <th>Motivo</th>

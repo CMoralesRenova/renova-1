@@ -19,7 +19,9 @@ $lstincapacidades = $oIncapacidades->Listado();
         $("#btnAgregar").button().click(function(e) {
             Editar("", "Agregar");
         });
-
+        $("#btnMinimo").button().click(function(e) {
+            Editar("", "Minimo");
+        });
     });
 </script>
 <!-- DataTales Example -->
@@ -27,6 +29,7 @@ $lstincapacidades = $oIncapacidades->Listado();
     <div class="card-header py-3" style="text-align:left">
         <h5 class="m-0 font-weight-bold text-danger">incapacidades</h5>
         <div class="form-group" style="text-align:right">
+            <input type="button" id="btnMinimo" class="btn btn-danger" name="btnMinimo" value="Sueldo minimo" />
             <input type="button" id="btnAgregar" class="btn btn-danger" name="btnAgregar" value="Agregar incapacidades" />
         </div>
     </div>
@@ -62,7 +65,7 @@ $lstincapacidades = $oIncapacidades->Listado();
                                 <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
                                 <td style="text-align: center;"><?= $campo->dias_autorizados ?></td>
                                 <td style="text-align: center;">
-                                    <a class="btn btn-sm btn-danger" href="javascript:Editar('<?= $campo->id ?>','')">Vacaciones no disponibles</a>
+                                    <a class="btn btn-sm btn-danger" href="javascript:Editar('<?= $campo->id ?>','Detalles', '<?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?>')">Ver incapacidades</a>
                                 </td>
                             </tr>
                     <?php

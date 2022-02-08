@@ -24,12 +24,6 @@ $oIncapacidades->Informacion();
 $oEmpleados = new empleados();
 $lstEmpleados = $oEmpleados->Listado();
 
-$ley = "LFT: Artículo 81.- Las incapacidades deberán concederse a los trabajadores dentro de los seis meses siguientes al
-cumplimiento del año de servicios. Los patrones entregarán anualmente a sus trabajadores una constancia que 
-contenga su antigüedad y de acuerdo con ella el período de incapacidades que les corresponda y la fecha en que 
-deberán disfrutarlo.";
-
-$aincapacidades = empty($oIncapacidades->perfiles_id) ? array() : explode("@", $oIncapacidades->perfiles_id);
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
@@ -82,7 +76,7 @@ $aincapacidades = empty($oIncapacidades->perfiles_id) ? array() : explode("@", $
         if (timeEnd >= timeStart) {
             var diff = timeEnd.getTime() - timeStart.getTime();
             dias_totales = Math.round(diff / (1000 * 60 * 60 * 24) + 1);
-            console.log(dias_totales);
+
             $("#dias_autorizados").val(dias_totales).trigger('change');
             if (dias_totales > 3) {
                 $("#cantidad").show();
@@ -95,7 +89,6 @@ $aincapacidades = empty($oIncapacidades->perfiles_id) ? array() : explode("@", $
     }
 
     function input_reingreso() {
-        console.log("aqui ");
         var timeStart = new Date(document.getElementById("fin_incapacida").value);
         var Reingreso = new Date(document.getElementById("reingreso").value);
         var actualDate = new Date();
@@ -111,7 +104,8 @@ $aincapacidades = empty($oIncapacidades->perfiles_id) ? array() : explode("@", $
     function Porcentaje() {
         let real = $("#monto_real").val();
         let seguro = $("#monto_incapacidad").val();
-        let dias = $("#dias_autorizados").val()
+        let dias = $("#dias_autorizados").val();
+
         if (real > 0 && seguro > 0 && dias > 0) {
             if ($("#ramo_seguro").val() == 1 || $("#ramo_seguro").val() == 3) {
                 cantidad_dia = (parseFloat(real) - parseFloat(seguro));    
@@ -158,7 +152,9 @@ $aincapacidades = empty($oIncapacidades->perfiles_id) ? array() : explode("@", $
                 <div class="form-group">
                     <strong class="">Tipo de incapacidad:</strong>
                         <div class="form-group">
-                            <select id="tipo_incapacidad" name="tipo_incapacidad" description="Seleccione los dias a disfrutar" class="form-control obligado" value="<?= $oIncapacidades->dias_pagados; ?>">
+                            <select id="tipo_incapacidad" name="tipo_incapacidad" description="Seleccione los dias a disfrutar" <?php if ($oIncapacidades->tipo_incapacidad != "") {
+                                                                                            echo "disabled";
+                                                                                        } ?> class="form-control obligado">
                             <option value="">--SELECCIONE--</option>
                             <option value="1" 
                                 <?php if ($oIncapacidades->tipo_incapacidad == "1") echo "selected";?>>Unica</option>
@@ -268,7 +264,7 @@ $aincapacidades = empty($oIncapacidades->perfiles_id) ? array() : explode("@", $
             <div class="form-group">
                 <strong class="">Monto Real(Renova):</strong>
                 <div class="form-group">
-                    <input type="text"readonly="true" id="monto_real" name="" value="<?= $oIncapacidades->monto_real; ?>" class="form-control">
+                    <input type="text"readonly="true" id="monto_real" name="" value="" class="form-control">
                 </div>
             </div>
         </div>
@@ -289,12 +285,6 @@ $aincapacidades = empty($oIncapacidades->perfiles_id) ? array() : explode("@", $
                 <textarea id="observaciones" name="observaciones" class="form-group" rows="3" style="width: 100%;"><?= $oIncapacidades->observaciones ?></textarea>
             </div>
     </div>
-    <?php if ($oIncapacidades->inicio_incapacida != "") { ?>
-        <input type="button" id="btnImprimir" class="btn btn-danger btn-block" name="btnImprimir" value="Imprimir Vacaciones">
-    <?php } ?>
     </div>
-    <input type="hidden" id="id" name="id" value="<?= $oIncapacidades->id ?>" />
-    <input type="hidden" id="user_id" name="user_id" value="<?= $sesion->id ?>">
-    <input type="hidden" id="accion" name="accion" value="GUARDAR" />
     </div>
 </form>

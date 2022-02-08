@@ -261,7 +261,6 @@ class nominas extends AW
                             `frecuencia` = frecuencia + 1,
                             `acumulado` = `acumulado` + `monto` 
                             WHERE `id` = '{$ahorros->id}'";
-                            print_r($sqlUpdateahorros);
                         $this->NonQuery($sqlUpdateahorros);
                     }
                 }

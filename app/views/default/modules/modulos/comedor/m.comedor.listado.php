@@ -15,8 +15,49 @@ $lstcomedor = $oComedor->Listado();
 <script type="text/javascript">
     $(document).ready(function(e) {
         $("#dataTable").DataTable({
-            "ordering": false
+            dom: 'Bfrtip',
+            buttons: [{
+                extend: 'excel',
+                footer: true,
+                title: 'Reporte comedor al dia <?= date('d-m-Y') ?>',
+                text: 'Exportar a Excel',
+                exportOptions: {
+                    columns: [0, 1, 2]
+                }
+            },{
+                extend: 'pdfHtml5',
+                footer: true,
+                title: 'Reporte comedor al dia <?= date('d-m-Y') ?>',
+                text: 'Exportar a pdf',
+                exportOptions: {
+                    columns: [0, 1, 2]
+                }
+            }],
+            "footerCallback": function(row, data, start, end, display) {
+                var api = this.api(),
+                    data;
+
+                // Remove the formatting to get integer data for summation
+                var intVal = function(i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+
+                // Total over all pages
+                monto = api
+                    .column(2)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Update footer
+                $(api.column(2).footer()).html(formatterDolar.format(monto));
+            }
         });
+        $(".buttons-html5 ").addClass("btn btn-danger");
 
         $("#btnAgregar").button().click(function(e) {
             Editar("", "Agregar");
@@ -46,7 +87,7 @@ $lstcomedor = $oComedor->Listado();
                 <tfoot>
                     <th>Empleado</th>
                     <th>Fecha de registro</th>
-                    <th>Cantidad</th>
+                    <th></th>
                     <th>Acciones</th>
                 </tfoot>
                 <tbody>

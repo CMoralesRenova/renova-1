@@ -10,11 +10,67 @@ require_once($_SITE_PATH . "/app/model/ahorros.class.php");
 
 $oAhorros = new ahorros(true, $_POST);
 $lstahorros = $oAhorros->Listado();
+
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        $("#dataTable").DataTable();
+        const formatterDolar = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        })
+        $("#dataTable").DataTable({
+            dom: 'Bfrtip',
+            buttons: [{
+                extend: 'excel',
+                footer: true,
+                title: 'Reporte Ahorros al dia <?= date('d-m-Y') ?>',
+                text: 'Exportar a Excel',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4]
+                }
+            },{
+                extend: 'pdfHtml5',
+                footer: true,
+                title: 'Reporte Ahorros al dia <?= date('d-m-Y') ?>',
+                text: 'Exportar a pdf',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4]
+                }
+            }],
+            "footerCallback": function(row, data, start, end, display) {
+                var api = this.api(),
+                    data;
 
+                // Remove the formatting to get integer data for summation
+                var intVal = function(i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+
+                // Total over all pages
+                monto = api
+                    .column(2)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                
+                acumulado = api
+                    .column(3)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Update footer
+                $(api.column(2).footer()).html(formatterDolar.format(monto));
+
+                $(api.column(3).footer()).html(formatterDolar.format(acumulado));
+            }
+        });
+        $(".buttons-html5 ").addClass("btn btn-danger");
         $("#btnAgregar").button().click(function(e) {
             Editar("", "Agregar");
         });
@@ -37,6 +93,7 @@ $lstahorros = $oAhorros->Listado();
                         <th>Empleado</th>
                         <th>Fecha de registro</th>
                         <th>Monto A Ahorrar</th>
+                        <th>Acumulado</th>
                         <th>Estatus</th>
                         <th>Acciones</th>
                     </tr>
@@ -44,7 +101,8 @@ $lstahorros = $oAhorros->Listado();
                 <tfoot>
                     <th>Empleado</th>
                     <th>Fecha de registro</th>
-                    <th>Monto A Ahorrar</th>
+                    <th></th>
+                    <th></th>
                     <th>Estatus</th>
                     <th>Acciones</th>
                 </tfoot>
@@ -56,7 +114,8 @@ $lstahorros = $oAhorros->Listado();
                             <tr>
                                 <td style="text-align: center;"><?= $campo->nombres." ".$campo->ape_paterno." ".$campo->ape_materno?></td>
                                 <td style="text-align: center;"><?= $campo->fecha_registro?></td>
-                                <td style="text-align: center;"><?= $campo->monto ?></td>
+                                <td style="text-align: center;"><?= "$".$campo->monto ?></td>
+                                <td style="text-align: center;"><?= "$".$campo->acumulado ?></td>
                                 <td style="text-align: center;"><?= $campo->est ?></td>
                                 <td style="text-align: center;">
                                     <?php if ($campo->estatus == "1") { ?>

@@ -199,3 +199,8 @@ function is_negative_number(number=0){
         return false;
     }
 }
+
+const formatterDolar = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD'
+})

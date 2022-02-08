@@ -13,7 +13,50 @@ $lstfonacot = $oFonacot->Listado();
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        $("#dataTable").DataTable();
+        $("#dataTable").DataTable({
+            dom: 'Bfrtip',
+            buttons: [{
+                extend: 'excel',
+                footer: true,
+                title: 'Reporte fonacot al dia <?= date('d-m-Y') ?>',
+                text: 'Exportar a Excel',
+                exportOptions: {
+                    columns: [0, 1, 2, 3]
+                }
+            },{
+                extend: 'pdfHtml5',
+                footer: true,
+                title: 'Reporte fonacot al dia <?= date('d-m-Y') ?>',
+                text: 'Exportar a pdf',
+                exportOptions: {
+                    columns: [0, 1, 2, 3]
+                }
+            }],
+            "footerCallback": function(row, data, start, end, display) {
+                var api = this.api(),
+                    data;
+
+                // Remove the formatting to get integer data for summation
+                var intVal = function(i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+
+                // Total over all pages
+                monto = api
+                    .column(3)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Update footer
+                $(api.column(3).footer()).html(formatterDolar.format(monto));
+            }
+        });
+        $(".buttons-html5 ").addClass("btn btn-danger");
 
         $("#btnAgregar").button().click(function(e) {
             Editar("", "Agregar");
@@ -46,7 +89,7 @@ $lstfonacot = $oFonacot->Listado();
                     <th>Empleado</th>
                     <th>Fecha de registro</th>
                     <th>Fecha pago</th>
-                    <th>Cantidad A Pagar Por Semana</th>
+                    <th></th>
                     <th>Estatus</th>
                     <th>Acciones</th>
                 </tfoot>
