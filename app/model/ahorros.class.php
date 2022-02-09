@@ -36,11 +36,18 @@ class ahorros extends AW
 
     public function Listado()
     {
+        $sqlEmpleado = "";
+        if (!empty($this->id_empleado)) {
+            $sqlEmpleado = "a.id_empleado='{$this->id_empleado}'";
+        } else {
+            $sqlFecha = "fecha_registro between '{$this->fecha_inicial}' and '{$this->fecha_final}'";
+        }
+
         $sql = "SELECT a.*, CASE WHEN a.estatus = 0 THEN 'AHORRO DETENIDO' WHEN a.estatus = 1 THEN 'AHORRANDO'
         ELSE 'OTRO' END AS est,
         b.nombres, b.ape_paterno, b.ape_materno
         FROM ahorros AS a LEFT JOIN empleados AS b ON a.id_empleado = b.id
-        where fecha_registro between '{$this->fecha_inicial}' and '{$this->fecha_final}'
+        where {$sqlEmpleado} {$sqlFecha}
         ORDER BY a.id ASC";
         return $this->Query($sql);
     }

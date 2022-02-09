@@ -181,7 +181,7 @@ class nominas extends AW
 
                 if (!empty($resOtros) && !($resOtros === NULL)) {
                     foreach ($resOtros as $idx => $otros) {
-                        if ($otros->numero_semanas >= $otros->semana_actual && $otros->estatus == 1) {
+                        if ($otros->numero_semanas == $otros->semana_actual) {
                             $sqlUpdateOtros1 = "UPDATE `otros`
                                 SET
                                 `estatus` = '0',

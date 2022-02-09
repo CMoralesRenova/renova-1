@@ -60,18 +60,34 @@ class horas extends AW {
 
     public function Informacion() {
 
-        $sql = "select * from horas_extras where  id='{$this->id}'";
-        $res = parent::Query($sql);
+        if (!empty($this->id_empleado)){
 
-        if (!empty($res) && !($res === NULL)) {
-            foreach ($res [0] as $idx => $valor) {
-                $this->{$idx} = $valor;
+            $sql = "SELECT sum(horas_extras) as horas_extras FROM horas_extras where estatus = '2' and id_empleado = '{$this->id_empleado}' and fecha_registro between date_add('{$this->Fecha}', INTERVAL -7 DAY) and '{$this->Fecha}'";
+            $res = parent::Query($sql);
+
+            if (!empty($res) && !($res === NULL)) {
+                foreach ($res [0] as $idx => $valor) {
+                    $this->{$idx} = $valor;
+                }
+            } else {
+                $res = NULL;
             }
-        } else {
-            $res = NULL;
-        }
 
-        return $res;
+            return $res;
+        } else {
+            $sql = "select * from horas_extras where  id='{$this->id}'";
+            $res = parent::Query($sql);
+
+            if (!empty($res) && !($res === NULL)) {
+                foreach ($res [0] as $idx => $valor) {
+                    $this->{$idx} = $valor;
+                }
+            } else {
+                $res = NULL;
+            }
+
+            return $res;
+        }
     }
 
     public function Existe() {

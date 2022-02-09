@@ -64,7 +64,6 @@ $lstnominas = $oNominas->Listado_prenomina();
                     .column(3)
                     .data()
                     .reduce(function(a, b) {
-                        console.log("esta es a ="+a+" esta es b ="+b);
                         return intVal(a) + intVal(b);
                     }, 0);
 
@@ -320,8 +319,8 @@ $lstnominas = $oNominas->Listado_prenomina();
                                 <td style="text-align: center;">
                                     <?= $nombre . "<br>" ?>
                                     <?php if ($prenomina->estatus == 1) { ?>
+                                        <a class="btn btn-sm btn-warning" href="javascript:Reporte('<?= $id_nomina ?>','<?= $id_empleado ?>')">Ver</a>
                                     <?php } ?>
-                                    <a class="btn btn-sm btn-warning" href="javascript:Reporte('<?= $id_nomina ?>','<?= $id_empleado ?>')">Ver</a>
                                 </td>
                             </tr>
                     <?php

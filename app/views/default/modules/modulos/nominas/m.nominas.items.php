@@ -7,6 +7,8 @@ require_once($_SITE_PATH . "app/model/puestos.class.php");
 require_once($_SITE_PATH . "app/model/departamentos.class.php");
 require_once($_SITE_PATH . "app/model/otros.class.php");
 require_once($_SITE_PATH . "app/model/prestamos.class.php");
+require_once($_SITE_PATH . "app/model/horas.class.php");
+require_once($_SITE_PATH . "app/model/ahorros.class.php");
 
 
 $oNominas = new nominas();
@@ -41,8 +43,8 @@ $oOtros->id_empleado = empty($_GET['id_empleado']) ? "" : $_GET['id_empleado'];
 $oOtros->fecha_pago = $oNominas->fecha;
 $LstOtros = $oOtros->Listado();
 
-    if ($oNominas_edit->nombre != '' && $oNominas_edit->estatus_final_edit == "2") {
 
+    if ($oNominas_edit->nombre != '' && $oNominas_edit->estatus_final_edit == "2") {
         $id_nomina = $oNominas_edit->id_nomina;
         $id_empleado = $oNominas_edit->id_empleado;
         $nombre = $oNominas_edit->nombre;
@@ -51,6 +53,7 @@ $LstOtros = $oOtros->Listado();
         $productividad = $oNominas_edit->productividad;
         $doce = $oNominas_edit->doce;
         $complemento = $oNominas_edit->complemento;
+        $bono_viaje = $oNominas_edit->bono_viaje;
         $diario = $oNominas_edit->diario;
         $faltas = $oNominas_edit->faltas;
         $asistencias = $oNominas_edit->asistencias;
@@ -77,6 +80,7 @@ $LstOtros = $oOtros->Listado();
         $productividad = $oNominas->productividad;
         $doce = $oNominas->doce;
         $complemento = $oNominas->complemento;
+        $bono_viaje = $oNominas->bono_viaje;
         $diario = $oNominas->diario;
         $faltas = $oNominas->faltas;
         $asistencias = $oNominas->asistencias;
@@ -95,7 +99,19 @@ $LstOtros = $oOtros->Listado();
         $total_p = $oNominas->total_p;
         $fecha = $oNominas->fecha;
     }
+if ($extras != "" && $extras > 0) {
+    $oExtras = new horas();
+    $oExtras->id_empleado = empty($_GET['id_empleado']) ? "" : $_GET['id_empleado'];
+    $oExtras->Fecha = $fecha;
+    $oExtras2 = $oExtras->Informacion();
+}
 
+if($ahorro != '' && $ahorro > 0 ) {
+    $oAhorros = new ahorros(true, $_POST);
+    $oAhorros->id_empleado = empty($_GET['id_empleado']) ? "" : $_GET['id_empleado'];
+    $oAhorros->fecha_pago = $oNominas->fecha;
+    $LstAhorros = $oAhorros->Listado();
+}
 $totalaPagar = $total_p;
 $totalaRetencion = $total_r;
 ?>
@@ -230,7 +246,7 @@ $totalaRetencion = $total_r;
                 <tr>
                     <td><Label>Horas extras</Label></td>
                     <td style="text-align:right"><?=  bcdiv($extras, '1', 2); ?> </td>
-                    <td>&nbsp;</td>
+                    <td style="text-align:right"><?= $oExtras2[0]->horas_extras ?> horas</td>
                     <td>&nbsp;</td>
                 </tr>
             <?php } ?>
@@ -266,10 +282,14 @@ $totalaRetencion = $total_r;
                     <td>&nbsp;</td>
                 </tr>
             <?php } ?>
-            <tr>
-                <td><Label>&nbsp;</Label></td>
-                <td>&nbsp;</td>
-            </tr>
+            <?php if ($bono_viaje > 0) { ?>
+                <tr>
+                    <td><Label>Bono de viaje</Label></td>
+                    <td style="text-align:right"><?= bcdiv($bono_viaje, '1', 2) ?> </td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+            <?php } ?>
             <tr>
                 <td><Label>&nbsp;</Label></td>
                 <td>&nbsp;</td>
@@ -338,9 +358,9 @@ $totalaRetencion = $total_r;
             <?php if ($ahorro > 0) { ?>
                 <tr>
                     <td><Label>Caja de ahorro</Label></td>
-                    <td></td>
+                    <td><?= $LstAhorros[0]->monto ?></td>
                     <?php  echo "<td style='text-align:right'>$oNominas->ahorro</td>"; ?>
-                    <td style="text-align:right"></td>
+                    <td style="text-align:right"><?= $LstAhorros[0]->acumulado ?></td>
                 </tr>
             <?php } ?>
             <?php if ($fonacot > 0) { ?>

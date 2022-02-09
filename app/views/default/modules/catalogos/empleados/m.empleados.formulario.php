@@ -142,10 +142,8 @@ $lsthorarios = $oHorarios->Listado();
 </script>
 <style>
     .divTabs {
-        border: 1px solid #d71414 !important;
         border-top-left-radius: 10px !important;
         border-top-right-radius: 10px !important;
-        background-color: #d71414 !important;
     }
 </style>
 <form id="frmFormulario" name="frmFormulario" action="app/views/default/modules/catalogos/empleados/m.empleados.procesa.php" enctype="multipart/form-data" method="post" target="_self" class="form-horizontal">
@@ -158,16 +156,19 @@ $lsthorarios = $oHorarios->Listado();
                             <a data-toggle="tab" class="btn btn-danger divTabs" href="#tab1">Datos del Empleado</a>
                         </li>
                         <li class=" ">
-                            <a data-toggle="tab" class="btn btn-danger divTabs" href="#tab2">Puesto</a>
+                            <a data-toggle="tab" class="btn btn-danger " href="#tab2">Puesto</a>
                         </li>
                         <li>
-                            <a data-toggle="tab" class="btn btn-danger divTabs" href="#tab3">Salario</a>
+                            <a data-toggle="tab" class="btn btn-danger " href="#tab3">Salario</a>
                         </li>
                         <li>
-                            <a data-toggle="tab" class="btn btn-danger divTabs" href="#tab4">Datos de contacto</a>
+                            <a data-toggle="tab" class="btn btn-danger " href="#tab4">Datos de contacto</a>
                         </li>
                         <li>
-                            <a data-toggle="tab" class="btn btn-danger divTabs" href="#tab5">Datos particulares</a>
+                            <a data-toggle="tab" class="btn btn-danger" href="#tab5">Datos particulares</a>
+                        </li>
+                        <li>
+                            <a data-toggle="tab" class="btn btn-danger" href="#tab6">Datos bancarios</a>
                         </li>
                     </ul>
                     <div class="tab-content">
@@ -479,7 +480,8 @@ $lsthorarios = $oHorarios->Listado();
                                 </div>
                             </div>
                         </div>
-
+                        <div id="tab6" class="tab-pane fade">
+                        </div>
                     </div>
                 </div>
             </div>
