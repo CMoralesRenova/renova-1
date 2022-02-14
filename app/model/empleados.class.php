@@ -38,6 +38,9 @@ class empleados extends AW
     var $id_horario;
     var $foto;
     var $ext;
+    var $empleado_cuenta;
+    var $empleado_clabe;
+    var $empleado_tarjeta;
 
     var $user_id;
     var $token;
@@ -66,6 +69,10 @@ class empleados extends AW
         if (!empty($this->id_puesto)) {
             $sqlPueso = "Where id_puesto = '{$this->id_puesto}'";
         }
+        $sqlEstatus = "";
+        if (!empty($this->estatus)) {
+            $sqlEstatus = "Where estatus = '{$this->estatus}'";
+        }
 
         $sql = "SELECT
         empleados.id,
@@ -86,7 +93,7 @@ class empleados extends AW
         empleados 
         join puestos on empleados.id_puesto=puestos.id
         join departamentos on puestos.id_departamento=departamentos.id
-        {$sqlPueso}
+        {$sqlPueso} {$sqlEstatus}
     ORDER BY
         empleados.nombres ASC";
         return $this->Query($sql);
@@ -183,6 +190,9 @@ class empleados extends AW
                 bono_doce = '{$this->bono_doce}',
                 checador = '{$this->checador}',
                 id_horario = '{$this->id_horario}',
+                empleado_cuenta = '{$this->empleado_cuenta}',
+                empleado_clabe = '{$this->empleado_clabe}',
+                empleado_tarjeta = '{$this->empleado_tarjeta}',
                 usuario_edicion = '{$this->user_id}'
                 where
                   id='{$this->id}'";
@@ -225,12 +235,14 @@ class empleados extends AW
         $sql = "insert into empleados
                 (id,nombres, ape_paterno,ape_materno, fecha_nacimiento, direccion, estado_civil,
                  rfc, curp, nss, nivel_estudios, id_puesto, id_jefe, salario_diario,salario_asistencia,salario_puntualidad,
-                 salario_productividad, salario_semanal,complemento_sueldo, bono_doce, fecha_ingreso, checador,id_horario, usuario_creacion, estatus)
+                 salario_productividad, salario_semanal,complemento_sueldo, bono_doce, fecha_ingreso, checador,id_horario,
+                 empleado_cuenta,empleado_clabe,empleado_tarjeta,usuario_creacion, estatus)
                 values
                 ('0','".ucwords(strtolower($this->nombres))."', '".ucwords(strtolower($this->ape_paterno))."', '".ucwords(strtolower($this->ape_materno))."','" . $this->fecha_nacimiento . "', '".ucwords(strtolower($this->direccion))."', '{$this->estado_civil}',
                  '{$this->rfc}', '".strtoupper($this->curp)."', '".strtoupper($this->nss)."', '{$this->nivel_estudios}', '{$this->id_puesto}', '{$this->id_jefe}','{$this->salario_diario}',
                  '{$this->salario_asistencia}','{$this->salario_puntualidad}','{$this->salario_productividad}','{$this->complemento_sueldo}','{$this->bono_doce}','" . $this->salario_diario * 7 . "', '{$this->fecha_ingreso}',
-                 '{$this->checador}','{$this->id_horario}', '{$this->user_id}','1')";
+                 '{$this->checador}','{$this->id_horario}',
+                 '{$this->empleado_cuenta}','{$this->empleado_clabe}','{$this->empleado_tarjeta}','{$this->user_id}','1')";
         $bResultado = $this->NonQuery($sql);
 
         $sql1 = "select id from empleados order by id desc limit 1";

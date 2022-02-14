@@ -51,12 +51,16 @@ class asistencia extends AW
     {
         $sqlEmpleado = "";
         if (!empty($this->id_empleado)) {
-            $sqlEmpleado = " order by a.fecha asc";
+            if (!empty($this->id_departamento) && $this->id_departamento >= 1 ) {
+                $sqlEmpleado = " and d.id_departamento = '{$this->id_departamento}' order by a.fecha asc"; 
+            } else {
+                $sqlEmpleado = " order by a.fecha asc";
+            }
         } else {
             $sqlEmpleado = "order by a.order desc limit 5";
         }
 
-        $sql = "SELECT b.nombres, b.ape_paterno, b.ape_materno, a.fecha, a.hora_entrada,a.hora_salida,a.estatus_entrada,a.estatus_salida, 
+        $sql = "SELECT a.id,b.nombres, b.ape_paterno, b.ape_materno, a.fecha, a.hora_entrada,a.hora_salida,a.estatus_entrada,a.estatus_salida, 
             IF(a.dia = 0,'Domingo',
             IF(a.dia = 1,'Lunes',
             IF(a.dia = 2,'Martes',
@@ -68,10 +72,12 @@ class asistencia extends AW
             IF(estatus_entrada = 1,'A tiempo', 
             if(estatus_entrada = 2, 'Retraso', 
             if(estatus_entrada = 3, 'Falta', ''))) AS retraso,
-            if(permiso_entrada = 1, 'Permiso entrada', if(permiso_salida = 1, 'Permiso salida', '')) as permiso
+            if(permiso_entrada = 1, 'Permiso entrada', if(permiso_salida = 1, 'Permiso salida', '')) as permiso,
+            d.id_departamento
             FROM asistencia as a 
             left join empleados as b on b.id = a.id_empleado
             left join horarios as c on c.id = b.id_horario
+            left join puestos as d on d.id = b.id_puesto
             where 1=1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' {$sqlEmpleado} ";
         return $this->Query($sql);
     }

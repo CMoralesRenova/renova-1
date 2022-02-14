@@ -9,7 +9,9 @@ $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"
 require_once($_SITE_PATH . "/app/model/comedor.nomina.class.php");
 
 $oComedor = new comedor_nominas(true, $_POST);
-$lstcomedor = $oComedor->Listado();
+$lstcomedor = $oComedor->Listado1();
+
+$lstcomedor1 = $oComedor->Listado();
 
 ?>
 <script type="text/javascript">

@@ -39,13 +39,17 @@ class comedor_nominas extends AW
 
     public function Listado()
     {   
-        $sqlEmpleado = "";
-        if (!empty($this->id_empleado)) {
-            $sqlEmpleado = "and id_empleado = '{$this->id_empleado}' ";
-        }
 
         $sql = "SELECT a.nombres, a.ape_paterno, a.ape_materno, b.id, b.id_empleado, b.precio_platillo, b.fecha FROM empleados as a 
-        inner join comedor as b on a.id = b.id_empleado where 1=1 and b.fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' {$sqlEmpleado} order by b.fecha";
+        inner join comedor as b on a.id = b.id_empleado where 1=1 and b.fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' order by b.fecha";
+        return $this->Query($sql);
+    }
+
+    public function Listado1()
+    {   
+
+        $sql = "SELECT a.nombres, a.ape_paterno, a.ape_materno, b.id, b.id_empleado, sum(b.precio_platillo) as precio_platillo, b.fecha FROM empleados as a 
+        inner join comedor as b on a.id = b.id_empleado where 1=1 and b.fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' group by a.nombres order by b.fecha desc";
         return $this->Query($sql);
     }
 

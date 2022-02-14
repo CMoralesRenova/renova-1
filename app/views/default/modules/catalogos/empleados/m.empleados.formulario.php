@@ -144,6 +144,7 @@ $lsthorarios = $oHorarios->Listado();
     .divTabs {
         border-top-left-radius: 10px !important;
         border-top-right-radius: 10px !important;
+        background-color: #e7001a !important;
     }
 </style>
 <form id="frmFormulario" name="frmFormulario" action="app/views/default/modules/catalogos/empleados/m.empleados.procesa.php" enctype="multipart/form-data" method="post" target="_self" class="form-horizontal">
@@ -153,7 +154,7 @@ $lsthorarios = $oHorarios->Listado();
                 <div class="panel-heading">
                     <ul id="rowTab" class="nav nav-tabs">
                         <li class="active divTabs">
-                            <a data-toggle="tab" class="btn btn-danger divTabs" href="#tab1">Datos del Empleado</a>
+                            <a data-toggle="tab" class="btn btn-danger" href="#tab1">Datos del Empleado</a>
                         </li>
                         <li class=" ">
                             <a data-toggle="tab" class="btn btn-danger " href="#tab2">Puesto</a>
@@ -481,6 +482,40 @@ $lsthorarios = $oHorarios->Listado();
                             </div>
                         </div>
                         <div id="tab6" class="tab-pane fade">
+                        <div class="card-header py-3">
+                                <center>
+                                    <strong class="center">Datos bancarios del empleado: </strong>
+                                </center>
+                                <div class="row">
+                                    <div class="col">
+                                        <strong class="">Cuenta:</strong>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"></span>
+                                            </div>
+                                            <input type="text" description="Ingrese cuenta en Datos bancarios" id="empleado_cuenta" required name="empleado_cuenta" onkeypress="return solonumeros(event);" value="<?= $oEmpleados->empleado_cuenta ?>" class="form-control obligado" />
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <strong class="">Clabe interbancaria:</strong>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"></span>
+                                            </div>
+                                            <input type="text" description="Ingrese clabe interbancaria en Datos Bancarios" id="empleado_clabe" required name="empleado_clabe"  onkeypress="return solonumeros(event);" value="<?= $oEmpleados->empleado_clabe ?>"  class="form-control obligado" />
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <strong class=""> Numero de tarjeta:</strong>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"></span>
+                                            </div>
+                                            <input type="text" description="Ingrese numero tarjeta en Datos bancarios" id="empleado_tarjeta" required name="empleado_tarjeta" value="<?= $oEmpleados->empleado_tarjeta ?>" class="form-control obligado" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

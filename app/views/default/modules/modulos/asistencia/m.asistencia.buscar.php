@@ -6,10 +6,15 @@ header("Acces-Control-Allow-Origin: *");
  */
 $_SITE_PATH = $_SERVER["DOCUMENT_ROOT"] . "/" . explode("/", $_SERVER["PHP_SELF"])[1] . "/";
 require_once($_SITE_PATH . "app/model/asistencia.class.php");
+require_once($_SITE_PATH . "app/model/departamentos.class.php");
 
 $oAsistencia = new asistencia();
 $sesion = $_SESSION[$oAsistencia->NombreSesion];
 $oAsistencia->ValidaNivelUsuario("asistencia");
+
+$oDepartamentos = new departamentos();
+$oDepartamentos->estatus = 1;
+$lstDepartamentos = $oDepartamentos->Listado();
 
 ?>
 <?php require_once('app/views/default/script_h.html'); ?>
@@ -18,6 +23,7 @@ $oAsistencia->ValidaNivelUsuario("asistencia");
         Listado();
         $('#fecha_inicial').change(Listado);
         $('#fecha_final').change(Listado);
+        $('#id_departamento').change(Listado);
 
         $("#btnGuardar").button().click(function(e) {
             $(".form-control").css('border', '1px solid #d1d3e2');
@@ -97,7 +103,7 @@ $oAsistencia->ValidaNivelUsuario("asistencia");
         var jsonDatos = {
             "fecha_inicial": $("#fecha_inicial").val(),
             "fecha_final": $("#fecha_final").val(),
-            "accion": "BUSCAR"
+            "id_departamento": $("#id_departamento").val()
         };
         $.ajax({
             data: jsonDatos,
@@ -176,6 +182,21 @@ $oAsistencia->ValidaNivelUsuario("asistencia");
                                     <div class="form-group">
                                         <input type="date" aria-describedby="" id="fecha_final" value="<?php echo date('Y-m-d'); ?>" required name="fecha_final" class="form-control" />
                                     </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <strong class="">Departamento:</strong>
+                                <div class="form-group">
+                                    <select id="id_departamento" class="form-control" name="id_departamento">
+                                        <?php
+                                        if (count($lstDepartamentos) > 0) {
+                                            echo "<option value='0' >-- SELECCIONE --</option>\n";
+                                            foreach ($lstDepartamentos as $idx => $campo) {
+                                                echo "<option value='{$campo->id}' >" . $campo->nombre ."</option>\n";
+                                            }
+                                        }
+                                        ?>
+                                    </select>
                                 </div>
                             </div>
                             <div class="row" style="float: right">

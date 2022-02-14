@@ -194,10 +194,16 @@ $avacaciones = empty($oVacaciones->perfiles_id) ? array() : explode("@", $oVacac
                                 var date = curWeekDay + ", " + curDay + " " + curMonth + " " + curYear;
                                 mont = '';
 
-                                if (r.getMonth() + 1 <= 10) {
+                                if (r.getMonth() + 1 <= 9) {
                                     mont = "0" + (r.getMonth() + 1);
                                 } else {
                                     mont = (r.getMonth() + 1);
+                                }
+
+                                if (r.getDay() <= 9) {
+                                    curDay = "0"+(r.getDay());
+                                } else {
+                                    curDay = (r.getDay());
                                 }
 
                                 $("#validarFehca").val(curYear + "-" + mont + "-" + curDay);

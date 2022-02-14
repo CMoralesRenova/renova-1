@@ -64,7 +64,9 @@ $lstasistencia = $oAsistencia->Listado_asistencia();
                         foreach ($lstasistencia as $idx => $campo) {
                     ?>
                             <tr>
-                                <td style="text-align: center;"><?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></td>
+                                <td style="text-align: center;"><a class="btn" href="javascript:Editar('<?= $campo->id ?>','Editar')">
+                                    <?= $campo->nombres . " " . $campo->ape_paterno . " " . $campo->ape_materno ?></a>
+                                </td>
                                 <td style="text-align: center;"><?php echo date_format(date_create($campo->fecha), 'd-m-Y') ?></td>
                                 <td style="text-align: center;" <?php if ($campo->retraso == 'A tiempo') {
                                                                     echo "";

@@ -733,8 +733,7 @@ class nominas extends AW
             LEFT JOIN (SELECT * FROM departamentos) i ON h.id_departamento = i.id
             LEFT JOIN (SELECT * FROM ahorros) j ON c.id = j.id_empleado
             LEFT JOIN (SELECT * FROM vacaciones) k ON c.id = k.id_empleado
-            WHERE a.id ='{$this->id}' and c.id = '35' || c.id = '7' || c.id = '26' || c.id = '90' || c.id = '88' 
-            || c.id = '87' || c.id = '85' group by c.id";
+            WHERE a.id ='{$this->id}' and c.id = '35' || c.id = '7' || c.id = '26' || c.id = '90' || c.id = '85' group by c.id";
         $resAdmin = $this->Query($sqlAdminist);
 
         foreach ($resAdmin as $idx => $campo) {
@@ -791,8 +790,14 @@ class nominas extends AW
 
                 $s_productividad = '';
                 if ($asistencias < 7) {
-                    $s_productividad = $productividad / 6 * ($asistencias - 1);
-                    $totalEsperado = $totalEsperado +  $s_productividad;
+                    if ($asistencias <= 1) {
+                        $s_productividad = $productividad / 6 * (0);
+                        $totalEsperado = $totalEsperado +  $s_productividad;
+                    } else {
+                        $s_productividad = $productividad / 6 * ($asistencias - 1);
+                        $totalEsperado = $totalEsperado +  $s_productividad;
+                    }
+                    
                 } else {
                     $s_productividad = $productividad;
                     $totalEsperado = $totalEsperado +  $s_productividad;
@@ -806,8 +811,13 @@ class nominas extends AW
 
                 $s_doce = '';
                 if ($asistencias < 7) {
-                    $s_doce = $resEmpleado[0]->bono_doce / 6 * ($asistencias - 1);
-                    $totalEsperado = $totalEsperado +  $s_doce;
+                    if ($asistencias <= 1) { 
+                        $s_doce = $resEmpleado[0]->bono_doce / 6 * (0);
+                        $totalEsperado = $totalEsperado +  $s_doce;
+                    } else {
+                        $s_doce = $resEmpleado[0]->bono_doce / 6 * ($asistencias - 1);
+                        $totalEsperado = $totalEsperado +  $s_doce;
+                    }
                 } else {
                     $s_doce = $resEmpleado[0]->bono_doce;
                     $totalEsperado = $totalEsperado +  $s_doce;
@@ -817,7 +827,12 @@ class nominas extends AW
                 $extras = bcdiv($resNomina[0]->extras, '1', 2);
 
                 //total esperado
-                $totalEsperado = $totalEsperado + $resEmpleado[0]->salario_diario * $asistencias;
+                if ($asistencias < 1) {
+                    $totalEsperado = $totalEsperado + 0;
+                } else {
+                    $totalEsperado = $totalEsperado + $resEmpleado[0]->salario_diario * $asistencias;
+                }
+
                 $totalEsperado = $totalEsperado + $extras;
                 $totalEsperado = $totalEsperado + $complemento;
 
@@ -921,13 +936,15 @@ class nominas extends AW
                     if ($dias_vacaciones > 0 && $campo->NominaAdministrativa == "0") {
 
                         $campo->dias_laborados = $campo->dias_laborados + $dias_vacaciones;
-                        if ($campo->dias_laborados >= 0 && $campo->dias_laborados <= 6) {
+                        if ($campo->dias_laborados > 1 && $campo->dias_laborados <= 6) {
                             $campo->dias_laborados = $campo->dias_laborados + $campo->festivos;
                             if ($campo->dias_laborados < 7) {
-                                $campo->dias_laborados = $campo->dias_laborados + 1;
+                                    $campo->dias_laborados = $campo->dias_laborados + 1;
                             }
                         } else {
-                            $campo->dias_laborados = $campo->dias_laborados + $campo->festivos;
+                            if ($campo->dias_laborados > 1) {
+                                $campo->dias_laborados = $campo->dias_laborados + $campo->festivos;
+                            }
                         }
                         if ($campo->dias_laborados > 5 && $campo->dias_laborados < 7) {
                             $campo->dias_laborados = $campo->dias_laborados + 1;
@@ -987,7 +1004,11 @@ class nominas extends AW
                         $totalEsperado = $totalEsperado +  $s_doce;
                     }
 
-                    $totalEsperado = $totalEsperado + $diario * $asistencias;
+                    if ($asistencias < 1) {
+                        $totalEsperado = $totalEsperado + 0;
+                    } else {
+                        $totalEsperado = $totalEsperado + $diario * $asistencias;
+                    }
                     $totalEsperado = $totalEsperado + $complemento;
                     $totalEsperado = $totalEsperado + $extras;
 
