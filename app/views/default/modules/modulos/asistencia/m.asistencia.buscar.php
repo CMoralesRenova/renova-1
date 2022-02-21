@@ -25,76 +25,83 @@ $lstDepartamentos = $oDepartamentos->Listado();
         $('#fecha_final').change(Listado);
         $('#id_departamento').change(Listado);
 
-        $("#btnGuardar").button().click(function(e) {
-            $(".form-control").css('border', '1px solid #d1d3e2');
-            var frmTrue = true;
+        $("#btnSincronizar").button().click(function(e) {
+            if ($("#btnSincronizar").val() == 'Agregar') {
+                $(".form-control").css('border', '1px solid #d1d3e2');
+                var frmTrue = true;
 
-            $("#frmFormulario").find('select, input, textarea').each(function() {
-                var elemento = this;
-                if ($(elemento).hasClass("obligado")) {
-                    if (elemento.value == "" || elemento.value == 0) {
-                        Alert("", $(elemento).attr("description"), "warning", 900, false);
-                        Empty(elemento.id);
-                        frmTrue = false;
+                $("#frmFormulario").find('select, input, textarea').each(function() {
+                    var elemento = this;
+                    if ($(elemento).hasClass("obligado")) {
+                        if (elemento.value == "" || elemento.value == 0) {
+                            Alert("", $(elemento).attr("description"), "warning", 900, false);
+                            Empty(elemento.id);
+                            frmTrue = false;
+                        }
                     }
+                });
+                if (frmTrue == true) {
+                    $("#frmFormulario").submit();
                 }
-            });
-            if (frmTrue == true) {
-                $("#frmFormulario").submit();
             }
         });
         $("#sincronizar").button().click(function(e) {
             Editar("", "Sincronizar");
         });
+        $("#agregar").button().click(function(e) {
+            Editar("", "Agregar");
+        });
         $("#btnSincronizar").button().click(function(e) {
-            if ($("#desde").val() != "" && $("#hasta").val() != "") {
-                $.ajax({
-                    async: true,
-                    data: "desde=" + $("#desde").val() + "&hasta=" + $("#hasta").val(),
-                    type: "POST",
-                    url:"http://192.168.1.161/renova/app/sensor/AsistenciaRestApi.php",
-                    dataType: "json",
-                    success: function(datos) {
-                        json = JSON.parse(JSON.stringify(datos));
-                        rest = 0;
+            if ($("#btnSincronizar").val() == 'Sincronizar') {
+                if ($("#desde").val() != "" && $("#hasta").val() != "") {
+                    $.ajax({
+                        async: true,
+                        data: "desde=" + $("#desde").val() + "&hasta=" + $("#hasta").val(),
+                        type: "POST",
+                        url: "http://192.168.1.161/renova/app/sensor/AsistenciaRestApi.php",
+                        dataType: "json",
+                        success: function(datos) {
+                            json = JSON.parse(JSON.stringify(datos));
+                            rest = 0;
 
-                        $("#btnSincronizar").hide();
-                        $("#divFormulario_").html(
-                            '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Insertando informacion en la BD, espere un momento por favor...</center></div>'
-                        );
+                            $("#btnSincronizar").hide();
+                            $("#divFormulario_").html(
+                                '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Insertando informacion en la BD, espere un momento por favor...</center></div>'
+                            );
 
-                        for (x of json) {
-                            if (x.insert != '' && x.insert != null) {
-                                var jsonDatos = {
-                                    "accion": "Sincronizar",
-                                    "insert_": x.insert,
-                                    "update_": x.update,
-                                    "fecha_": x.fecha,
-                                    "id_empleado_": x.id_empleado
-                                };
+                            for (x of json) {
+                                if (x.insert != '' && x.insert != null) {
+                                    var jsonDatos = {
+                                        "accion": "Sincronizar",
+                                        "insert_": x.insert,
+                                        "update_": x.update,
+                                        "fecha_": x.fecha,
+                                        "id_empleado_": x.id_empleado
+                                    };
 
-                                $.ajax({
-                                    async: true,
-                                    data: jsonDatos,
-                                    type: "POST",
-                                    url: "app/views/default/modules/modulos/asistencia/m.asistencia.procesa.php",
-                                    dataType: "json",
-                                    success: function(datos) {
-                                       
-                                    }
-                                });
-                            }
-                            rest++;
-                            if (json[0]['total'] == rest) {
-                                $("#myModal").modal("hide");
-                                Listado();
-                                $("#btnSincronizar").show();
+                                    $.ajax({
+                                        async: true,
+                                        data: jsonDatos,
+                                        type: "POST",
+                                        url: "app/views/default/modules/modulos/asistencia/m.asistencia.procesa.php",
+                                        dataType: "json",
+                                        success: function(datos) {
+
+                                        }
+                                    });
+                                }
+                                rest++;
+                                if (json[0]['total'] == rest) {
+                                    $("#myModal").modal("hide");
+                                    Listado();
+                                    $("#btnSincronizar").show();
+                                }
                             }
                         }
-                    }
-                });
-            } else {
-                Alert("", "Selecciona las fechas para sincronizar asistencia", "warning", 900, false);
+                    });
+                } else {
+                    Alert("", "Selecciona las fechas para sincronizar asistencia", "warning", 900, false);
+                }
             }
         });
     });
@@ -134,6 +141,25 @@ $lstDepartamentos = $oDepartamentos->Listado();
                     },
                     success: function(datos) {
                         $("#divFormulario").html(datos);
+                    }
+                });
+                $("#myModal").modal({
+                    backdrop: "true"
+                });
+                break;
+            case 'Agregar':
+                $.ajax({
+                    data: "nombre=" + nombre,
+                    type: "POST",
+                    url: "app/views/default/modules/modulos/asistencia/m.asistencia.justificar.php",
+                    beforeSend: function() {
+                        $("#divFormulario").html(
+                            '<div class="container"><center><img src="app/views/default/img/loading.gif" border="0"/><br />Cargando formulario, espere un momento por favor...</center></div>'
+                        );
+                    },
+                    success: function(datos) {
+                        $("#divFormulario").html(datos);
+
                     }
                 });
                 $("#myModal").modal({
@@ -192,7 +218,7 @@ $lstDepartamentos = $oDepartamentos->Listado();
                                         if (count($lstDepartamentos) > 0) {
                                             echo "<option value='0' >-- SELECCIONE --</option>\n";
                                             foreach ($lstDepartamentos as $idx => $campo) {
-                                                echo "<option value='{$campo->id}' >" . $campo->nombre ."</option>\n";
+                                                echo "<option value='{$campo->id}' >" . $campo->nombre . "</option>\n";
                                             }
                                         }
                                         ?>
@@ -200,6 +226,7 @@ $lstDepartamentos = $oDepartamentos->Listado();
                                 </div>
                             </div>
                             <div class="row" style="float: right">
+                                <button class="btn btn-success" tabindex="0" id="agregar" type="button"><span>Agregar asistencia</span></button>&nbsp;
                                 <button class="btn btn-danger" tabindex="0" id="sincronizar" type="button"><span>Sincronizar Asistencia</span></button>
                             </div>
                         </div>
@@ -233,6 +260,7 @@ $lstDepartamentos = $oDepartamentos->Listado();
                 </div>
             </div>
             <!-- Modal -->
+
             <!-- archivo Footer -->
             <?php require_once('app/views/default/footer.php'); ?>
             <!-- End of Footer -->

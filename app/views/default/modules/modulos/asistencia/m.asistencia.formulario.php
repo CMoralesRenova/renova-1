@@ -20,7 +20,8 @@ $lstEmpleados = $oEmpleados->Listado();
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        $("#nameModal").text("<?php echo $nombre ?> Prestamo");
+        $("#btnSincronizar").val("<?php echo $nombre ?>");
+        $("#nameModal").text("<?php echo $nombre ?> Asistencia");
         $("#frmFormulario").ajaxForm({
             beforeSubmit: function(formData, jqForm, options) {},
             success: function(data) {

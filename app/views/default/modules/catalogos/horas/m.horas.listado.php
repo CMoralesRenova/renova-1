@@ -13,8 +13,50 @@ $lsthoras = $oHoras->Listado();
 ?>
 <script type="text/javascript">
     $(document).ready(function(e) {
-        $("#dataTable").DataTable();
+        $("#dataTable").DataTable({
+            dom: 'Bfrtip',
+            buttons: [{
+                extend: 'excel',
+                footer: true,
+                title: 'Reporte otros descuentos al dia <?= date('d-m-Y') ?>',
+                text: 'Exportar a Excel',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                }
+            },{
+                extend: 'pdfHtml5',
+                footer: true,
+                title: 'Reporte otros descuentos al dia <?= date('d-m-Y') ?>',
+                text: 'Exportar a pdf',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 5, 6]
+                }
+            }],
+            "footerCallback": function(row, data, start, end, display) {
+                var api = this.api(),
+                    data;
 
+                // Remove the formatting to get integer data for summation
+                var intVal = function(i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+                
+                 // Total over all pages
+                 horas = api
+                    .column(5)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Update footer
+                $(api.column(5).footer()).html(horas);
+            }
+        });
+        $(".buttons-html5 ").addClass("btn btn-danger");
         $("#btnAgregar").button().click(function(e) {
             Editar("", "Agregar");
         });

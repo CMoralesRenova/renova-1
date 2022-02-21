@@ -71,7 +71,7 @@ class empleados extends AW
         }
         $sqlEstatus = "";
         if (!empty($this->estatus)) {
-            $sqlEstatus = "Where estatus = '{$this->estatus}'";
+            $sqlEstatus = "Where empleados.estatus = '{$this->estatus}'";
         }
 
         $sql = "SELECT

@@ -43,7 +43,7 @@ class asistencia extends AW
     {
         $sql = "SELECT a.nombres, a.ape_paterno, a.ape_materno, count(dia)   as dia, id_empleado  FROM empleados as a 
         left join asistencia as b on a.id = b.id_empleado where 1=1 and fecha between '{$this->fecha_inicial}' and '{$this->fecha_final}' group by a.id";
-        
+
         return $this->Query($sql);
     }
 
@@ -51,8 +51,8 @@ class asistencia extends AW
     {
         $sqlEmpleado = "";
         if (!empty($this->id_empleado)) {
-            if (!empty($this->id_departamento) && $this->id_departamento >= 1 ) {
-                $sqlEmpleado = " and d.id_departamento = '{$this->id_departamento}' order by a.fecha asc"; 
+            if (!empty($this->id_departamento) && $this->id_departamento >= 1) {
+                $sqlEmpleado = " and d.id_departamento = '{$this->id_departamento}' order by a.fecha asc";
             } else {
                 $sqlEmpleado = " order by a.fecha asc";
             }
@@ -131,7 +131,7 @@ class asistencia extends AW
     }
 
     public function Actualizar()
-    {   
+    {
         $now = date("Y-m-d");
         $now2 = date("Y-m-d H:i:s");
 
@@ -206,16 +206,16 @@ class asistencia extends AW
                 $horasExtra  = '';
                 $porciones = explode(".", $intervalo->format('%H.%i'));
                 $horasExtra = $porciones[0];
-                if ($porciones[1] >= 30){
-                    if ($porciones[1] >= 30 && $porciones[1] <= 49 ) {
+                if ($porciones[1] >= 30) {
+                    if ($porciones[1] >= 30 && $porciones[1] <= 49) {
                         $porciones[1] = 5;
-                    } else if ($porciones[1] >= 50 && $porciones[1] <= 59 ) {
+                    } else if ($porciones[1] >= 50 && $porciones[1] <= 59) {
                         $porciones[0] + 1;
                         $porciones[1] = 0;
                     } else {
                         $porciones[1] = 0;
                     }
-                    $horasExtra = $porciones[0].".".$porciones[1];
+                    $horasExtra = $porciones[0] . "." . $porciones[1];
                 }
                 $sql1 = "select * from horas_extras where id_empleado = '{$this->id_empleado}' and fecha_registro = '{$this->fecha_inicial}'";
                 $res1 = $this->Query($sql1);
@@ -252,7 +252,7 @@ class asistencia extends AW
     }
 
     public function Agregar()
-    {   
+    {
         $now = date("Y-m-d");
         $now2 = date("Y-m-d H:i:s");
 
@@ -341,17 +341,17 @@ class asistencia extends AW
         $res = $this->Query($sql);
         $result = 0;
         if (count($res) > 0) {
-            if($this->update_ != "" && $this->update_ != null) {
-                $this->update_ = str_replace("\'","'",$this->update_);
+            if ($this->update_ != "" && $this->update_ != null) {
+                $this->update_ = str_replace("\'", "'", $this->update_);
                 $update_new = explode("`id` =", $this->update_);
-                $rs = $this->NonQuery($update_new[0]."`id` = '{$res[0]->id}'");
+                $rs = $this->NonQuery($update_new[0] . "`id` = '{$res[0]->id}'");
                 if ($rs) {
                     $result = 1;
                 }
             }
         } else {
-            $this->insert_ = str_replace("\'","'",$this->insert_);
-            $this->update_ = str_replace("\'","'",$this->update_);
+            $this->insert_ = str_replace("\'", "'", $this->insert_);
+            $this->update_ = str_replace("\'", "'", $this->update_);
 
             $rs = $this->NonQuery($this->insert_);
             if ($rs > 0 && $this->update_ != "") {
@@ -359,11 +359,37 @@ class asistencia extends AW
                 $res = $this->Query($sql);
                 if (count($res) > 0) {
                     $update_new = explode("`id` =", $this->update_);
-                    $rs = $this->NonQuery($update_new[0]."`id` = '{$res[0]->id}'");
+                    $rs = $this->NonQuery($update_new[0] . "`id` = '{$res[0]->id}'");
                     if ($rs) {
                         $result = 1;
                     }
                 }
+            }
+        }
+        return $result;
+    }
+
+    public function AgregarAsis()
+    {
+        $sql = "SELECT * FROM asistencia where fecha = '{$this->fecha}' and id_empleado = '{$this->id_empleado}' order by id desc limit 1";
+        $res = $this->Query($sql);
+
+        $result = 0;
+        if (count($res) > 0 && empty($this->hora_salida)) {
+            $result = 1;
+        } else {
+            $sql = "INSERT INTO 
+            `asistencia` (`id_empleado`,`fecha`,`hora_entrada`,`dia`, `estatus_entrada`,`quitar_bonos`)
+            VALUES
+            ('{$this->id_empleado}','{$this->fecha}','{$this->hora_entrada}','{$this->dia}', '{$this->AgregarAsis}','{$this->quitar_bonos}')";
+            $rs = $this->NonQuery($this->sql);
+            if ($rs && !empty($this->hora_salida)) {
+                $sql = "UPDATE `asistencia`
+               SET
+               `hora_salida` = '{$this->hora_salida}',
+               `estatus_salida` = '{$this->estatus_salida}',
+               WHERE fecha = '{$this->fecha}' and id_empleado = '{$this->id_empleado}'";
+                $rs = $this->NonQuery($this->sql);
             }
         }
         return $result;

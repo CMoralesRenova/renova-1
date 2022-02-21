@@ -46,6 +46,7 @@ $fecha_actual = date("d-m-Y");
         var jsonDatos = {
             "fecha_inicial": $("#fecha_inicial").val(),
             "fecha_final": $("#fecha_final").val(),
+            "estatus": $("#estatus").val(),
             "accion": "BUSCAR"
         };
         $.ajax({
@@ -162,7 +163,14 @@ $fecha_actual = date("d-m-Y");
                                     </div>
                                 </div>
                             </div>
-
+                            <div class="form-group">
+                                    <strong class="">Estado:</strong>
+                                    <select id="estatus" class="form-control obligado" onchange="Listado()">
+                                        <option value=''>--TODOS--</option>
+                                        <option value='2'>AUTORIZADAS</option>
+                                        <option value='1'>EN ESPERA A AUTORIZACIÓN</option>
+                                    </select>
+                                </div>
                         </div>
                     </div>
                     <!-- cerrar contenido pagina-->

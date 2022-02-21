@@ -733,12 +733,14 @@ class nominas extends AW
             LEFT JOIN (SELECT * FROM departamentos) i ON h.id_departamento = i.id
             LEFT JOIN (SELECT * FROM ahorros) j ON c.id = j.id_empleado
             LEFT JOIN (SELECT * FROM vacaciones) k ON c.id = k.id_empleado
-            WHERE a.id ='{$this->id}' and c.id = '35' || c.id = '7' || c.id = '26' || c.id = '90' || c.id = '85' group by c.id";
+            WHERE a.id ='{$this->id}' and c.id = '35' || c.id = '7' || c.id = '26' || c.id = '90' || c.id = '85' 
+            and c.estatus = '1' group by c.id";
         $resAdmin = $this->Query($sqlAdminist);
 
         foreach ($resAdmin as $idx => $campo) {
             array_push($resNomina, $campo);
         }
+        print_r($resNomina);
         return $resNomina;
     }
 

@@ -39,6 +39,11 @@ class horas extends AW {
     }
 
     public function Listado() {
+        $sqlEstatus = "";
+        if (!empty($this->estatus)) {
+            $sqlEstatus = "and a.estatus = '{$this->estatus}'";
+        }
+
         $sql = "SELECT a.*, CASE WHEN a.estatus = 0 THEN
             'NO AUTORIZADO' 
             WHEN a.estatus = 1 THEN
@@ -52,7 +57,7 @@ class horas extends AW {
     FROM
         horas_extras AS a
         LEFT JOIN empleados AS b ON a.id_empleado = b.id
-        where fecha_registro between '{$this->fecha_inicial}' and '{$this->fecha_final}' ORDER BY a.id ASC";
+        where fecha_registro between '{$this->fecha_inicial}' and '{$this->fecha_final}' {$sqlEstatus} ORDER BY a.id ASC";
         //echo nl2br($sql);
         return $this->Query($sql);
         
